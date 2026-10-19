@@ -1,0 +1,198 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+
+/* Google Fonts - TaxAlphonic */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+
+/* Global Font Settings */
+:root {
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+/* Default Website Font */
+html,
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+/* Main Hero Heading */
+h1 {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+/* Buttons */
+button,
+.btn,
+input[type="submit"],
+input[type="button"] {
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+/* Form Fields */
+input,
+textarea,
+select {
+  font-family: var(--font-body);
+  font-weight: 400;
+}
+
+/* Navigation */
+nav,
+nav a {
+  font-family: var(--font-heading);
+  font-weight: 500;
+}
+
+/* Links */
+a {
+  text-decoration: none;
+}
+
+/* Responsive Heading Sizes */
+h1 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+}
+
+h2 {
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
+}
+
+h3 {
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+}
+
+:root {
+  --font-main: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+html,
+body {
+  font-family: var(--font-main);
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Optional: hide scrollbar while keeping horizontal scrolling */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+:root {
+  /* Brand Colors */
+  --color-primary: #0e96ac;
+  --color-primary-light: #3cb7cc;
+  --color-accent: #e8521e;
+  --color-gold: #f39200;
+
+  /* Light Theme */
+  --color-background: #fbfbfd;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f3f4f8;
+
+  --color-text: #0a0e1a;
+  --color-text-secondary: #2a3142;
+  --color-text-muted: #5b6478;
+
+  --color-border: #e6e8f0;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(10, 14, 26, 0.04);
+  --shadow-md: 0 8px 30px rgba(10, 14, 26, 0.06);
+  --shadow-lg: 0 20px 60px rgba(14, 150, 172, 0.16);
+}
+
+/* Dark Theme */
+
+.dark {
+  --color-background: #080c16;
+  --color-surface: #101625;
+  --color-surface-soft: #171e2e;
+
+  --color-text: #f7f9fc;
+  --color-text-secondary: #d3d9e5;
+  --color-text-muted: #929caf;
+
+  --color-border: #263044;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 20px 60px rgba(14, 150, 172, 0.18);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: Arial, Helvetica, sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* Layered so Tailwind text-* / font-* utilities on buttons and inputs (e.g. the header nav) win. */
+@layer base {
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+}
+
+/* Layered so Tailwind text-* utilities on links (e.g. text-white buttons) still win. */
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}

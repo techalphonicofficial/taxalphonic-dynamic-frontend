@@ -1,0 +1,311 @@
+/* Footer, copied from uirefrence.html (#siteFooter) and scoped under .ta-footer. */
+.ta-footer {
+  --ink: #0a0e1a;
+  --brand: #0e96ac;
+  --brand2: #3cb7cc;
+  --shadow-lg: 0 20px 60px rgba(14, 150, 172, .16);
+  margin-top: 30px;
+  background: var(--ink);
+  color: rgba(255, 255, 255, .6);
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ta-footer *,
+.ta-footer *::before,
+.ta-footer *::after {
+  box-sizing: border-box;
+}
+
+.ta-footer h5,
+.ta-footer h6,
+.ta-footer p {
+  margin: 0;
+}
+
+.ta-footer a {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ta-footer .wrap {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.ta-footer .btn-primary {
+  display: inline-block;
+  background: var(--brand);
+  color: #fff;
+  padding: 14px 26px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15.5px;
+  box-shadow: var(--shadow-lg);
+  transition: transform .15s;
+}
+
+.ta-footer .btn-primary:hover {
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.ta-footer .footer-logo {
+  display: block;
+  width: 230px;
+  max-width: 70%;
+  height: auto;
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin: 0 auto 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .2);
+}
+
+.ta-footer .f-mega {
+  background: var(--ink);
+  color: rgba(255, 255, 255, .65);
+  padding: 50px 0 36px;
+}
+
+.ta-footer .f-mega-head {
+  text-align: center;
+  max-width: 620px;
+  margin: 0 auto 40px;
+}
+
+.ta-footer .f-mega-head p {
+  margin: 14px 0 20px;
+  font-size: 15px;
+  color: rgba(255, 255, 255, .6);
+}
+
+.ta-footer .f-hiring {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  background: linear-gradient(120deg, #0e96ac, #0b7d90 55%, #f39200);
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin: 22px 0;
+  box-shadow: 0 10px 30px rgba(14, 150, 172, .28);
+  position: relative;
+  overflow: hidden;
+}
+
+.ta-footer .f-hiring::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -5%;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(255, 255, 255, .16), transparent 70%);
+  pointer-events: none;
+}
+
+.ta-footer .f-hiring-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.ta-footer .f-hiring-emoji {
+  font-size: 32px;
+}
+
+.ta-footer .f-hiring-left b {
+  display: block;
+  font-size: 17px;
+  color: #fff;
+  font-family: var(--font-sora), Sora, sans-serif;
+  letter-spacing: .2px;
+}
+
+.ta-footer .f-hiring-left span {
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, .9);
+}
+
+.ta-footer .f-hiring-btn {
+  background: #fff;
+  color: #0b7d90;
+  border-radius: 10px;
+  padding: 11px 22px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .18);
+  position: relative;
+  z-index: 1;
+  font-size: 13.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: .16s;
+}
+
+.ta-footer .f-hiring-btn:hover {
+  background: #f39200;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.ta-footer .f-section-title {
+  font-family: var(--font-sora), Sora, sans-serif;
+  font-weight: 700;
+  color: #fff;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin: 30px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+
+.ta-footer .f-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px 20px;
+}
+
+.ta-footer .f-col h5 {
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-family: var(--font-sora), Sora, sans-serif;
+}
+
+.ta-footer .f-col a {
+  display: block;
+  padding: 4px 0;
+  color: rgba(255, 255, 255, .6);
+  font-size: 13px;
+}
+
+.ta-footer .f-col a:hover {
+  color: #fff;
+}
+
+.ta-footer .f-col a.f-more {
+  color: var(--brand2);
+  font-weight: 600;
+  font-size: 12.5px;
+}
+
+.ta-footer .f-bottom {
+  background: #070a12;
+  padding: 36px 0 24px;
+  color: rgba(255, 255, 255, .6);
+}
+
+.ta-footer .f-bcols {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1.4fr;
+  gap: 26px;
+  margin-bottom: 26px;
+}
+
+.ta-footer .f-bottom h6 {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-family: var(--font-sora), Sora, sans-serif;
+}
+
+.ta-footer .f-bottom a {
+  display: block;
+  padding: 4px 0;
+  color: rgba(255, 255, 255, .6);
+  font-size: 13px;
+}
+
+.ta-footer .f-bottom a:hover {
+  color: #fff;
+}
+
+.ta-footer .f-contact p {
+  font-size: 13px;
+  padding: 3px 0;
+}
+
+/* Phone and e-mail links sit inside the contact lines. */
+.ta-footer .f-bottom a.f-inline {
+  display: inline;
+  padding: 0;
+}
+
+.ta-footer .f-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ta-footer .f-bottom .f-social a {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, .8);
+}
+
+.ta-footer .f-bottom .f-social a:hover {
+  background: var(--brand);
+  color: #fff;
+}
+
+.ta-footer .fbot {
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  padding-top: 20px;
+  font-size: 12.5px;
+}
+
+@media (max-width: 820px) {
+  .ta-footer .f-grid,
+  .ta-footer .f-bcols {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .ta-footer .f-hiring,
+  .ta-footer .f-hiring-left {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media print {
+  .ta-footer {
+    display: none;
+  }
+}
+
+/* ---------- CMS additions ---------- */
+/* A column heading that is itself a link (footer menu item with a URL). */
+.ta-footer .f-col h5 a.f-col-title {
+  display: inline;
+  padding: 0;
+  color: #fff;
+  font-size: inherit;
+}
+
+/* "Get in touch" always takes the last (wider) bottom column. */
+@media (min-width: 821px) {
+  .ta-footer .f-bcols > .f-contact {
+    grid-column: 4;
+  }
+}

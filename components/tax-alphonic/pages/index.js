@@ -1,0 +1,9 @@
+export { default as HomePage } from "./HomePage";
+export { default as ServicePage } from "./ServicePage";
+export { default as CategoryPage } from "./CategoryPage";
+export { default as AdvisoryPage } from "./AdvisoryPage";
+export { default as TaxpediaPage } from "./TaxpediaPage";
+export { default as ListingPage } from "./ListingPage";
+export { default as GenericPage } from "./GenericPage";
+export { default as ApiPage } from "./ApiPage";
+export { default as ApiServicePage } from "./ApiServicePage";
