@@ -2,13 +2,13 @@ import { apiClient } from "@/service/apiClient";
 
 // Dynamic sitemap: /sitemap.xml is an index of /sitemaps/pages.xml, /sitemaps/services.xml, /sitemaps/blog.xml and
 // /sitemaps/seo-pages-<n>.xml (pSEO pages, split every PER_FILE URLs; Google's limit is 50,000).
-// Entries come from GET /api/v1/sitemap (cached for an hour) and are listed with the same rules
+// Entries come from GET /api/v1/sitemap (read fresh on every request, so a newly published service,
+// page, pSEO page or blog post is listed straight away) and are listed with the same rules
 // the pages render with: published only, no "noindex" robots, no canonical pointing elsewhere,
 // with any SEO Config (admin) override of robots / canonical applied.
 
 export const SITE_URL = (process.env.SITE_URL || "https://taxalphonic.com").replace(/\/+$/, "");
 export const PER_FILE = 45000;
-const REVALIDATE_SECONDS = 3600;
 
 const EMPTY = { pages: [], services: [], seoPages: [], blogs: [] };
 
@@ -41,7 +41,7 @@ function entry(path, record, config) {
 
 async function fetchEntries() {
   try {
-    const payload = await apiClient("/api/v1/sitemap", { next: { revalidate: REVALIDATE_SECONDS } });
+    const payload = await apiClient("/api/v1/sitemap", { cache: "no-store" });
     return payload?.success ? payload.data : null;
   } catch (error) {
     console.error("Unable to load sitemap entries", error);
@@ -114,8 +114,8 @@ const escapeXml = (value) => String(value)
 
 const XML_HEADERS = {
   "Content-Type": "application/xml; charset=utf-8",
-  // CDNs keep it for an hour; the data itself is cached for an hour too (see fetchEntries).
-  "Cache-Control": "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400",
+  // A CDN may keep it for 10 minutes at most, so changes show within ~10 minutes (the data itself is not cached).
+  "Cache-Control": "public, max-age=0, s-maxage=600, stale-while-revalidate=600",
 };
 
 export function urlsetResponse(entries) {

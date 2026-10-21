@@ -48,6 +48,11 @@ async function resolvePath(pathname) {
   if (!resolved) return null;
 
   const record = await withSeoConfig(resolved.record, SEO_CONFIG_TYPE[resolved.kind], resolved.record.id, pathname);
+  // The backend also serves draft services by slug; they stay reachable but are never indexed
+  // (and the sitemap lists published services only). Applied after the SEO Config so it cannot undo it.
+  if (resolved.kind === "service" && record.status && record.status !== "published") {
+    record.robots = "noindex, nofollow";
+  }
   return { ...resolved, record };
 }
 

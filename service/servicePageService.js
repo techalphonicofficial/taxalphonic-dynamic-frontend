@@ -64,6 +64,8 @@ export function mapService(service) {
     id: service.id,
     title: service.title?.trim() || "Untitled service",
     slug: service.slug,
+    // "published" | "draft" | ...: a service that is not published is never indexed (see app/[...slug]/page.jsx).
+    status: service.status || "",
     summary: service.summary || service.shortDescription || "",
     categoryId: service.categoryId || null,
     readingTime: service.readingTime || null,
