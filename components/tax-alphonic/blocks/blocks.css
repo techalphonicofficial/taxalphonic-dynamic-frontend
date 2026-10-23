@@ -1,0 +1,638 @@
+/*
+ * General-purpose blocks (CommonBlocks.jsx, scoped .ta-cb) and block backgrounds
+ * (BlockBackground.jsx, .ta-bg). Same tokens as the reference design (home-page.css etc.), so the
+ * blocks match whichever page type they are placed on.
+ */
+
+.ta-cb {
+  --cb-ink: #0a0e1a;
+  --cb-text: #3a4256;
+  --cb-muted: #5b6478;
+  --cb-line: #e6e8f0;
+  --cb-mist: #f3f4f8;
+  --cb-brand: #0e96ac;
+  --cb-shadow: 0 1px 2px rgba(10, 14, 26, .04), 0 8px 30px rgba(10, 14, 26, .06);
+  padding: 36px 0;
+  color: var(--cb-ink);
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+}
+
+.ta-cb *,
+.ta-cb *::before,
+.ta-cb *::after {
+  box-sizing: border-box;
+}
+
+.ta-cb .cb-wrap {
+  max-width: 1210px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Inside a page column that already has its own side spacing. */
+.ta-svc .ta-cb .cb-wrap,
+.ta-journey .jbody .ta-cb .cb-wrap,
+.ta-tools .tool-page-body .ta-cb .cb-wrap,
+.ta-bg-pad-sm .ta-cb .cb-wrap,
+.ta-bg-pad-md .ta-cb .cb-wrap,
+.ta-bg-pad-lg .ta-cb .cb-wrap,
+.ta-bg-pad-xl .ta-cb .cb-wrap {
+  padding: 0;
+}
+
+.ta-svc .ta-cb {
+  padding: 18px 0;
+}
+
+.ta-cb h2 {
+  font-family: var(--font-sora), Sora, sans-serif;
+  font-size: clamp(22px, 2.6vw, 30px);
+  letter-spacing: -.02em;
+  line-height: 1.2;
+  margin: 0 0 12px;
+  color: inherit;
+}
+
+.ta-cb p {
+  color: var(--cb-text);
+  font-size: 15.5px;
+  line-height: 1.7;
+  margin: 0 0 12px;
+}
+
+.ta-cb a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ta-cb .cb-head {
+  margin-bottom: 22px;
+  max-width: 760px;
+}
+
+.ta-cb .cb-center {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ta-cb .cb-kicker {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--cb-brand);
+  margin-bottom: 8px;
+}
+
+.ta-cb .cb-sub {
+  color: var(--cb-muted);
+}
+
+.ta-cb .cb-caption {
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--cb-muted);
+  margin-top: 10px;
+}
+
+.ta-cb .cb-icon-img {
+  width: 1.2em;
+  height: 1.2em;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+/* Buttons */
+.ta-cb .cb-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.ta-cb .cb-buttons.cb-align-center,
+.ta-cb .cb-center .cb-buttons {
+  justify-content: center;
+}
+
+.ta-cb .cb-buttons.cb-align-right {
+  justify-content: flex-end;
+}
+
+.ta-cb .cb-btn {
+  background: var(--cb-brand);
+  color: #fff;
+  border: 1px solid var(--cb-brand);
+  padding: 13px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 20px 60px rgba(14, 150, 172, .16);
+  transition: transform .15s;
+}
+
+.ta-cb .cb-btn:hover {
+  transform: translateY(-2px);
+}
+
+.ta-cb .cb-btn-ghost {
+  background: #fff;
+  color: var(--cb-ink);
+  border-color: var(--cb-line);
+  box-shadow: none;
+}
+
+/* Text */
+.ta-cb .cb-text {
+  max-width: 820px;
+}
+
+.ta-cb .cb-text.cb-center {
+  margin: 0 auto;
+}
+
+/* Image + text */
+.ta-cb .cb-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 44px;
+  align-items: center;
+}
+
+.ta-cb .cb-split-rev .cb-split-media {
+  order: 2;
+}
+
+.ta-cb .cb-split-media img {
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: var(--cb-shadow);
+  display: block;
+}
+
+.ta-cb .cb-points {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.ta-cb .cb-points li {
+  position: relative;
+  padding-left: 26px;
+  color: var(--cb-text);
+  font-size: 15px;
+}
+
+.ta-cb .cb-points li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--cb-brand);
+  font-weight: 700;
+}
+
+/* Image */
+.ta-cb .cb-figure {
+  margin: 0 auto;
+}
+
+.ta-cb .cb-size-full { max-width: none; }
+.ta-cb .cb-size-wide { max-width: 1000px; }
+.ta-cb .cb-size-medium { max-width: 720px; }
+.ta-cb .cb-size-small { max-width: 420px; }
+
+.ta-cb .cb-figure img {
+  width: 100%;
+  display: block;
+  border-radius: 18px;
+}
+
+.ta-cb .cb-figure figcaption {
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--cb-muted);
+  margin-top: 10px;
+}
+
+/* Video / embed */
+.ta-cb .cb-video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  max-width: 960px;
+  margin: 0 auto;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: var(--cb-shadow);
+}
+
+.ta-cb .cb-video iframe,
+.ta-cb .cb-video video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.ta-cb .cb-embed {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--cb-line);
+}
+
+.ta-cb .cb-embed iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.ta-cb .cb-embed-html iframe {
+  max-width: 100%;
+}
+
+/* Gallery */
+.ta-cb .cb-gallery {
+  display: grid;
+  grid-template-columns: repeat(var(--cb-cols, 3), minmax(0, 1fr));
+  gap: 14px;
+}
+
+.ta-cb .cb-gallery-item {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: var(--cb-mist);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: zoom-in;
+  aspect-ratio: 4 / 3;
+}
+
+.ta-cb .cb-gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .3s;
+}
+
+.ta-cb .cb-gallery-item:hover img {
+  transform: scale(1.04);
+}
+
+.ta-cb .cb-gallery-item span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 18px 12px 10px;
+  font-size: 13px;
+  color: #fff;
+  text-align: left;
+  background: linear-gradient(transparent, rgba(0, 0, 0, .6));
+}
+
+.ta-cb .cb-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(8, 12, 22, .92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 60px;
+}
+
+.ta-cb .cb-lightbox figure {
+  margin: 0;
+  max-width: 100%;
+  max-height: 100%;
+  text-align: center;
+}
+
+.ta-cb .cb-lightbox img {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 10px;
+}
+
+.ta-cb .cb-lightbox figcaption {
+  color: #fff;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.ta-cb .cb-lb-close,
+.ta-cb .cb-lb-nav {
+  position: absolute;
+  background: rgba(255, 255, 255, .12);
+  color: #fff;
+  border: 0;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ta-cb .cb-lb-close { top: 18px; right: 18px; }
+.ta-cb .cb-lb-prev { left: 14px; top: 50%; transform: translateY(-50%); }
+.ta-cb .cb-lb-next { right: 14px; top: 50%; transform: translateY(-50%); }
+
+/* Stats */
+.ta-cb .cb-stats {
+  display: grid;
+  grid-template-columns: repeat(var(--cb-cols, 4), minmax(0, 1fr));
+  gap: 16px;
+}
+
+.ta-cb .cb-stat {
+  background: #fff;
+  border: 1px solid var(--cb-line);
+  border-radius: 16px;
+  padding: 22px 16px;
+  text-align: center;
+  box-shadow: var(--cb-shadow);
+}
+
+.ta-cb .cb-stat-ic {
+  font-size: 26px;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.ta-cb .cb-stat b {
+  display: block;
+  font-family: var(--font-sora), Sora, sans-serif;
+  font-size: clamp(24px, 3vw, 34px);
+  color: var(--cb-brand);
+  line-height: 1.1;
+}
+
+.ta-cb .cb-stat span {
+  font-size: 13.5px;
+  color: var(--cb-muted);
+}
+
+/* Cards */
+.ta-cb .cb-cards {
+  display: grid;
+  grid-template-columns: repeat(var(--cb-cols, 3), minmax(0, 1fr));
+  gap: 18px;
+}
+
+.ta-cb .cb-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid var(--cb-line);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: var(--cb-shadow);
+  transition: transform .18s, border-color .18s;
+}
+
+.ta-cb a.cb-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--cb-brand);
+}
+
+.ta-cb .cb-cards-plain .cb-card {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  padding: 8px 0;
+}
+
+.ta-cb .cb-card-ic {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: rgba(14, 150, 172, .1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.ta-cb .cb-card b {
+  font-family: var(--font-sora), Sora, sans-serif;
+  font-size: 17px;
+}
+
+.ta-cb .cb-card p {
+  font-size: 14.5px;
+  margin: 0;
+}
+
+.ta-cb .cb-card i {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--cb-brand);
+  margin-top: auto;
+}
+
+/* Logos */
+.ta-cb .cb-logos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 18px 34px;
+}
+
+.ta-cb .cb-logo img {
+  max-height: 46px;
+  max-width: 150px;
+  object-fit: contain;
+  display: block;
+  transition: filter .2s, opacity .2s;
+}
+
+.ta-cb .cb-logo span {
+  font-weight: 700;
+  color: var(--cb-muted);
+}
+
+.ta-cb .cb-logos-gray .cb-logo img {
+  filter: grayscale(1);
+  opacity: .7;
+}
+
+.ta-cb .cb-logos-gray .cb-logo:hover img {
+  filter: none;
+  opacity: 1;
+}
+
+/* Spacer */
+.ta-cb.cb-spacer { padding: 0; }
+.ta-cb.cb-space-sm { height: 16px; }
+.ta-cb.cb-space-md { height: 40px; }
+.ta-cb.cb-space-lg { height: 72px; }
+.ta-cb.cb-space-xl { height: 120px; }
+
+.ta-cb.cb-spacer {
+  display: flex;
+  align-items: center;
+}
+
+.ta-cb.cb-spacer .cb-wrap {
+  width: 100%;
+}
+
+.ta-cb.cb-spacer hr {
+  border: 0;
+  border-top: 1px solid var(--cb-line);
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .ta-cb .cb-split {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .ta-cb .cb-split-rev .cb-split-media {
+    order: 0;
+  }
+  .ta-cb .cb-gallery,
+  .ta-cb .cb-cards,
+  .ta-cb .cb-stats {
+    grid-template-columns: repeat(min(var(--cb-cols, 3), 2), minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .ta-cb .cb-gallery,
+  .ta-cb .cb-cards {
+    grid-template-columns: 1fr;
+  }
+  .ta-cb .cb-lightbox {
+    padding: 50px 12px;
+  }
+}
+
+/* ---- Block backgrounds (BlockBackground.jsx) ---------------------------------------------- */
+
+.ta-bg {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.ta-bg-img,
+.ta-bg-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ta-bg-img { z-index: 0; }
+.ta-bg-overlay { z-index: 1; }
+
+.ta-bg-content {
+  position: relative;
+  z-index: 2;
+}
+
+.ta-bg-rounded {
+  border-radius: 20px;
+}
+
+/* A block inside a page column keeps a little air around its coloured box. */
+.ta-svc .ta-bg,
+.ta-journey .jbody .ta-bg,
+.ta-tools .tool-page-body .ta-bg {
+  margin: 14px 0;
+}
+
+.ta-bg-pad-sm > .ta-bg-content { padding: 16px 20px; }
+.ta-bg-pad-md > .ta-bg-content { padding: 32px 28px; }
+.ta-bg-pad-lg > .ta-bg-content { padding: 56px 32px; }
+.ta-bg-pad-xl > .ta-bg-content { padding: 90px 36px; }
+
+/* Blocks inside a coloured box drop their own outer spacing (the box gives it). */
+.ta-bg:not(.ta-bg-pad-none) > .ta-bg-content > .ta-cb {
+  padding: 0;
+}
+
+/* A custom background replaces the hero's own decorative background. */
+.ta-bg .hh-bg,
+.ta-bg .jhero2-bg {
+  display: none;
+}
+
+.ta-bg .svc-hero,
+.ta-bg .tool-page-hero,
+.ta-bg .tools-hub-hero,
+.ta-bg .hh,
+.ta-bg .jhero2 {
+  background: transparent;
+}
+
+/* Service hero sits inside the page column: give its text room inside the box. */
+.ta-bg-hero.ta-bg-pad-none > .ta-bg-content > .svc-hero {
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+/* Text colour on dark / light backgrounds. */
+.ta-bg-light > .ta-bg-content :is(h1, h2, h3, h4, h5, h6, p, li, figcaption, blockquote, .lede, .sub, .cb-sub, .cb-caption, .jkicker, .kicker, .cb-kicker, .eyebrow, .crumb, .crumb span) {
+  color: #fff;
+}
+
+.ta-bg-light > .ta-bg-content :is(.lede, .sub, .cb-sub, p) {
+  opacity: .92;
+}
+
+/* Hero headings with a gradient highlight, stats and meta under the hero. */
+.ta-bg-light > .ta-bg-content .svc-hero h1 {
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+}
+
+.ta-bg-light > .ta-bg-content .svc-hero .lede {
+  color: rgba(255, 255, 255, .88);
+}
+
+.ta-bg-light > .ta-bg-content .svc-hero h1 em {
+  -webkit-text-fill-color: transparent;
+}
+
+.ta-bg-light > .ta-bg-content .trust-row :is(div, b),
+.ta-bg-light > .ta-bg-content .eyebrow {
+  color: #fff;
+}
+
+.ta-bg-light > .ta-bg-content .trust-row div {
+  color: rgba(255, 255, 255, .8);
+}
+
+.ta-bg-light > .ta-bg-content .eyebrow {
+  background: rgba(255, 255, 255, .14);
+  border-color: rgba(255, 255, 255, .25);
+}
+
+.ta-bg-dark > .ta-bg-content :is(h1, h2, h3, h4, h5, h6) {
+  color: #0a0e1a;
+}
+
+.ta-bg-dark > .ta-bg-content :is(p, li, .lede, .sub, .cb-sub) {
+  color: #2a3142;
+}
+
+/* A homepage block placed on another page: no page-coloured band of its own. */
+.ta-home.ta-home-embed {
+  background: transparent;
+  max-width: none;
+}

@@ -10,8 +10,8 @@ export function mapSection(section, index) {
   return {
     id: section.id || `home-${index}`,
     type: section.type,
-    // { placement: "full" | "main" | "sidebar" } from the builder's Display settings
-    config: parsePayload(section.config),
+    // { placement, kicker, anchorId, background } from the builder; background image paths made absolute like payload images
+    config: normalizePayload(parsePayload(section.config)),
     payload: normalizePayload(parsePayload(section.data?.payload)),
   };
 }

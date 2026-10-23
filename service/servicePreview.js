@@ -5,6 +5,8 @@ import { getServiceCategory, mapService } from "@/service/servicePageService";
 import { getServiceLocations } from "@/service/serviceLocationsService";
 import { mapSection } from "@/service/homePageService";
 import { attachModuleContent } from "@/service/homeContentService";
+import { getJourneyStages } from "@/service/journeyService";
+import { getTools } from "@/service/toolsService";
 
 /**
  * Server Action behind /cms-preview: turns the CMS admin's unsaved service draft into the same
@@ -47,15 +49,21 @@ async function hydrateSection(section) {
     return { ...section, payload: { ...payload, packages } };
   }
 
+  // Any other block that picks a CMS form (homepage Form / Expert banner, ToolForm, ...).
+  if (payload.formId) {
+    return { ...section, payload: { ...payload, form: await loadForm(payload.formId) } };
+  }
+
   return { ...section, payload };
 }
 
 export async function buildServicePreview(draft) {
   if (!draft || typeof draft !== "object") return null;
 
-  const sections = await Promise.all(
+  // Homepage blocks on the page read their CMS module (Testimonials, Team, ...) as on the live page.
+  const sections = await attachModuleContent(await Promise.all(
     (Array.isArray(draft.sections) ? draft.sections.slice(0, 60) : []).map(hydrateSection)
-  );
+  ));
 
   const service = mapService({
     ...draft,
@@ -96,11 +104,48 @@ export async function buildHomePreview(draft) {
   return attachModuleContent(sections);
 }
 
+/**
+ * Same for a Journey Stage page: { title, slug, sections } as the Page form holds them, plus the
+ * published stages (the draft takes its place among them by its stage number).
+ */
+export async function buildJourneyPreview(draft) {
+  if (!draft || typeof draft !== "object") return null;
+  const raw = Array.isArray(draft.sections) ? draft.sections.slice(0, 60) : [];
+  const sections = await attachModuleContent(await Promise.all(raw.map(mapSection).filter(Boolean).map(hydrateSection)));
+  if (!sections.length) return null;
+  return {
+    sections,
+    stages: await getJourneyStages(),
+    page: { slug: String(draft.slug || "journey/preview"), title: String(draft.title || "").trim() },
+  };
+}
+
+/**
+ * Same for a free tool page or the tools hub: { title, slug, sections }, plus the published tools
+ * (a draft tool is added to the list so the hub / "More tools" look right). The ToolForm block's
+ * form is loaded from its formId, as the backend does on the live page.
+ */
+export async function buildToolPreview(draft) {
+  if (!draft || typeof draft !== "object") return null;
+  const raw = Array.isArray(draft.sections) ? draft.sections.slice(0, 60) : [];
+  const sections = await attachModuleContent(await Promise.all(raw.map(mapSection).filter(Boolean).map(hydrateSection)));
+  if (!sections.length) return null;
+  const slug = String(draft.slug || "tool/preview").replace(/^\/+|\/+$/g, "");
+  const tools = await getTools();
+  const hero = sections.find((s) => s.type === "ToolHero")?.payload || {};
+  const calculator = sections.find((s) => s.type === "ToolCalculator");
+  const listed = calculator && !tools.some((t) => t.slug === slug)
+    ? [...tools, { slug, url: `/${slug}`, calculator: calculator.payload?.calculator || "", title: hero.title || draft.title || "", icon: hero.icon || "", tag: hero.tag || "", order: hero.order || "" }]
+      .sort((a, b) => (parseFloat(a.order) || 999) - (parseFloat(b.order) || 999) || String(a.title).localeCompare(String(b.title)))
+    : tools;
+  return { sections, tools: listed, page: { slug, title: String(draft.title || "").trim() } };
+}
+
 /** Same for a CMS page: { title, content, sections } as the Page form holds them. */
 export async function buildPagePreview(draft) {
   if (!draft || typeof draft !== "object") return null;
   const raw = Array.isArray(draft.sections) ? draft.sections.slice(0, 60) : [];
-  const sections = await Promise.all(raw.map(mapSection).filter(Boolean).map(hydrateSection));
+  const sections = await attachModuleContent(await Promise.all(raw.map(mapSection).filter(Boolean).map(hydrateSection)));
   return {
     id: "preview",
     title: String(draft.title || "").trim() || "Untitled page",

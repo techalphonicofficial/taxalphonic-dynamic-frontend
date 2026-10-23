@@ -3,6 +3,10 @@ import Link from "next/link";
 import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import CmsForm from "../forms/CmsForm";
 import PackagesBlock from "../packages/PackagesBlock";
+import { HomeBlock } from "../home/HomeSections";
+import CommonBlock from "../blocks/CommonBlocks";
+import BlockBackground, { backgroundOf } from "../blocks/BlockBackground";
+import { isCommonSection, isHomeSection } from "../blocks/commonBlockTypes";
 import "../service-page.css";
 
 // Markup and class names mirror the #/service/... view in uirefrence.html;
@@ -13,7 +17,7 @@ import "../service-page.css";
 // Blocks with no content render nothing, and empty columns collapse.
 
 // Where a block goes when its config has no placement.
-// Keep in sync with DEFAULT_PLACEMENT in cms-admin PageBuilder.jsx.
+// Keep in sync with DEFAULT_PLACEMENT in cms-admin layoutZones.js (homepage blocks default to "bottom").
 const DEFAULT_PLACEMENT = {
   Faq: "bottom",
   FAQ: "bottom",
@@ -171,12 +175,18 @@ function Block({ config, defaultId, title, intro, className = "", children }) {
 // Hero
 // ---------------------------------------------------------------------------
 
-function Hero({ service, hero }) {
+function Hero({ service, hero, config }) {
   const heading = hero.heading || service.title;
   const [lead, highlight] = splitHeading(heading, hero.highlight);
   const eyebrow = hero.eyebrow || service.category?.name;
   const description = hero.subHeading || service.summary;
-  const image = hero.image || hero.backgroundImage || service.bannerImage || service.thumbImage;
+  // Right-side image (admin: Hero → "Right-side image"): "none" hides it, "custom" uses only the
+  // hero's own image. "auto" falls back to the service banner/thumbnail, except when the hero has
+  // its own background (Background panel): then the thumbnail would sit on top of it.
+  const mode = hero.imageMode || "auto";
+  const ownImage = hero.image || hero.backgroundImage;
+  const fallback = mode === "auto" && !backgroundOf(config) ? service.bannerImage || service.thumbImage : "";
+  const image = mode === "none" ? "" : ownImage || fallback;
   const price = formatPrice(hero.price);
   const showMeta = hero.showMeta !== false;
   const readingTime = showMeta ? formatReadingTime(service.readingTime) : "";
@@ -643,13 +653,17 @@ function ServiceBlock({ section, placement, firstOverviewId, packageCtaHref, loc
     case "CallToAction":
       return <CallToActionBlock payload={payload} config={config} placement={placement} />;
     default:
+      // Homepage blocks and the general-purpose blocks can be placed on any page.
+      if (isHomeSection(section)) return <HomeBlock section={section} />;
+      if (isCommonSection(section)) return <CommonBlock section={section} />;
       return <GenericBlock section={section} />;
   }
 }
 
 function placementOf(section) {
   const placement = section.config?.placement;
-  return PLACEMENTS.includes(placement) ? placement : DEFAULT_PLACEMENT[section.type] || "main";
+  // Homepage blocks are full-width designs: below the columns unless placed elsewhere.
+  return PLACEMENTS.includes(placement) ? placement : DEFAULT_PLACEMENT[section.type] || (isHomeSection(section) ? "bottom" : "main");
 }
 
 // "Locations We Serve" on a service (or location page) whose Page Builder has no such block:
@@ -658,7 +672,8 @@ const AUTO_LOCATIONS = { id: "auto-locations", type: "LocationsServed", config: 
 
 export default function ApiServicePage({ service }) {
   const locations = list(service.locations);
-  const hero = service.sections.find((section) => section.type === "HeroBanner")?.payload || {};
+  const heroSection = service.sections.find((section) => section.type === "HeroBanner");
+  const hero = heroSection?.payload || {};
   const sections = service.sections.filter((section) => section.type !== "HeroBanner" && hasContent(section, locations));
   const hasLocationsBlock = service.sections.some((section) => section.type === "LocationsServed");
 
@@ -676,17 +691,21 @@ export default function ApiServicePage({ service }) {
   // Plan buttons without their own link jump to the page's enquiry form, when there is one.
   const packageCtaHref = firstForm ? `#${firstForm.config?.anchorId || "enquiry"}` : "";
 
+  // Every block may have its own background (admin: the block's Background panel).
   const render = (section, placement) => (
-    <ServiceBlock
-      key={section.id}
-      section={section}
-      placement={placement}
-      firstOverviewId={firstOverviewId}
-      packageCtaHref={packageCtaHref}
-      locations={locations}
-      currentPath={service.path}
-      serviceTitle={service.locationsFor || service.title}
-    />
+    <Fragment key={section.id}>
+      <BlockBackground config={section.config}>
+        <ServiceBlock
+          section={section}
+          placement={placement}
+          firstOverviewId={firstOverviewId}
+          packageCtaHref={packageCtaHref}
+          locations={locations}
+          currentPath={service.path}
+          serviceTitle={service.locationsFor || service.title}
+        />
+      </BlockBackground>
+    </Fragment>
   );
 
   // Location pages pass their own trail (category / service / place); services show category / title.
@@ -715,7 +734,7 @@ export default function ApiServicePage({ service }) {
 
         <div className="svc">
           <div className="wrap">
-            <Hero service={service} hero={hero} />
+            <BlockBackground config={heroSection?.config} hero><Hero service={service} hero={hero} config={heroSection?.config} /></BlockBackground>
 
             {groups.top.length > 0 && <div className="svc-top">{groups.top.map((section) => render(section, "top"))}</div>}
 
@@ -749,13 +768,16 @@ export function ContentBlocks({ sections }) {
   const packageCtaHref = firstForm ? `#${firstForm.config?.anchorId || "enquiry"}` : "";
 
   return items.map((section) => (
-    <ServiceBlock
-      key={section.id}
-      section={section}
-      placement="main"
-      firstOverviewId={firstOverviewId}
-      packageCtaHref={packageCtaHref}
-      locations={[]}
-    />
+    <Fragment key={section.id}>
+      <BlockBackground config={section.config}>
+        <ServiceBlock
+          section={section}
+          placement="main"
+          firstOverviewId={firstOverviewId}
+          packageCtaHref={packageCtaHref}
+          locations={[]}
+        />
+      </BlockBackground>
+    </Fragment>
   ));
 }

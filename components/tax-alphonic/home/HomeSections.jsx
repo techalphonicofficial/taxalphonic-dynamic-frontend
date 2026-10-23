@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import CmsForm from "../forms/CmsForm";
 import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import "./home-page.css";
+import BlockBackground from "../blocks/BlockBackground";
+import CommonBlock from "../blocks/CommonBlocks";
+import { isCommonSection } from "../blocks/commonBlockTypes";
 
 /*
  * Homepage blocks from the CMS Page Builder (page slug "home"), or DEFAULT_HOME_SECTIONS.
@@ -1049,7 +1052,28 @@ function groupSections(sections) {
 
 function renderBlock(section, i) {
   const Block = BLOCKS[section.type];
-  return Block ? <Block key={section.id || i} p={section.payload || {}} /> : null;
+  const inner = Block ? <Block p={section.payload || {}} /> : isCommonSection(section) ? <CommonBlock section={section} /> : null;
+  if (!inner) return null;
+  // Each block may have its own background (admin: the block's Background panel).
+  return (
+    <Fragment key={section.id || i}>
+      <BlockBackground config={section.config} hero={section.type === "HomeHero"}>{inner}</BlockBackground>
+    </Fragment>
+  );
+}
+
+/**
+ * One homepage block on another page (service, CMS page, blog, journey, tool): it brings the
+ * homepage styles with it (.ta-home). The caller adds the block's background.
+ */
+export function HomeBlock({ section }) {
+  const Block = BLOCKS[section?.type];
+  if (!Block) return null;
+  return (
+    <div className="ta-home ta-home-embed">
+      <div className="home-page"><Block p={section.payload || {}} /></div>
+    </div>
+  );
 }
 
 export default function HomeSections({ sections = [] }) {

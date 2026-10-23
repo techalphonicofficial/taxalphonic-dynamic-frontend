@@ -89,7 +89,7 @@ export function mapService(service) {
       .map((section) => ({
         id: section.id,
         type: section.type?.componentKey || section.type?.name || "Content",
-        config: parsePayload(section.config),
+        config: normalizePayload(parsePayload(section.config)),
         payload: normalizePayload(parsePayload(section.data?.payload)),
       })),
   };

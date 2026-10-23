@@ -1,0 +1,1624 @@
+/*
+ * Journey Stage page styles, extracted from uirefrence.html (#/journey/<stage> view) by
+ * scripts/extract-journey-css.mjs and scoped under .ta-journey. Regenerate rather than hand-edit
+ * this part; local additions live at the end of the file.
+ */
+
+.ta-journey {
+  --ink: #0a0e1a;
+  --ink2: #1a2236;
+  --paper: #fbfbfd;
+  --mist: #f3f4f8;
+  --line: #e6e8f0;
+  --brand: #0e96ac;
+  --brand2: #3cb7cc;
+  --accent: #e8521e;
+  --gold: #f39200;
+  --muted: #5b6478;
+  --shadow: 0 1px 2px rgba(10,14,26,.04),0 8px 30px rgba(10,14,26,.06);
+  --shadow-lg: 0 20px 60px rgba(14,150,172,.16);
+  max-width: 100vw;
+  overflow-x: clip;
+  font-family: var(--font-inter),Inter,system-ui,sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 40px;
+}
+
+.ta-journey * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.ta-journey img,
+.ta-journey svg {
+  max-width: 100%;
+}
+
+.ta-journey h1,
+.ta-journey h2,
+.ta-journey h3,
+.ta-journey h4 {
+  font-family: var(--font-sora),Sora,sans-serif;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+}
+
+.ta-journey a {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+
+.ta-journey .wrap {
+  box-sizing: border-box;
+}
+
+.ta-journey .wrap {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.ta-journey .wrap {
+  max-width: 100%;
+}
+
+.ta-journey .crumb {
+  font-size: 13px;
+  color: var(--muted);
+  padding: 18px 0 0;
+}
+
+.ta-journey .crumb a:hover {
+  color: var(--brand);
+}
+
+.ta-journey .crumb span {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.ta-journey .hh-cta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ta-journey .btn-primary {
+  background: var(--brand);
+  color: #fff;
+  padding: 14px 26px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15.5px;
+  box-shadow: var(--shadow-lg);
+  transition: transform .15s;
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.ta-journey .btn-primary:hover {
+  transform: translateY(-2px);
+}
+
+.ta-journey .btn-ghost {
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15.5px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.ta-journey .lead-note {
+  font-size: 11.5px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 10px;
+}
+
+.ta-journey .blk {
+  margin-bottom: 42px;
+  scroll-margin-top: 90px;
+}
+
+.ta-journey .kicker {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--brand);
+  margin-bottom: 9px;
+}
+
+.ta-journey .blk h2 {
+  font-size: 27px;
+  margin-bottom: 14px;
+}
+
+.ta-journey .blk p {
+  color: #2a3142;
+  font-size: 15.5px;
+  margin-bottom: 13px;
+}
+
+.ta-journey .jblock2 {
+  position: relative;
+  overflow: hidden;
+  transition: .2s;
+}
+
+.ta-journey .jblock2::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,var(--jc,var(--brand)),transparent 70%);
+  opacity: .5;
+}
+
+.ta-journey .jblock2:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.ta-journey .jt-card {
+  transition: .2s;
+}
+
+.ta-journey .jt-item:hover .jt-card {
+  transform: scale(1.02);
+  box-shadow: var(--shadow);
+  background: #fff;
+}
+
+.ta-journey .jt-item:hover .jt-node {
+  transform: translateX(-50%) scale(1.15);
+}
+
+.ta-journey .jhero2-meta-item {
+  transition: .2s;
+}
+
+.ta-journey .jhero2-meta-item:hover {
+  transform: translateY(-3px);
+  border-color: var(--jc);
+}
+
+.ta-journey .jprog-wrap {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px 24px;
+  margin: 8px 0;
+  box-shadow: var(--shadow);
+}
+
+.ta-journey .jprog-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.ta-journey .jprog-label {
+  font-family: Sora;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.ta-journey .jprog-count {
+  font-size: 12.5px;
+  color: var(--brand);
+  font-weight: 600;
+  background: rgba(14,150,172,.08);
+  padding: 4px 12px;
+  border-radius: 99px;
+}
+
+.ta-journey .jprogress-track {
+  height: 5px;
+  background: var(--mist);
+  border-radius: 99px;
+  margin: 10px 0 4px;
+  overflow: hidden;
+}
+
+.ta-journey .jprogress-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width .6s ease;
+}
+
+.ta-journey .jprogress {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 10px 0 2px;
+  position: relative;
+}
+
+.ta-journey .jp-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  text-decoration: none;
+  min-width: 0;
+  transition: .2s;
+  position: relative;
+}
+
+.ta-journey .jp-stage::before {
+  content: "";
+  position: absolute;
+  top: 18px;
+  left: -50%;
+  width: 100%;
+  height: 2px;
+  background: var(--line);
+  z-index: 0;
+}
+
+.ta-journey .jp-stage:first-child::before {
+  display: none;
+}
+
+.ta-journey .jp-stage.done::before,
+.ta-journey .jp-stage.active::before {
+  background: var(--jc);
+}
+
+.ta-journey .jp-dot {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--line);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  font-family: Sora;
+  flex-shrink: 0;
+  transition: .2s;
+  z-index: 1;
+}
+
+.ta-journey .jp-stage:hover .jp-dot {
+  transform: scale(1.12);
+  border-color: var(--jc);
+  color: var(--jc);
+}
+
+.ta-journey .jp-stage.active .jp-dot {
+  background: var(--jc);
+  border-color: var(--jc);
+  color: #fff;
+  transform: scale(1.15);
+  box-shadow: 0 6px 18px color-mix(in srgb,var(--jc) 45%,transparent);
+}
+
+.ta-journey .jp-stage.done .jp-dot {
+  background: color-mix(in srgb,var(--jc) 14%,white);
+  border-color: var(--jc);
+  color: var(--jc);
+}
+
+.ta-journey .jp-name {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.25;
+  max-width: 74px;
+}
+
+.ta-journey .jp-stage.active .jp-name {
+  color: var(--jc);
+  font-weight: 700;
+}
+
+.ta-journey .jp-stage.done .jp-name {
+  color: #2a3142;
+}
+
+@media (max-width:820px) {
+  .ta-journey .jprogress {
+    overflow-x: auto;
+    justify-content: flex-start;
+    gap: 6px;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ta-journey .jp-stage {
+    flex: 0 0 auto;
+    min-width: 66px;
+  }
+  .ta-journey .jp-stage::before {
+    display: none;
+  }
+  .ta-journey .jp-name {
+    font-size: 10px;
+  }
+}
+
+.ta-journey .jhero2 {
+  position: relative;
+  overflow: hidden;
+  padding: 40px 0 44px;
+}
+
+.ta-journey .jhero2-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(700px 360px at 78% -5%,color-mix(in srgb,var(--jc) 16%,transparent),transparent),radial-gradient(400px 300px at 0 80%,color-mix(in srgb,var(--jc) 8%,transparent),transparent);
+}
+
+.ta-journey .jhero2-grid {
+  display: grid;
+  grid-template-columns: 1.25fr .75fr;
+  gap: 36px;
+  align-items: center;
+}
+
+.ta-journey .jhero2-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.ta-journey .jhero2-num {
+  font-family: Sora;
+  font-weight: 800;
+  font-size: 22px;
+  color: #fff;
+  background: var(--jc);
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px color-mix(in srgb,var(--jc) 40%,transparent);
+}
+
+.ta-journey .jhero2-tag {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--jc);
+  background: color-mix(in srgb,var(--jc) 10%,white);
+  padding: 6px 14px;
+  border-radius: 99px;
+}
+
+.ta-journey .jhero2-left h1 {
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1.08;
+  margin-bottom: 12px;
+}
+
+.ta-journey .jhero2-left .lede {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 22px;
+}
+
+.ta-journey .jhero2-meta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.ta-journey .jhero2-meta-item {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  padding: 12px 18px;
+  box-shadow: var(--shadow);
+}
+
+.ta-journey .jhero2-meta-item span {
+  font-size: 11.5px;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 3px;
+}
+
+.ta-journey .jhero2-meta-item b {
+  font-size: 15px;
+  font-family: Sora;
+}
+
+.ta-journey .jhero2-prog {
+  height: 8px;
+  background: var(--mist);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.ta-journey .jhero2-prog-bar {
+  height: 100%;
+  border-radius: 99px;
+  transition: width .6s ease;
+}
+
+.ta-journey .jhero2-prog-label {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.ta-journey .jhero2-prog-label b {
+  color: var(--ink);
+}
+
+.ta-journey .jhero2-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ta-journey .jhero2-orb {
+  position: relative;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 35% 28%,var(--oc),color-mix(in srgb,var(--oc) 70%,black));
+  box-shadow: 0 30px 70px color-mix(in srgb,var(--oc) 45%,transparent),inset 0 -12px 36px rgba(0,0,0,.25),inset 0 12px 36px rgba(255,255,255,.35);
+}
+
+.ta-journey .jhero2-orb span {
+  font-size: 72px;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,.25));
+  z-index: 2;
+}
+
+.ta-journey .jhero2-ring {
+  position: absolute;
+  inset: -18px;
+  border: 2px dashed color-mix(in srgb,var(--oc) 40%,transparent);
+  border-radius: 50%;
+  animation: jspin 18s linear infinite;
+}
+
+.ta-journey .jhero2-ring.r2 {
+  inset: -36px;
+  border-style: dotted;
+  border-color: color-mix(in srgb,var(--oc) 25%,transparent);
+  animation-duration: 28s;
+  animation-direction: reverse;
+}
+
+.ta-journey .jblock2 {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 34px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow);
+}
+
+.ta-journey .jblock-head h2 {
+  font-size: 24px;
+  margin: 6px 0 4px;
+}
+
+.ta-journey .jtimeline {
+  position: relative;
+  max-width: 740px;
+  margin: 30px auto 0;
+  padding: 10px 0;
+}
+
+.ta-journey .jtimeline::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg,color-mix(in srgb,var(--jc) 40%,white),var(--jc));
+  transform: translateX(-50%);
+  border-radius: 99px;
+}
+
+.ta-journey .jt-item {
+  position: relative;
+  display: flex;
+  width: 100%;
+  margin-bottom: 22px;
+  min-height: 60px;
+}
+
+.ta-journey .jt-item.left {
+  justify-content: flex-start;
+}
+
+.ta-journey .jt-item.right {
+  justify-content: flex-end;
+}
+
+.ta-journey .jt-card {
+  width: 44%;
+  background: var(--mist);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 20px;
+  position: relative;
+}
+
+.ta-journey .jt-item.left .jt-card {
+  margin-right: auto;
+}
+
+.ta-journey .jt-item.right .jt-card {
+  margin-left: auto;
+}
+
+.ta-journey .jt-step-label {
+  font-family: Sora;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: .05em;
+  margin-bottom: 5px;
+}
+
+.ta-journey .jt-card p {
+  font-size: 14px;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.ta-journey .jt-node {
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  transform: translateX(-50%);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-family: Sora;
+  font-size: 14px;
+  border: 4px solid #fff;
+  box-shadow: var(--shadow);
+  z-index: 2;
+}
+
+.ta-journey .jcols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.ta-journey .jdelivs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ta-journey .jdeliv {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 14px;
+  color: #2a3142;
+  background: var(--mist);
+  padding: 12px 16px;
+  border-radius: 11px;
+}
+
+.ta-journey .jdeliv span {
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.ta-journey .jsvc-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ta-journey .jsvc {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--mist);
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  padding: 13px 16px;
+  cursor: pointer;
+  transition: .18s;
+}
+
+.ta-journey .jsvc:hover {
+  background: #fff;
+  transform: translateX(4px);
+  box-shadow: var(--shadow);
+}
+
+.ta-journey .jsvc-ic {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.ta-journey .jsvc b {
+  flex: 1;
+  font-size: 14px;
+}
+
+.ta-journey .jsvc i {
+  font-style: normal;
+  font-weight: 700;
+}
+
+.ta-journey .jwhy2 {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  background: linear-gradient(120deg,color-mix(in srgb,var(--jc) 8%,white),#fff);
+  border: 1px solid color-mix(in srgb,var(--jc) 25%,var(--line));
+  border-radius: 22px;
+  padding: 30px;
+  margin-bottom: 22px;
+}
+
+.ta-journey .jwhy2-ic {
+  font-size: 54px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.1));
+}
+
+.ta-journey .jwhy2 h3 {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.ta-journey .jwhy2 p {
+  font-size: 14.5px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.ta-journey .kc-wrap {
+  padding: 10px 0;
+}
+
+.ta-journey .kc-blk {
+  margin: 0;
+}
+
+.ta-journey .kc-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.ta-journey .kc-foot span {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.ta-journey .kc-all {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brand);
+  cursor: pointer;
+}
+
+.ta-journey .kc-all:hover {
+  text-decoration: underline;
+}
+
+.ta-journey .ctastrip {
+  background: linear-gradient(135deg,#0f1b2d,#14284a);
+  border-radius: 18px;
+  box-shadow: 0 16px 40px rgba(15,27,45,.25);
+}
+
+.ta-journey .crumb {
+  font-size: 12.5px;
+  opacity: .9;
+}
+
+.ta-journey .wrap {
+  scroll-margin-top: 140px;
+}
+
+.ta-journey .jres-block {
+  background: linear-gradient(135deg,#fff,var(--mist));
+}
+
+.ta-journey .jres-grid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 14px;
+}
+
+.ta-journey .jres-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  cursor: pointer;
+  transition: .2s;
+  text-align: center;
+  position: relative;
+}
+
+.ta-journey .jres-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--brand);
+  box-shadow: var(--shadow-lg);
+}
+
+.ta-journey .jres-card span {
+  font-size: 30px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.ta-journey .jres-card b {
+  font-size: 14.5px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.ta-journey .jres-card p {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin: 0 0 8px;
+  line-height: 1.4;
+}
+
+.ta-journey .jres-card i {
+  font-style: normal;
+  color: var(--brand);
+  font-weight: 700;
+}
+
+.ta-journey .jrm-block {
+  background: linear-gradient(135deg,#fff,var(--mist));
+}
+
+.ta-journey .jrm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ta-journey .jrm-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: .18s;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.ta-journey .jrm-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--jc);
+  opacity: 0;
+  transition: .18s;
+}
+
+.ta-journey .jrm-row:hover {
+  transform: translateX(4px);
+  border-color: var(--jc);
+  box-shadow: var(--shadow);
+}
+
+.ta-journey .jrm-row:hover::before {
+  opacity: 1;
+}
+
+.ta-journey .jrm-row.current {
+  background: color-mix(in srgb,var(--jc) 6%,white);
+  border-color: var(--jc);
+}
+
+.ta-journey .jrm-row.current::before {
+  opacity: 1;
+}
+
+.ta-journey .jrm-num {
+  font-family: Sora;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--jc);
+  width: 30px;
+  flex-shrink: 0;
+}
+
+.ta-journey .jrm-ic {
+  font-size: 22px;
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: color-mix(in srgb,var(--jc) 12%,white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ta-journey .jrm-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.ta-journey .jrm-text b {
+  font-size: 15px;
+  display: block;
+  color: var(--ink);
+}
+
+.ta-journey .jrm-text span {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.ta-journey .jrm-here {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--jc);
+  padding: 5px 12px;
+  border-radius: 99px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.ta-journey .jrm-go {
+  font-size: 18px;
+  color: var(--jc);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.ta-journey .joffer-block {
+  background: linear-gradient(135deg,color-mix(in srgb,var(--jc) 6%,white),#fff);
+}
+
+.ta-journey .joffer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr .8fr;
+  gap: 30px;
+  align-items: center;
+}
+
+.ta-journey .joffer-left h2 {
+  font-size: 23px;
+  margin: 6px 0 12px;
+}
+
+.ta-journey .joffer-out {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #2a3142;
+  margin-bottom: 12px;
+}
+
+.ta-journey .joffer-sub {
+  font-size: 14.5px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+.ta-journey .joffer-right {
+  display: flex;
+  justify-content: center;
+}
+
+.ta-journey .joffer-badge {
+  background: linear-gradient(135deg,var(--ink),var(--ink2));
+  border-radius: 20px;
+  padding: 28px;
+  text-align: center;
+  width: 100%;
+  max-width: 240px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ta-journey .joffer-badge::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle,color-mix(in srgb,var(--jc) 40%,transparent),transparent 70%);
+}
+
+.ta-journey .joffer-badge-ic {
+  font-size: 44px;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.ta-journey .joffer-badge-num {
+  font-size: 12px;
+  color: var(--jc);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  position: relative;
+  z-index: 1;
+}
+
+.ta-journey .joffer-badge-title {
+  color: #fff;
+  font-family: Sora;
+  font-weight: 700;
+  font-size: 18px;
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.ta-journey .joffer-badge-line {
+  height: 2px;
+  background: var(--jc);
+  width: 50px;
+  margin: 14px auto;
+  border-radius: 99px;
+  position: relative;
+  z-index: 1;
+}
+
+.ta-journey .joffer-badge-foot {
+  font-size: 12.5px;
+  color: rgba(255,255,255,.75);
+  position: relative;
+  z-index: 1;
+}
+
+.ta-journey .jex-block {
+  background: #fff;
+}
+
+.ta-journey .jex-who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.ta-journey .jex-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #fff;
+}
+
+.ta-journey .jex-who b {
+  font-size: 17px;
+}
+
+.ta-journey .jex-flow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.ta-journey .jex-step {
+  background: var(--mist);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  border-top: 3px solid var(--line);
+}
+
+.ta-journey .jex-before {
+  border-top-color: #ef4444;
+}
+
+.ta-journey .jex-did {
+  border-top-color: var(--jc);
+  background: color-mix(in srgb,var(--jc) 4%,white);
+}
+
+.ta-journey .jex-after {
+  border-top-color: #16a34a;
+  background: rgba(22,163,74,.04);
+}
+
+.ta-journey .jex-tag {
+  font-size: 12px;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 8px;
+  color: #ef4444;
+}
+
+.ta-journey .jex-step p {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #2a3142;
+  margin: 0;
+}
+
+.ta-journey .jex-arrow {
+  display: flex;
+  align-items: center;
+  font-size: 22px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.ta-journey .jflow-block {
+  background: linear-gradient(135deg,#fff,var(--mist));
+}
+
+.ta-journey .jflow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 24px 0;
+}
+
+.ta-journey .jflow-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 88px;
+  cursor: pointer;
+  padding: 8px 4px;
+  border-radius: 12px;
+  transition: .18s;
+}
+
+.ta-journey .jflow-node:hover {
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.ta-journey .jflow-ic {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: color-mix(in srgb,var(--fc) 12%,white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  border: 2px solid transparent;
+  transition: .18s;
+}
+
+.ta-journey .jflow-node.current .jflow-ic {
+  border-color: var(--fc);
+  background: var(--fc);
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px color-mix(in srgb,var(--fc) 40%,transparent);
+}
+
+.ta-journey .jflow-node.past .jflow-ic {
+  opacity: .7;
+}
+
+.ta-journey .jflow-lbl {
+  font-size: 10.5px;
+  text-align: center;
+  line-height: 1.2;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.ta-journey .jflow-node.current .jflow-lbl {
+  color: var(--fc);
+  font-weight: 700;
+}
+
+.ta-journey .jflow-link {
+  position: absolute;
+  top: 33px;
+  right: -6px;
+  width: 12px;
+  height: 2px;
+  background: var(--line);
+  z-index: 0;
+}
+
+.ta-journey .jflow-cta {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.ta-journey .jugc-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 18px;
+}
+
+.ta-journey .jugc-frame {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  background: #fff;
+}
+
+.ta-journey .jugc-photo {
+  aspect-ratio: 4/3;
+  background: linear-gradient(135deg,color-mix(in srgb,var(--uc) 14%,white),color-mix(in srgb,var(--uc) 5%,white));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  border-bottom: 1px solid var(--line);
+}
+
+.ta-journey .jugc-ph-ic {
+  font-size: 40px;
+  opacity: .4;
+}
+
+.ta-journey .jugc-ph-tag {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--uc);
+  background: #fff;
+  padding: 4px 12px;
+  border-radius: 99px;
+  box-shadow: var(--shadow);
+}
+
+.ta-journey .jugc-cap {
+  padding: 14px 16px;
+  font-size: 13.5px;
+  color: #2a3142;
+  font-weight: 500;
+  text-align: center;
+}
+
+.ta-journey .jsector-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 14px;
+}
+
+.ta-journey .jsector-card {
+  background: var(--mist);
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  padding: 18px;
+  cursor: pointer;
+  transition: .18s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ta-journey .jsector-card:hover {
+  background: #fff;
+  transform: translateY(-3px);
+  border-color: var(--sc);
+  box-shadow: var(--shadow);
+}
+
+.ta-journey .jsector-ic {
+  font-size: 26px;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: color-mix(in srgb,var(--sc) 12%,white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.ta-journey .jsector-card b {
+  font-size: 14.5px;
+}
+
+.ta-journey .jsector-card span {
+  font-size: 12px;
+  color: var(--muted);
+  flex: 1;
+  line-height: 1.4;
+}
+
+.ta-journey .jsector-card i {
+  font-style: normal;
+  color: var(--sc);
+  font-weight: 700;
+  font-size: 12.5px;
+}
+
+.ta-journey .jstate-block {
+  background: linear-gradient(135deg,#fff,color-mix(in srgb,var(--jc) 4%,white));
+}
+
+.ta-journey .jstate-map {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.ta-journey .jstate-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ta-journey .jstate-chip {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 11px 16px;
+  font-size: 13.5px;
+  font-weight: 500;
+  box-shadow: var(--shadow);
+}
+
+.ta-journey .jstate-note b {
+  font-family: Sora;
+  font-size: 17px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.ta-journey .jstate-note p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.ta-journey .ikb-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.ta-journey .ikb-btn {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: .18s;
+  box-shadow: var(--shadow);
+}
+
+.ta-journey .ikb-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.ta-journey .ikb-ic {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg,rgba(14,150,172,.1),rgba(232,82,30,.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.ta-journey .ikb-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ta-journey .ikb-preview {
+  margin-top: 18px;
+  background: var(--mist);
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+
+.ta-journey .ikb-preview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ta-journey .ikb-preview-head b {
+  font-family: Sora;
+  font-size: 14.5px;
+}
+
+.ta-journey .ikb-preview-head a {
+  font-size: 13px;
+  color: var(--brand);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ta-journey .ikb-art {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  color: #2a3142;
+  cursor: pointer;
+}
+
+.ta-journey .ikb-art:last-child {
+  border: 0;
+}
+
+.ta-journey .ikb-art:hover {
+  color: var(--brand);
+}
+
+.ta-journey .ikb-art span {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+@media (max-width:820px) {
+  .ta-journey .ikb-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width:900px) {
+  .ta-journey .jnav {
+    grid-template-columns: 1fr;
+  }
+  .ta-journey .jhero2-grid,
+  .ta-journey .jcols {
+    grid-template-columns: 1fr;
+  }
+  .ta-journey .jugc-grid,
+  .ta-journey .jsector-grid,
+  .ta-journey .jstate-map {
+    grid-template-columns: 1fr;
+  }
+  .ta-journey .jres-grid,
+  .ta-journey .joffer-grid {
+    grid-template-columns: 1fr;
+  }
+  .ta-journey .jex-flow {
+    grid-template-columns: 1fr;
+  }
+  .ta-journey .jex-arrow {
+    transform: rotate(90deg);
+    justify-content: center;
+    padding: 4px 0;
+  }
+  .ta-journey .jtimeline::before {
+    left: 20px;
+  }
+  .ta-journey .jt-item.left,
+  .ta-journey .jt-item.right {
+    justify-content: flex-start;
+  }
+  .ta-journey .jt-card {
+    width: calc(100% - 50px);
+    margin-left: 46px !important;
+    margin-right: 0 !important;
+  }
+  .ta-journey .jt-node {
+    left: 20px;
+  }
+  .ta-journey .jwhy2 {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@keyframes jspin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---- Local additions (kept by scripts/extract-journey-css.mjs) ---- */
+
+/* Images from the CMS where the reference shows an emoji (icons, hero, photo frames). */
+.ta-journey .journey-icon-img {
+  width: 1.15em;
+  height: 1.15em;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.ta-journey .jhero2-orb .journey-icon-img,
+.ta-journey .jwhy2-ic .journey-icon-img,
+.ta-journey .joffer-badge-ic .journey-icon-img {
+  width: 1em;
+  height: 1em;
+}
+
+.ta-journey .journey-hero-img {
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 28px;
+  box-shadow: 0 30px 70px color-mix(in srgb, var(--jc) 30%, transparent);
+}
+
+.ta-journey .jugc-photo .journey-photo-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ta-journey .jugc-photo .jugc-ph-tag {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * The reference has no styles for these three (its previous / next links are plain text, the
+ * CTA strip shows a dark heading on its dark background and the updates block touches the
+ * screen edge): finished here with the reference's own tokens.
+ */
+.ta-journey .jnav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 8px 0 36px;
+}
+
+.ta-journey .jnav-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: var(--shadow);
+  transition: transform .18s, border-color .18s;
+}
+
+.ta-journey .jnav-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--jc, var(--brand));
+}
+
+.ta-journey .jnav-btn span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.ta-journey .jnav-btn b {
+  font-family: var(--font-sora), Sora, sans-serif;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.ta-journey .jnav-btn.next {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.ta-journey .kc-wrap {
+  padding: 10px 24px 24px;
+}
+
+.ta-journey .ctastrip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  padding: 44px 28px;
+  margin: 10px 0 20px;
+}
+
+.ta-journey .ctastrip h2 {
+  color: #fff;
+  font-size: clamp(22px, 3vw, 30px);
+}
+
+.ta-journey .ctastrip p {
+  color: rgba(255, 255, 255, .78);
+  margin-bottom: 8px;
+}
+
+/* Meta chips under the stage title (the reference's detail-page "nl9-meta" strip). */
+.ta-journey .nl9-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 10px 0 4px;
+}
+
+.ta-journey .nl9-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #f3f4f8;
+  border: 1px solid #e6e8f0;
+  border-radius: 99px;
+  padding: 4px 12px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #5b6478;
+}
