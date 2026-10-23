@@ -515,7 +515,6 @@ function stageOf(sections, page = {}) {
     color: String(hero.color || "").trim() || DEFAULT_COLOR,
     tag: String(hero.tag || "").trim(),
     roadmapText: String(hero.roadmapText || "").trim(),
-    crumbLabel: String(hero.crumbLabel || "").trim(),
   };
 }
 
@@ -562,13 +561,6 @@ export default function JourneySections({ sections = [], stages = [], page = {} 
 
   return (
     <main className="ta-journey" style={{ "--jc": stage.color }}>
-      {list(sections).some((s) => s.type === "JourneyHero") && (
-        <div className="wrap">
-          <div className="crumb">
-            <Link href="/">Home</Link> / <span>{stage.crumbLabel || "Business Journey"}</span> / <span>{stage.title}</span>
-          </div>
-        </div>
-      )}
       {groups.map((group) => (group.body ? <div key={group.key} className="wrap jbody">{group.nodes}</div> : <Fragment key={group.key}>{group.nodes}</Fragment>))}
     </main>
   );

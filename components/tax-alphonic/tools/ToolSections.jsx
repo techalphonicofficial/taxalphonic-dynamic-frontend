@@ -234,15 +234,8 @@ export default function ToolSections({ sections = [], tools = [], page = {} }) {
     ? <div className="tool-layout"><div className="tool-main">{group.nodes}</div><aside className="tool-aside">{group.aside}</aside></div>
     : [...group.nodes, ...group.aside]);
 
-  const title = hero.title || page.title || "";
   return (
     <main className="ta-tools">
-      <div className="wrap">
-        <div className="crumb">
-          <Link href="/">Home</Link> /{" "}
-          {isHub ? <span>{title || "Tools & Calculators"}</span> : <><Link href={hero.hubUrl || "/tools"}>{hero.hubLabel || "Tools"}</Link> / <span>{title}</span></>}
-        </div>
-      </div>
       {groups.map((group) => (group.body
         ? <div key={group.key} className={`wrap ${isHub ? "tools-hub-body" : "tool-page-body"}`}>{bodyContent(group)}</div>
         : <Fragment key={group.key}>{group.nodes}</Fragment>))}

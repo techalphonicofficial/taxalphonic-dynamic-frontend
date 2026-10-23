@@ -187,10 +187,6 @@ export default function AboutPage({ about }) {
   return (
     <div className="ta-svc">
       <div className="view">
-        <div className="wrap">
-          <div className="crumb"><Link href="/">Home</Link> / <span>About</span></div>
-        </div>
-
         <div className="svc">
           <div className="wrap">
             <Hero about={about} />

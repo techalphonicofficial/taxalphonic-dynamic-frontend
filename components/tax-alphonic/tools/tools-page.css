@@ -764,3 +764,23 @@
 .ta-tools .wrap {
   max-width: 1280px;
 }
+
+/* ---- Responsive: tool cards at most 3 per row on wide tablets, 2 on tablets, 1 on phones ---- */
+@media (max-width: 1199px) {
+  .ta-tools .tool-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .ta-tools .tool-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .ta-tools .tool-grid,
+  .ta-tools .calc-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

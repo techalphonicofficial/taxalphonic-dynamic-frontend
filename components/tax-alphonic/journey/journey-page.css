@@ -1622,3 +1622,29 @@
   font-weight: 700;
   color: #5b6478;
 }
+
+/* ---------- Responsive: cards at most 3 per row on wide tablets, 2 on tablets, 1 on phones ---------- */
+@media (max-width: 1199px) {
+  .ta-journey .jres-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .ta-journey .jres-grid,
+  .ta-journey .jugc-grid,
+  .ta-journey .jsector-grid,
+  .ta-journey .ikb-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .ta-journey .jres-grid,
+  .ta-journey .jugc-grid,
+  .ta-journey .jsector-grid,
+  .ta-journey .ikb-grid,
+  .ta-journey .jstate-map {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -7,6 +7,7 @@ import { mapSection } from "@/service/homePageService";
 import { attachModuleContent } from "@/service/homeContentService";
 import { getJourneyStages } from "@/service/journeyService";
 import { getTools } from "@/service/toolsService";
+import { getSiteSettings } from "@/service/siteSettingsService";
 
 /**
  * Server Action behind /cms-preview: turns the CMS admin's unsaved service draft into the same
@@ -154,3 +155,21 @@ export async function buildPagePreview(draft) {
   };
 }
 
+
+/**
+ * Landing page draft (admin Landing Pages builder): { title, sections } with the LandingHeader /
+ * LandingFooter blocks, plus the site settings their "Simple" style falls back to.
+ */
+export async function buildLandingPreview(draft) {
+  if (!draft || typeof draft !== "object") return null;
+  const raw = Array.isArray(draft.sections) ? draft.sections.slice(0, 150) : [];
+  const [sections, settings] = await Promise.all([
+    Promise.all(raw.map(mapSection).filter(Boolean).map(hydrateSection)).then(attachModuleContent),
+    getSiteSettings(),
+  ]);
+  return {
+    page: { id: "landing-preview", title: String(draft.title || "").trim() || "Landing page", sections },
+    branding: settings.branding,
+    contact: settings.contact,
+  };
+}

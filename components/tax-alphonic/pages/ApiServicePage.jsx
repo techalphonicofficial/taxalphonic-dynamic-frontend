@@ -708,30 +708,11 @@ export default function ApiServicePage({ service }) {
     </Fragment>
   );
 
-  // Location pages pass their own trail (category / service / place); services show category / title.
-  const crumbs = list(service.breadcrumbs).length
-    ? service.breadcrumbs
-    : [...(service.category?.name ? [{ label: service.category.name }] : []), { label: service.title }];
-
+  // No visible breadcrumb on any page (removed on request, 2026-10-23).
   return (
     <div className="ta-svc">
       <JsonLd value={service.schemaMarkup} />
       <div className="view">
-        <div className="wrap">
-          <div className="crumb">
-            <Link href="/">Home</Link>
-            {crumbs.map((crumb, index) => {
-              const last = index === crumbs.length - 1;
-              return (
-                <Fragment key={`${crumb.label}-${index}`}>
-                  {" / "}
-                  {last ? <span>{crumb.label}</span> : crumb.href ? <Link href={crumb.href}>{crumb.label}</Link> : crumb.label}
-                </Fragment>
-              );
-            })}
-          </div>
-        </div>
-
         <div className="svc">
           <div className="wrap">
             <BlockBackground config={heroSection?.config} hero><Hero service={service} hero={hero} config={heroSection?.config} /></BlockBackground>

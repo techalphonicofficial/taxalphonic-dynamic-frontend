@@ -1,0 +1,355 @@
+/* Landing pages (components/tax-alphonic/landing): the "Simple" header and footer regions.
+   The body uses the service-page styles (ApiServicePage, .ta-svc). */
+
+.ta-landing {
+  --lp-ink: #0a0e1a;
+  --lp-muted: #5b6478;
+  --lp-line: #e6e8f0;
+  --lp-brand: #0e96ac;
+  --lp-brand-dark: #0b7f93;
+  --lp-bg: #ffffff;
+  --lp-footer: #0b1120;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  scroll-behavior: smooth;
+}
+
+.ta-landing > .ta-svc,
+.ta-landing > article,
+.ta-landing > main {
+  flex: 1 0 auto;
+}
+
+.ta-landing .lp-wrap {
+  width: 100%;
+  /* Same column as the page body (.ta-svc .svc > .wrap). */
+  max-width: 1210px;
+  margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+/* Header */
+.ta-landing .lp-header {
+  background: var(--lp-bg);
+  border-bottom: 1px solid var(--lp-line);
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+  z-index: 50;
+}
+
+.ta-landing .lp-sticky {
+  position: sticky;
+  top: 0;
+}
+
+.ta-landing .ta-bg:has(> .ta-bg-content > .lp-sticky) {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.ta-landing .ta-bg > .ta-bg-content > .lp-header {
+  background: transparent;
+  border-bottom-color: transparent;
+}
+
+.ta-landing .lp-header-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-height: 68px;
+}
+
+.ta-landing .lp-logo {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--lp-ink);
+  text-decoration: none;
+  font-family: var(--font-sora), Sora, sans-serif;
+  font-size: 18px;
+}
+
+.ta-landing .lp-logo img {
+  height: 40px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+}
+
+.ta-landing .lp-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin: 0 auto;
+}
+
+.ta-landing .lp-nav-link {
+  color: var(--lp-ink);
+  font-weight: 600;
+  font-size: 14.5px;
+  text-decoration: none;
+}
+
+.ta-landing .lp-nav-link:hover {
+  color: var(--lp-brand);
+}
+
+.ta-landing .lp-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+}
+
+.ta-landing .lp-nav + .lp-actions {
+  margin-left: 0;
+}
+
+.ta-landing .lp-phone {
+  color: var(--lp-ink);
+  font-weight: 700;
+  font-size: 14.5px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ta-landing .lp-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 18px;
+  border-radius: 10px;
+  background: var(--lp-brand);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14.5px;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(14, 150, 172, .25);
+}
+
+.ta-landing .lp-btn:hover {
+  background: var(--lp-brand-dark);
+}
+
+.ta-landing .lp-burger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid var(--lp-line);
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.ta-landing .lp-burger span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  color: var(--lp-ink);
+}
+
+.ta-landing .lp-dark {
+  --lp-bg: #0b1120;
+  --lp-ink: #ffffff;
+  --lp-line: rgba(255, 255, 255, .12);
+}
+
+/* Footer */
+.ta-landing .lp-footer {
+  background: var(--lp-footer);
+  color: rgba(255, 255, 255, .78);
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+  font-size: 14.5px;
+  padding-top: 48px;
+}
+
+.ta-landing .ta-bg > .ta-bg-content > .lp-footer {
+  background: transparent;
+}
+
+.ta-landing .lp-footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 36px;
+  padding-bottom: 32px;
+}
+
+.ta-landing .lp-footer-logo {
+  height: 44px;
+  width: auto;
+  max-width: 220px;
+  object-fit: contain;
+  margin-bottom: 14px;
+}
+
+.ta-landing .lp-footer p {
+  margin: 0;
+  line-height: 1.65;
+  max-width: 420px;
+}
+
+.ta-landing .lp-footer h4 {
+  margin: 0 0 12px;
+  color: #fff;
+  font-family: var(--font-sora), Sora, sans-serif;
+  font-size: 15px;
+}
+
+.ta-landing .lp-footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.ta-landing .lp-footer a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ta-landing .lp-footer a:hover {
+  color: #fff;
+}
+
+.ta-landing .lp-footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  padding-top: 18px;
+  padding-bottom: 22px;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  font-size: 13px;
+}
+
+.ta-landing .lp-legal {
+  display: flex;
+  gap: 16px;
+}
+
+.ta-landing .lp-social {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.ta-landing .lp-social a {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .08);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.ta-landing .lp-footer-light {
+  --lp-footer: #f6f8fb;
+  color: var(--lp-muted);
+}
+
+.ta-landing .lp-footer-light h4,
+.ta-landing .lp-footer-light a:hover {
+  color: var(--lp-ink);
+}
+
+.ta-landing .lp-footer-light .lp-footer-bottom {
+  border-top-color: var(--lp-line);
+}
+
+.ta-landing .lp-footer-light .lp-social a {
+  background: #fff;
+  border: 1px solid var(--lp-line);
+}
+
+@media (max-width: 900px) {
+  .ta-landing .lp-burger {
+    display: inline-flex;
+  }
+
+  .ta-landing .lp-nav {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 8px 24px 16px;
+    background: var(--lp-bg);
+    border-bottom: 1px solid var(--lp-line);
+    box-shadow: 0 12px 24px rgba(10, 14, 26, .08);
+  }
+
+  .ta-landing .lp-nav.lp-open {
+    display: flex;
+  }
+
+  .ta-landing .lp-nav-link {
+    padding: 10px 0;
+  }
+
+  .ta-landing .lp-header-row {
+    position: relative;
+  }
+
+  .ta-landing .lp-footer-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .ta-landing .lp-social {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .ta-landing .lp-phone span {
+    display: none;
+  }
+
+  .ta-landing .lp-btn {
+    padding: 9px 14px;
+    font-size: 13.5px;
+  }
+}
+
+/* Phones: logo, phone, button and menu must fit in one row (the menu button was pushed off-screen). */
+@media (max-width: 480px) {
+  .ta-landing .lp-wrap {
+    padding: 0 14px;
+  }
+
+  .ta-landing .lp-header-row {
+    gap: 10px;
+    min-height: 60px;
+  }
+
+  .ta-landing .lp-logo {
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  .ta-landing .lp-logo img {
+    height: 32px;
+    max-width: 130px;
+  }
+
+  .ta-landing .lp-actions {
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .ta-landing .lp-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}

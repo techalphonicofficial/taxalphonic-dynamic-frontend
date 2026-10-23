@@ -5,6 +5,8 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { getFooterNavigation, getHeaderNavigation } from "@/service/navigationService";
 import { getSiteSettings } from "@/service/siteSettingsService";
 import { Sora, Inter } from "next/font/google";
+import { headers } from "next/headers";
+import { LANDING_HEADER } from "@/lib/landingHost.mjs";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -28,6 +30,18 @@ export async function generateMetadata() {
 }
 
 export default async function RootLayout({ children }) {
+  // Landing page subdomains (proxy.js sets this header; it can't come from the browser) render
+  // their own header and footer regions (components/tax-alphonic/landing/LandingPage.jsx).
+  if ((await headers()).get(LANDING_HEADER)) {
+    return (
+      <html lang="en">
+        <body className={`${sora.variable} ${inter.variable}`}>
+          <ThemeProvider>{children}</ThemeProvider>
+        </body>
+      </html>
+    );
+  }
+
   const [navigation, footerMenu, { branding, contact }] = await Promise.all([
     getHeaderNavigation(),
     getFooterNavigation(),

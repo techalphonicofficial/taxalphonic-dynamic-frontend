@@ -2098,3 +2098,39 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* ---------- Responsive: cards at most 3 per row on wide tablets, 2 on tablets, 1 on phones ---------- */
+@media (max-width: 1199px) {
+  .ta-svc .guarantee,
+  .ta-svc .cred-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ta-svc .pgrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ta-svc .svc-stats {
+    grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .ta-svc .pgrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ta-svc .pgrid-fit {
+    grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .ta-svc :is(.bgrid, .docs, .wc-grid, .benefit-list, .guarantee, .incl-grid, .pgrid, .pgrid-fit, .svc-stats, .nl9-trust) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ta-svc .cred-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

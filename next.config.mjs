@@ -7,6 +7,8 @@ const SERVER_ACTION_ORIGINS = [
   "taxalphonic.com",
   "www.taxalphonic.com",
   "frontend.taxalphonic.com",
+  // Landing pages on subdomains (cbdt.taxalphonic.com, proxy.js): their forms post to the same host.
+  "*.taxalphonic.com",
   ...String(process.env.SERVER_ACTION_ORIGINS || "").split(",").map((host) => host.trim()).filter(Boolean),
 ];
 

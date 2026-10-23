@@ -130,12 +130,6 @@ export function BlogListPage({ posts, pagination, categories, category, search }
   return (
     <div className="ta-svc ta-blog">
       <div className="view">
-        <div className="wrap">
-          <div className="crumb">
-            <Link href="/">Home</Link> / {active ? <><Link href="/blog">Blog</Link> / <span>{active.name}</span></> : <span>Blog</span>}
-          </div>
-        </div>
-
         <div className="loans-hero">
           <div className="wrap">
             <span className="eyebrow">● Blogs &amp; Guides — Tax Alphonic</span>
@@ -201,14 +195,6 @@ export function BlogPostPage({ post, url }) {
     <div className="ta-svc ta-blog">
       <BlogViewCounter slug={post.slug} />
       <div className="view">
-        <div className="wrap">
-          <div className="crumb">
-            <Link href="/">Home</Link> / <Link href="/blog">Blog</Link>
-            {post.category && <> / <Link href={`/blog?category=${post.category.slug}`}>{post.category.name}</Link></>}
-            {" / "}<span>{post.title}</span>
-          </div>
-        </div>
-
         <article className="wrap blog-post">
           <header className="blog-post-head">
             {post.category && <Link href={`/blog?category=${post.category.slug}`} className="eyebrow">● {post.category.name}</Link>}

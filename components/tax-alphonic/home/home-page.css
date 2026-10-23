@@ -3065,3 +3065,90 @@
   object-position: center;
   padding: 8px;
 }
+
+/* ---------- Responsive: hero search and card grids ---------- */
+/* The search input must be allowed to shrink, or the Search button is pushed out of the box on phones. */
+.ta-home .hero-search {
+  width: 100%;
+  min-width: 0;
+}
+
+.ta-home .hero-search input {
+  min-width: 0;
+  width: 100%;
+  text-overflow: ellipsis;
+}
+
+.ta-home .hero-search .hs-ic,
+.ta-home .hero-search .hs-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .ta-home .hero-search {
+    gap: 4px;
+    padding: 5px;
+  }
+
+  .ta-home .hero-search .hs-ic {
+    padding: 0 2px 0 8px;
+  }
+
+  .ta-home .hero-search input {
+    font-size: 14px;
+  }
+
+  .ta-home .hero-search .hs-btn {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+}
+
+/* Cards: at most 3 per row on wide tablets, 2 on tablets, 1 on phones. Blocks in the right
+   sidebar stay at one column (.home-side rule above). */
+@media (max-width: 1199px) {
+  .ta-home :is(.catgrid, .why-grid, .ind-grid, .sec-grid2, .journey3d, .how-flow, .tool-grid, .ej-track, .pf-grid),
+  .ta-home .home-main :is(.catgrid, .why-grid, .ind-grid, .sec-grid2, .journey3d, .how-flow, .tool-grid, .ej-track, .pf-grid) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ta-home :is(.ej-connector, .how-line, .j3d-line) {
+    display: none;
+  }
+
+  .ta-home .team-card,
+  .ta-home .branch-card {
+    flex-basis: calc((100% - 36px) / 3);
+  }
+}
+
+@media (max-width: 900px) {
+  .ta-home :is(.catgrid, .sec-grid, .why-grid, .ttm-grid, .bundle-grid, .ind-grid, .sec-grid2, .journey3d, .how-flow, .tool-grid, .ej-track, .pf-grid),
+  .ta-home .home-main :is(.catgrid, .sec-grid, .why-grid, .ttm-grid, .bundle-grid, .ind-grid, .sec-grid2, .journey3d, .how-flow, .tool-grid, .ej-track, .pf-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ta-home .team-card,
+  .ta-home .branch-card {
+    flex-basis: calc((100% - 18px) / 2);
+  }
+}
+
+@media (max-width: 640px) {
+  .ta-home :is(.catgrid, .sec-grid, .why-grid, .ttm-grid, .bundle-grid, .ind-grid, .sec-grid2, .journey3d, .how-flow, .tool-grid, .ej-track, .pf-grid),
+  .ta-home .home-main :is(.catgrid, .sec-grid, .why-grid, .ttm-grid, .bundle-grid, .ind-grid, .sec-grid2, .journey3d, .how-flow, .tool-grid, .ej-track, .pf-grid) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ta-home .team-card,
+  .ta-home .branch-card {
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 1199px) {
+  .ta-home .home-side :is(.team-card, .branch-card) {
+    flex-basis: 100%;
+  }
+}

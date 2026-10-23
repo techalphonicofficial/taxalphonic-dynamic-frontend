@@ -201,7 +201,8 @@ function Hero({ p }) {
   const d = p.dashboard || {};
   // Right side: the admin's image when set, else the dashboard visual. Size: sm | md | lg | xl.
   const image = has(p.heroImage) ? String(p.heroImage).trim() : "";
-  const showVisual = Boolean(image) || has(d.value) || list(d.bars).length > 0 || list(d.chips).length > 0;
+  // payload.rightSide "hide" (admin: Right side) takes the image / dashboard off without deleting it.
+  const showVisual = p.rightSide !== "hide" && (Boolean(image) || has(d.value) || list(d.bars).length > 0 || list(d.chips).length > 0);
   const size = ["sm", "md", "lg", "xl"].includes(p.visualSize) ? p.visualSize : "lg";
   const showSearch = has(p.searchPlaceholder) || searchItems.length > 0;
 
