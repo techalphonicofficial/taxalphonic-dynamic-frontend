@@ -1,8 +1,11 @@
 import ApiPage from "../pages/ApiPage";
 import BlockBackground from "../blocks/BlockBackground";
+import FormPopupHost from "../forms/FormPopupHost";
 import { LandingFooterBar, LandingHeaderBar } from "./LandingChrome";
 import { regionMode, splitLandingSections } from "./landingBlockTypes";
+import { landingThemeOf } from "./landingThemes";
 import "./landing.css";
+import "./landing-themes.css";
 
 /**
  * A landing page (own subdomain): Header region, the body blocks rendered exactly like a CMS
@@ -18,9 +21,15 @@ export default function LandingPage({ page, branding = {}, contact = {}, siteHea
   const { header, body, footer } = splitLandingSections(page.sections);
   const headerMode = regionMode(header);
   const footerMode = regionMode(footer);
+  // Colour theme picked in the admin (Header block payload.pageTheme); "default" = the stylesheets' colours.
+  const theme = landingThemeOf(header);
+  const themeAttr = theme === "default" ? undefined : theme;
+  // "#form" buttons (header "Enquire now", hero, ...) open the page's first form in a popup.
+  const formBlock = body.find((s) => s.type === "Form" && s.payload?.form?.fields?.length);
+  const defaultForm = formBlock ? { form: formBlock.payload.form, heading: formBlock.payload.heading, subHeading: formBlock.payload.subHeading } : null;
 
   return (
-    <div className="ta-landing" id="top">
+    <div className="ta-landing" id="top" data-lp-theme={themeAttr}>
       {headerMode === "site" && siteHeader}
       {headerMode === "simple" && (
         <BlockBackground config={header.config} hero>
@@ -29,6 +38,8 @@ export default function LandingPage({ page, branding = {}, contact = {}, siteHea
       )}
 
       <ApiPage page={{ id: page.id, title: page.title, content: "", sections: body, hideBreadcrumbs: true }} />
+
+      <FormPopupHost defaultForm={defaultForm} theme={themeAttr} />
 
       {footerMode === "site" && siteFooter}
       {footerMode === "simple" && (

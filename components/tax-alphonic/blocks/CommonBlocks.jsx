@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { openFormPopup } from "@/lib/formPopup";
 import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import "./blocks.css";
 
@@ -21,9 +22,10 @@ const isImage = (value) => /^(https?:|\/|data:)/i.test(String(value || "").trim(
 
 function useGo() {
   const router = useRouter();
-  return (url) => {
+  return (url, label) => {
     const target = String(url || "").trim();
     if (!target) return;
+    if (openFormPopup(target, label)) return; // "#form-<id>": form popup (FormPopupHost)
     if (target.startsWith("#")) document.getElementById(target.slice(1))?.scrollIntoView({ behavior: "smooth" });
     else if (isExternal(target)) window.open(target, "_blank", "noopener");
     else router.push(target);
@@ -40,7 +42,7 @@ function A({ url, className, children, label }) {
 function Button({ button, ghost = false }) {
   const go = useGo();
   if (!hasButton(button)) return null;
-  return <button type="button" className={ghost || button.style === "ghost" ? "cb-btn cb-btn-ghost" : "cb-btn"} onClick={() => go(button.url)}>{button.text}</button>;
+  return <button type="button" className={ghost || button.style === "ghost" ? "cb-btn cb-btn-ghost" : "cb-btn"} onClick={() => go(button.url, button.text)}>{button.text}</button>;
 }
 
 function Icon({ value }) {

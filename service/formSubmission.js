@@ -53,3 +53,19 @@ export async function submitCmsForm(identifier, _prevState, formData) {
     };
   }
 }
+
+/**
+ * Server Action for form popups (FormPopupHost): an active CMS form by id or slug, as
+ * GET /api/v1/forms/public/:identifier returns it, or null.
+ */
+export async function loadPublicForm(identifier) {
+  const id = String(identifier ?? "").trim();
+  if (!/^[A-Za-z0-9_-]{1,64}$/.test(id)) return null;
+  try {
+    const payload = await apiClient(`/api/v1/forms/public/${encodeURIComponent(id)}`, { next: { revalidate: 60 } });
+    return payload?.success ? payload.data : null;
+  } catch (error) {
+    if (error.status !== 404) console.error(`Unable to load form ${id} for a popup`, error);
+    return null;
+  }
+}

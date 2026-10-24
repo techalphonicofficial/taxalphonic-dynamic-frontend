@@ -1,6 +1,7 @@
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import FormPopupHost from "@/components/tax-alphonic/forms/FormPopupHost";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { getFooterNavigation, getHeaderNavigation } from "@/service/navigationService";
 import { getSiteSettings } from "@/service/siteSettingsService";
@@ -55,6 +56,8 @@ export default async function RootLayout({ children }) {
           <Header navigation={navigation} branding={branding} />
           {children}
           <Footer menu={footerMenu} branding={branding} contact={contact} />
+          {/* "#form-<id>" buttons open that form in a popup (landing pages mount their own). */}
+          <FormPopupHost />
         </ThemeProvider>
       </body>
     </html>

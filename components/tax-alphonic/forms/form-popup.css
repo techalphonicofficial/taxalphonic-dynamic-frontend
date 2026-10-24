@@ -1,0 +1,160 @@
+/* Form popup (FormPopupHost.jsx). The card reuses the service page's lead card and form styles. */
+.ta-fp {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: rgba(10, 14, 26, .6);
+  backdrop-filter: blur(3px);
+  animation: ta-fp-fade .18s ease-out;
+}
+
+.ta-svc .ta-fp-dialog {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 460px;
+  max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 48px);
+  overflow: hidden;
+  padding: 0;
+  box-shadow: 0 30px 80px rgba(10, 14, 26, .35);
+  animation: ta-fp-pop .2s ease-out;
+}
+
+/* Fixed heading, scrolling fields, fixed submit button. */
+.ta-svc .ta-fp-head {
+  flex-shrink: 0;
+  padding: 28px 26px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.ta-svc .ta-fp-head h3 {
+  padding-right: 34px;
+}
+
+.ta-svc .ta-fp-head .csub {
+  margin-bottom: 0;
+}
+
+.ta-svc .ta-fp-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.ta-svc .ta-fp-body > :is(.ta-fp-loading, .ta-fp-error) {
+  padding-left: 26px;
+  padding-right: 26px;
+}
+
+/* Only the fields scroll; the error message and the submit button stay below them. */
+.ta-svc .ta-fp-body .cms-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 0 0 20px;
+}
+
+.ta-svc .ta-fp-body .cms-form-grid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px 26px 6px;
+}
+
+.ta-svc .ta-fp-body .cms-form > :is(.cms-form-error, button[type="submit"]) {
+  flex-shrink: 0;
+  margin-left: 26px;
+  margin-right: 26px;
+  width: auto;
+}
+
+.ta-svc .ta-fp-body .cms-form > .cms-form-error {
+  margin-top: 8px;
+}
+
+.ta-svc .ta-fp-body .cms-form > button[type="submit"] {
+  margin-top: 12px;
+  box-shadow: 0 -16px 18px -14px rgba(10, 14, 26, .25), var(--shadow-lg);
+}
+
+.ta-fp-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: #f1f4f8;
+  color: #0a0e1a;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.ta-fp-close:hover {
+  background: #e3e8ef;
+}
+
+.ta-fp-loading {
+  padding: 30px 0;
+  text-align: center;
+  color: var(--muted, #5b6478);
+}
+
+.ta-fp-error {
+  color: #b42318;
+  margin: 10px 0 0;
+}
+
+/* Phones: the form opens as a sheet from the bottom. */
+@media (max-width: 560px) {
+  .ta-fp {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .ta-svc .ta-fp-dialog {
+    max-width: none;
+    max-height: 92vh;
+    max-height: 92dvh;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .ta-svc .ta-fp-head {
+    padding: 24px 18px 12px;
+  }
+
+  .ta-svc .ta-fp-body .cms-form-grid {
+    padding: 14px 18px 6px;
+  }
+
+  .ta-svc .ta-fp-body .cms-form > :is(.cms-form-error, button[type="submit"]) {
+    margin-left: 18px;
+    margin-right: 18px;
+  }
+}
+
+@keyframes ta-fp-fade {
+  from { opacity: 0; }
+}
+
+@keyframes ta-fp-pop {
+  from { opacity: 0; transform: translateY(14px) scale(.98); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ta-fp,
+  .ta-svc .ta-fp-dialog {
+    animation: none;
+  }
+}

@@ -3,6 +3,7 @@
 import { Fragment } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { openFormPopup } from "@/lib/formPopup";
 import { HomeBlock } from "../home/HomeSections";
 import CommonBlock from "../blocks/CommonBlocks";
 import BlockBackground from "../blocks/BlockBackground";
@@ -29,9 +30,10 @@ const DEFAULT_COLOR = "#0E96AC";
 
 function useGo() {
   const router = useRouter();
-  return (url) => {
+  return (url, label) => {
     const target = String(url || "").trim();
     if (!target) return;
+    if (openFormPopup(target, label)) return; // "#form-<id>": form popup (FormPopupHost)
     if (target.startsWith("#")) document.getElementById(target.slice(1))?.scrollIntoView({ behavior: "smooth" });
     else if (isExternal(target)) window.open(target, "_blank", "noopener");
     else router.push(target);
@@ -48,7 +50,7 @@ function A({ url, className, style, title, children }) {
 function Button({ button, className = "btn-primary" }) {
   const go = useGo();
   if (!hasButton(button)) return null;
-  return <button type="button" className={className} onClick={() => go(button.url)}>{button.text}</button>;
+  return <button type="button" className={className} onClick={() => go(button.url, button.text)}>{button.text}</button>;
 }
 
 /** Emoji / text icon, or an image when the CMS stores a URL. */

@@ -115,7 +115,8 @@ const escapeXml = (value) => String(value)
 const XML_HEADERS = {
   "Content-Type": "application/xml; charset=utf-8",
   // A CDN may keep it for 10 minutes at most, so changes show within ~10 minutes (the data itself is not cached).
-  "Cache-Control": "public, max-age=0, s-maxage=600, stale-while-revalidate=600",
+  // No shared (CDN / proxy) cache: a publish shows in the sitemap on the next request.
+  "Cache-Control": "public, max-age=0, must-revalidate",
 };
 
 export function urlsetResponse(entries) {

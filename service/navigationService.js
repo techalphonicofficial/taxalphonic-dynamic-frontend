@@ -1,5 +1,6 @@
 import { apiClient } from "@/service/apiClient";
 import { normalizeAssetUrl } from "@/service/servicePageService";
+import { explorePath } from "@/lib/menuSlug";
 
 const headerMenuPath = "/api/v1/menus?page=1&limit=50&sortBy=createdAt&sortOrder=ASC";
 // The first five header menu items sit in the top bar beside search (Taxpedia, GeM Services,
@@ -52,7 +53,8 @@ function toLink(item) {
  * three columns. Three levels (menu → column heading → links): one titled column per heading;
  * links placed directly under the menu form one untitled column first.
  */
-function dropdownColumns(children) {
+// A column heading without its own URL links to its explore page (/explore/<item>/<column>).
+function dropdownColumns(children, parentTitle) {
   const nested = children.some((child) => child.children?.length);
   if (!nested) return toDropdownColumns(children.map(toLink));
 
@@ -63,7 +65,7 @@ function dropdownColumns(children) {
       const heading = toLink(child);
       return {
         title: heading.label,
-        url: heading.url !== "#" ? heading.url : "",
+        url: heading.url !== "#" ? heading.url : explorePath(parentTitle, child.title),
         icon: heading.icon,
         items: sortByDisplayOrder(child.children).map(toLink),
       };
@@ -77,11 +79,13 @@ function mapMenuItem(item) {
   return {
     ...toLink(item),
     enabled: true,
+    // "View all" at the bottom of the dropdown: every link of this item on one page.
+    exploreUrl: children.length ? explorePath(item.title) : "",
     dropdown: children.length
       ? {
           sections: [{
             type: "columns",
-            columns: dropdownColumns(children),
+            columns: dropdownColumns(children, item.title),
           }],
         }
       : undefined,

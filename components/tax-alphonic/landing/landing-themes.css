@@ -1,0 +1,167 @@
+/* Landing page colour themes (landingThemes.js; picked in the admin, saved as the Header block's
+   payload.pageTheme). LandingPage sets data-lp-theme on .ta-landing (and FormPopupHost on the popup)
+   for every theme except "default", which keeps the stylesheets' own colours.
+   1. Each theme sets --t-brand / --t-accent / --t-deep.
+   2. Those feed the variables of every block stylesheet (.ta-svc, .ta-home, .ta-cb, landing chrome).
+   3. Rules that use literal brand colours (rgba(14,150,172,…)) get themed copies below.
+   Generated from landingThemes.js: keep the colours in sync. */
+
+[data-lp-theme="ocean"] { --t-brand: #2563eb; --t-accent: #f59e0b; --t-deep: #0b1b3f; }
+[data-lp-theme="emerald"] { --t-brand: #059669; --t-accent: #f97316; --t-deep: #052e24; }
+[data-lp-theme="royal"] { --t-brand: #7c3aed; --t-accent: #ec4899; --t-deep: #1e1240; }
+[data-lp-theme="sunset"] { --t-brand: #ea580c; --t-accent: #db2777; --t-deep: #2a1206; }
+[data-lp-theme="rose"] { --t-brand: #e11d48; --t-accent: #7c3aed; --t-deep: #2a0a14; }
+[data-lp-theme="midnight"] { --t-brand: #1e3a8a; --t-accent: #d97706; --t-deep: #0a1230; }
+[data-lp-theme="forest"] { --t-brand: #15803d; --t-accent: #ca8a04; --t-deep: #0c2414; }
+[data-lp-theme="crimson"] { --t-brand: #b91c1c; --t-accent: #f59e0b; --t-deep: #1c0a0a; }
+[data-lp-theme="slate"] { --t-brand: #334155; --t-accent: #0ea5e9; --t-deep: #0f172a; }
+
+.ta-landing[data-lp-theme],
+.ta-fp[data-lp-theme] {
+  --t-brand2: color-mix(in srgb, var(--t-brand) 72%, #fff);
+  --t-mist: color-mix(in srgb, var(--t-brand) 6%, #fff);
+  --t-paper: color-mix(in srgb, var(--t-brand) 2.5%, #fff);
+  --lp-brand: var(--t-brand);
+  --lp-brand-dark: color-mix(in srgb, var(--t-brand) 80%, #000);
+  --lp-footer: var(--t-deep);
+}
+
+.ta-landing[data-lp-theme] :is(.ta-svc, .ta-home, .ta-cb),
+.ta-fp[data-lp-theme] {
+  --brand: var(--t-brand);
+  --brand2: var(--t-brand2);
+  --accent: var(--t-accent);
+  --paper: var(--t-paper);
+  --mist: var(--t-mist);
+  --shadow-lg: 0 20px 60px color-mix(in srgb, var(--t-brand) 16%, transparent);
+  --cb-brand: var(--t-brand);
+  --cb-mist: var(--t-mist);
+  --home-page-bg: var(--t-mist);
+}
+
+.ta-landing[data-lp-theme] {
+  background: var(--t-paper);
+}
+
+/* Literal colours in the block stylesheets */
+[data-lp-theme] .ta-svc .eyebrow,
+[data-lp-theme] .ta-home .eyebrow,
+[data-lp-theme] .ta-svc .proc2-day,
+[data-lp-theme] .ta-home .bundle-tag,
+[data-lp-theme] .ta-home .how-tag { background: color-mix(in srgb, var(--brand) 8%, transparent); }
+
+[data-lp-theme] .ta-svc .loc-count { background: color-mix(in srgb, var(--brand) 10%, transparent); border-color: color-mix(in srgb, var(--brand) 25%, transparent); }
+[data-lp-theme] .ta-home .ej-eyebrow,
+[data-lp-theme] .ta-home .branch-badge,
+[data-lp-theme] .ta-cb .cb-card-ic { background: color-mix(in srgb, var(--brand) 10%, transparent); }
+[data-lp-theme] .ta-home .cmp-us { background: color-mix(in srgb, var(--brand) 5%, transparent); }
+
+[data-lp-theme] .ta-svc :is(.bcard .ic, .cred-ic),
+[data-lp-theme] .ta-home :is(.catcard .ci, .sec-ic, .why-card .ic, .sec2-ic, .team-photo) {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand) 12%, transparent), color-mix(in srgb, var(--accent) 12%, transparent));
+}
+
+[data-lp-theme] .ta-svc .guarantee { background: linear-gradient(120deg, color-mix(in srgb, var(--brand) 5%, transparent), color-mix(in srgb, var(--accent) 5%, transparent)); }
+[data-lp-theme] :is(.ta-svc, .ta-home) .trustbar { background: linear-gradient(90deg, color-mix(in srgb, var(--brand) 5%, transparent), color-mix(in srgb, var(--gold) 5%, transparent)); }
+
+[data-lp-theme] .ta-svc .svc-hero-img { background: linear-gradient(135deg, var(--brand), var(--accent)); box-shadow: 0 8px 28px color-mix(in srgb, var(--brand) 20%, transparent); }
+[data-lp-theme] .ta-svc .svc-hero-chip { box-shadow: 0 8px 28px color-mix(in srgb, var(--brand) 20%, transparent); }
+[data-lp-theme] .ta-svc .proc2-num { box-shadow: 0 4px 10px color-mix(in srgb, var(--brand) 25%, transparent); }
+[data-lp-theme] .ta-svc .wc-item:hover { box-shadow: 0 8px 20px color-mix(in srgb, var(--brand) 10%, transparent); }
+[data-lp-theme] .ta-home :is(.hstat:hover, .ql-chip:hover) { box-shadow: 0 8px 20px color-mix(in srgb, var(--brand) 16%, transparent); }
+[data-lp-theme] .ta-home .how-card:hover { box-shadow: 0 18px 40px color-mix(in srgb, var(--brand) 16%, transparent); }
+[data-lp-theme] .ta-home .pf-card:hover { border-color: color-mix(in srgb, var(--brand) 45%, transparent); box-shadow: 0 14px 30px color-mix(in srgb, var(--brand) 14%, transparent); }
+[data-lp-theme] .ta-cb .cb-btn { box-shadow: 0 20px 60px color-mix(in srgb, var(--brand) 16%, transparent); }
+.ta-landing[data-lp-theme] .lp-btn { box-shadow: 0 6px 18px color-mix(in srgb, var(--lp-brand) 25%, transparent); }
+
+[data-lp-theme] .ta-home .hh-bg { background: radial-gradient(600px 300px at 80% -5%, color-mix(in srgb, var(--brand) 10%, transparent), transparent), radial-gradient(500px 280px at 10% 30%, color-mix(in srgb, var(--accent) 8%, transparent), transparent); }
+[data-lp-theme] .ta-home .ej { background: radial-gradient(1100px 500px at 50% -10%, color-mix(in srgb, var(--brand) 6%, transparent), transparent); }
+[data-lp-theme] .ta-home .ej-cta-glow { background: radial-gradient(circle, color-mix(in srgb, var(--brand) 30%, transparent), transparent 70%); }
+[data-lp-theme] .ta-home .expert-banner::after { background: radial-gradient(500px 240px at 30% 0, color-mix(in srgb, var(--brand) 30%, transparent), transparent); }
+[data-lp-theme] .ta-home ::selection { background: color-mix(in srgb, var(--brand) 22%, transparent); }
+
+[data-lp-theme] :is(.ta-svc, .ta-home) .field :is(input, select, textarea):focus,
+.ta-fp[data-lp-theme] .field :is(input, select, textarea):focus { box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 12%, transparent); }
+
+/* ---------- Header and footer regions ("Landing page" style) ---------- */
+/* A brand → accent strip on top of the header; a background set on the Header block stays. */
+.ta-landing[data-lp-theme] .lp-header {
+  background: linear-gradient(90deg, var(--t-brand), var(--t-accent)) top / 100% 3px no-repeat, var(--lp-bg);
+}
+
+.ta-landing[data-lp-theme] .ta-bg > .ta-bg-content > .lp-header {
+  background: linear-gradient(90deg, var(--t-brand), var(--t-accent)) top / 100% 3px no-repeat;
+}
+
+.ta-landing[data-lp-theme] .lp-dark {
+  --lp-bg: var(--t-deep);
+}
+
+.ta-landing[data-lp-theme] .lp-phone {
+  color: var(--t-brand);
+}
+
+.ta-landing[data-lp-theme] .lp-dark .lp-phone {
+  color: #fff;
+}
+
+/* Footer: dark = the theme's deep colour, light = a soft tint of the brand colour. */
+.ta-landing[data-lp-theme] .lp-footer {
+  background-image: linear-gradient(90deg, var(--t-brand), var(--t-accent));
+  background-size: 100% 4px;
+  background-repeat: no-repeat;
+}
+
+.ta-landing[data-lp-theme] .lp-footer-light {
+  --lp-footer: color-mix(in srgb, var(--t-brand) 7%, #fff);
+  --lp-line: color-mix(in srgb, var(--t-brand) 18%, #fff);
+}
+
+.ta-landing[data-lp-theme] .lp-footer h4 {
+  padding-left: 10px;
+  border-left: 3px solid var(--t-accent);
+}
+
+.ta-landing[data-lp-theme] .lp-footer a:hover {
+  color: var(--t-brand2);
+}
+
+.ta-landing[data-lp-theme] .lp-footer-light h4 {
+  color: color-mix(in srgb, var(--t-brand) 55%, #0a0e1a);
+}
+
+.ta-landing[data-lp-theme] .lp-footer-light a:hover {
+  color: var(--t-brand);
+}
+
+.ta-landing[data-lp-theme] .lp-social a {
+  background: color-mix(in srgb, var(--t-brand) 35%, transparent);
+  color: #fff;
+}
+
+.ta-landing[data-lp-theme] .lp-footer-light .lp-social a {
+  background: var(--t-brand);
+  border-color: var(--t-brand);
+  color: #fff;
+}
+
+/* Centred footer: the heading accent is a short bar under the heading instead of on its left. */
+.ta-landing[data-lp-theme] .lp-footer-center h4 {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.ta-landing[data-lp-theme] .lp-footer-center h4::after {
+  content: "";
+  display: block;
+  width: 36px;
+  height: 3px;
+  margin: 8px auto 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--t-brand), var(--t-accent));
+}
+
+/* Minimal footer: a thinner strip. */
+.ta-landing[data-lp-theme] .lp-footer-min {
+  background-size: 100% 3px;
+}

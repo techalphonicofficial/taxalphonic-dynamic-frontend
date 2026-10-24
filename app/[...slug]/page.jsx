@@ -7,7 +7,8 @@ import { getSeoPageByPath } from "@/service/seoPageService";
 import { HOME_PAGE_SLUG } from "@/service/homePageService";
 import { withSeoConfig } from "@/service/seoConfigService";
 import { createMetadata } from "@/lib/seoMetadata";
-import { permanentRedirect } from "next/navigation";
+import { permanentRedirect, redirect } from "next/navigation";
+import { resolveMenuAlias } from "@/service/menuExploreService";
 import JourneySections from "@/components/tax-alphonic/journey/JourneySections";
 import { isJourneySection } from "@/components/tax-alphonic/journey/journeyBlockTypes";
 import { getJourneyStages } from "@/service/journeyService";
@@ -87,6 +88,12 @@ export default async function DynamicPage({ params }) {
   const pathname = getSlugPath(resolvedParams?.slug);
   // The CMS "home" page is the homepage itself.
   if (pathname === `/${HOME_PAGE_SLUG}`) permanentRedirect("/");
+  // /category/<name> (homepage category cards) always opens the menu section's explore page,
+  // even when a service has the same slug.
+  if (pathname.startsWith("/category/")) {
+    const section = await resolveMenuAlias(pathname);
+    if (section) redirect(section);
+  }
   const resolved = await resolvePath(pathname);
   // Homepage blocks placed on this page (Testimonials, Team, FAQ, ...) read their CMS module, as on the homepage.
   if (resolved?.record?.sections?.some(isHomeSection)) {
@@ -116,6 +123,11 @@ export default async function DynamicPage({ params }) {
   if (resolved?.kind === "page") return <ApiPage page={resolved.record} />;
   // pSEO pages render through the service page layout (see service/seoPageService.js).
   if (resolved) return <ApiServicePage service={resolved.record} />;
+
+  // Nothing else here: a header menu section with this name (homepage category cards
+  // "/category/startup", "/advisory", the header's own "/taxpedia") opens its explore page.
+  const explore = await resolveMenuAlias(pathname);
+  if (explore) redirect(explore);
 
   return <NotFound pathname={pathname} />;
 }

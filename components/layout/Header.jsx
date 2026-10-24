@@ -1193,7 +1193,26 @@ function DesktopDropdown({
           <p className="px-5 py-6 text-center text-sm text-slate-500">No matching services found.</p>
         )}
       </div>
+      <ViewAllLink item={item} />
     </div>
+  );
+}
+
+/** "View all <item> (n) →" under a dropdown: the item's explore page (navigationService exploreUrl). */
+function ViewAllLink({ item, onClick, mobile = false }) {
+  if (!item?.exploreUrl) return null;
+  const count = getDropdownOptionCount(item);
+  return (
+    <Link
+      href={item.exploreUrl}
+      onClick={onClick}
+      className={mobile
+        ? "mt-1 flex items-center justify-between rounded-lg bg-[#F0FDFA] px-3 py-2 text-xs font-semibold text-[#0F766E]"
+        : "flex items-center justify-between border-t border-slate-100 bg-[#F8FAFC] px-5 py-2.5 text-[12.5px] font-semibold text-[#0F766E] transition-colors hover:bg-[#F0FDFA]"}
+    >
+      <span>View all {item.label}{count ? ` (${count})` : ""}</span>
+      <span aria-hidden>→</span>
+    </Link>
   );
 }
 
@@ -1476,6 +1495,7 @@ function MobileSection({
       ) : (
         <p className="px-2 py-3 text-center text-xs text-slate-500">No matching services found.</p>
       )}
+      <ViewAllLink item={item} onClick={closeMenu} mobile />
     </div>
   );
 }

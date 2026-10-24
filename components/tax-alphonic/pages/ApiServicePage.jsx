@@ -105,7 +105,11 @@ function JsonLd({ value }) {
 
 export function RichContent({ html }) {
   if (!html) return null;
-  return <div className="svc-rich" dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }} />;
+  // Tables get their own scrolling box so a wide table never widens the page.
+  const clean = sanitizeHtml(html)
+    .replace(/<table\b/gi, '<div class="svc-table-wrap"><table')
+    .replace(/<\/table>/gi, "</table></div>");
+  return <div className="svc-rich" dangerouslySetInnerHTML={{ __html: clean }} />;
 }
 
 /** CMS icon: an image URL, an emoji/text, or a legacy icon-font class (mapped or dropped). */
@@ -200,6 +204,25 @@ function Hero({ service, hero, config }) {
   const primary = toButton(hero.primaryButton || { text: hero.ctaText, url: hero.ctaUrl });
   const secondary = toButton(hero.secondaryButton);
   if (primary && price) primary.text = `${primary.text} — ${price}`;
+
+  // Hero → "Text on the hero": "hide" shows only the background (an image with its own text),
+  // "buttons" only the buttons on it. The heading stays in the page for search engines / screen readers.
+  const textMode = hero.textMode === "hide" || hero.textMode === "buttons" ? hero.textMode : "show";
+  if (textMode !== "show") {
+    const height = ["sm", "md", "lg", "xl", "r31", "r169"].includes(hero.height) ? hero.height : "md";
+    const align = ["left", "center", "right"].includes(hero.buttonsAlign) ? hero.buttonsAlign : "center";
+    return (
+      <div className={`svc-hero svc-hero-bare svc-hero-h-${height} svc-hero-btns-${align}`}>
+        <h1 className="svc-sr-only">{heading}</h1>
+        {textMode === "buttons" && (primary || secondary) && (
+          <div className="hh-cta">
+            <CmsButton button={primary} className="btn-primary" />
+            <CmsButton button={secondary} className="btn-ghost" />
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="svc-hero">

@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { openFormPopup } from "@/lib/formPopup";
 import CmsForm from "../forms/CmsForm";
 import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import "./home-page.css";
@@ -30,9 +31,10 @@ function scrollToHash(url) {
 
 function useGo() {
   const router = useRouter();
-  return (url) => {
+  return (url, label) => {
     const target = String(url || "").trim();
     if (!target) return;
+    if (openFormPopup(target, label)) return; // "#form-<id>": form popup (FormPopupHost)
     if (target.startsWith("#")) scrollToHash(target);
     else if (isExternal(target)) window.open(target, "_blank", "noopener");
     else router.push(target);
@@ -71,7 +73,7 @@ function Card({ url, className, style, children }) {
 function Button({ button, className = "btn-primary", style }) {
   const go = useGo();
   if (!hasButton(button)) return null;
-  return <button type="button" className={className} style={style} onClick={() => go(button.url)}>{button.text}</button>;
+  return <button type="button" className={className} style={style} onClick={() => go(button.url, button.text)}>{button.text}</button>;
 }
 
 /** Emoji/text icon, or an image when the CMS stores a URL. */

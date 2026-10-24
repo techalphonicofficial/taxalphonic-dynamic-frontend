@@ -87,9 +87,43 @@ export function LandingFooterBar({ payload = {}, branding = {}, contact = {} }) 
     .replace(/\{year\}/g, year)
     .replace(/\{company\}/g, branding.name || "Tax Alphonic");
   const light = payload.theme === "light";
+  // "minimal" (default): logo on the left, small contact details on the right, one thin bottom row;
+  // "center": everything centred in one column; "columns": logo | links | contact.
+  const layout = payload.layout === "center" || payload.layout === "columns" ? payload.layout : "minimal";
+  const centered = layout === "center";
+
+  if (layout === "minimal") {
+    const bottomLinks = [...links, ...legal];
+    return (
+      <footer className={`lp-footer lp-footer-min${light ? " lp-footer-light" : ""}`}>
+        <div className="lp-wrap lp-min-row">
+          <a href="#top" className="lp-min-logo" aria-label={branding.name || "Home"}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {logo ? <img src={light ? branding.lightLogo || logo : logo} alt={branding.name || ""} /> : <b>{branding.name}</b>}
+          </a>
+          {(phone || email || address) && (
+            <ul className="lp-min-contact">
+              {phone && <li><a href={telHref(phone)}>📞 {phone}</a></li>}
+              {email && <li><a href={`mailto:${email}`}>✉️ {email}</a></li>}
+              {address && <li>📍 {address}</li>}
+            </ul>
+          )}
+        </div>
+        <div className="lp-wrap lp-min-bottom">
+          <span>{copyright}</span>
+          {bottomLinks.length > 0 && <span className="lp-legal">{bottomLinks.map((link, i) => <Anchor key={`${link.text}-${i}`} href={link.url}>{link.text}</Anchor>)}</span>}
+          {socials.length > 0 && (
+            <span className="lp-social">
+              {socials.map((s) => <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.name}>{s.label}</a>)}
+            </span>
+          )}
+        </div>
+      </footer>
+    );
+  }
 
   return (
-    <footer className={`lp-footer${light ? " lp-footer-light" : ""}`}>
+    <footer className={`lp-footer${light ? " lp-footer-light" : ""}${centered ? " lp-footer-center" : ""}`}>
       <div className="lp-wrap lp-footer-grid">
         <div className="lp-footer-brand">
           {/* eslint-disable-next-line @next/next/no-img-element */}

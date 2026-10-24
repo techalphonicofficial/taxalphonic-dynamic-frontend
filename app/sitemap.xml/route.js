@@ -1,4 +1,7 @@
 import { SITE_URL, getSitemapFiles, indexResponse } from "@/service/sitemapService";
+// Built on every request (never at build time) so a newly published page or service is listed at once.
+export const dynamic = "force-dynamic";
+
 
 // /sitemap.xml: the sitemap index (see service/sitemapService.js). Submit this URL in Search Console.
 export async function GET() {
