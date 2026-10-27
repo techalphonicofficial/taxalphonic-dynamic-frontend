@@ -11,7 +11,7 @@ import "./landing-themes.css";
 /**
  * A landing page (taxalphonic.com/lp/<label>): Header region, the body blocks rendered exactly like a CMS
  * page with blocks (ApiPage → ApiServicePage: hero, main | sidebar, Form, Packages, ...), and
- * the Footer region. Used by the live route (app/landing-host/[label]) and the admin preview.
+ * the Footer region. Used by the live route (app/lp/[label]) and the admin preview.
  *
  * page: { id, title, sections } (sections mapped like a CMS page, Form / Packages hydrated)
  * branding / contact: getSiteSettings() (logos, phone, email, address, socials)

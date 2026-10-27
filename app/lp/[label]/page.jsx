@@ -13,10 +13,10 @@ import { getSiteSettings } from "@/service/siteSettingsService";
 import { withSeoConfig } from "@/service/seoConfigService";
 
 /*
- * A landing page at /lp/<label> on the main website (taxalphonic.com/lp/cbdt). proxy.js rewrites
- * that path to /landing-host/<label> and sets the x-ta-landing header (old <label>.taxalphonic.com
- * addresses are redirected to /lp/<label>); without that header (someone opening
- * /landing-host/... on the main site) or without a published page for the label, it is a 404.
+ * A landing page at /lp/<label> on the landing host (services.taxalphonic.com/lp/cbdt). proxy.js
+ * passes that request on with the x-ta-landing header (no rewrite; /lp/<label> on the main site and
+ * old <label>.taxalphonic.com addresses are redirected to the landing host); without that header
+ * or without a published page for the label, it is a 404.
  * Only the published version is ever loaded (service/landingPageService.js).
  * SEO: the page's own SEO (Settings & SEO tab); an active SEO Config for this landing page
  * (admin SEO Configs, type "landing") wins field by field, empty config fields keep the page's own.
