@@ -1,3 +1,4 @@
+
 // Public hosts the site is opened on. The live server sits behind LiteSpeed, which forwards its
 // internal host instead of the public one, so Next.js saw the browser's Origin
 // (frontend.taxalphonic.com) as a different site and rejected every Server Action (CMS form
@@ -16,6 +17,7 @@ const SERVER_ACTION_ORIGINS = [
 const nextConfig = {
   reactCompiler: true,
   experimental: {
+    trustHostHeader: true,
     serverActions: {
       allowedOrigins: SERVER_ACTION_ORIGINS,
     },
