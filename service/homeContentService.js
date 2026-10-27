@@ -1,6 +1,7 @@
 import { apiClient } from "@/service/apiClient";
 import { normalizeAssetUrl } from "@/service/servicePageService";
 import { cache } from "react";
+import { getPageBySlug } from "@/service/pageService";
 
 // Records from the CMS content modules (Testimonials, Team Members, FAQs, Banners,
 // Branches, Partners & Clients, Global Presence, Portfolio) for the homepage blocks that show them.
@@ -135,7 +136,29 @@ const limitItems = (items, limit) => {
  * keeps its own items when set to "manual", or when the module has nothing published,
  * so the section never turns up empty.
  */
-export async function attachModuleContent(sections) {
+/**
+ * Free Tool blocks (CommonTool, source "page"): the calculator and settings of the chosen
+ * published tool page (its ToolCalculator block) as payload.tool; null when that page is not live.
+ */
+const toolSlugOf = (section) => String(section.payload.toolSlug).split("/").filter(Boolean).join("/");
+
+async function attachTools(sections) {
+  const slugs = [...new Set(sections
+    .filter((s) => s.type === "CommonTool" && s.payload?.source !== "calculator" && s.payload?.toolSlug)
+    .map((s) => toolSlugOf(s)))];
+  if (!slugs.length) return sections;
+  const tools = Object.fromEntries(await Promise.all(slugs.map(async (slug) => {
+    const page = await getPageBySlug(slug).catch(() => null);
+    const calc = page?.sections?.find((s) => s.type === "ToolCalculator")?.payload;
+    return [slug, calc?.calculator ? { calculator: calc.calculator, settings: calc.settings || {}, title: page.title } : null];
+  })));
+  return sections.map((s) => (s.type === "CommonTool" && s.payload?.source !== "calculator" && s.payload?.toolSlug
+    ? { ...s, payload: { ...s.payload, tool: tools[toolSlugOf(s)] || null } }
+    : s));
+}
+
+export async function attachModuleContent(rawSections) {
+  const sections = await attachTools(rawSections);
   const needed = new Set(
     sections
       .map((s) => MODULE_BLOCKS[s.type])

@@ -7,7 +7,7 @@ import { normalizeAssetUrl } from "@/service/servicePageService";
 // (type + id, with the URL as fallback). Each field set in the config wins over the record's own
 // SEO; empty fields keep the record's value.
 //
-// type: "service" | "page" | "seo_page" | "static" (id "home" / "about").
+// type: "service" | "page" | "seo_page" | "landing" | "static" (id "home" / "about").
 
 export const getSeoConfig = cache(async function getSeoConfig(type, id, route) {
   const params = new URLSearchParams();

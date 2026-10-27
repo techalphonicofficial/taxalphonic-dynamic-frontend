@@ -15,7 +15,7 @@ import { getJourneyStages } from "@/service/journeyService";
 import ToolSections from "@/components/tax-alphonic/tools/ToolSections";
 import { isToolSection } from "@/components/tax-alphonic/tools/toolBlockTypes";
 import { getTools } from "@/service/toolsService";
-import { isHomeSection } from "@/components/tax-alphonic/blocks/commonBlockTypes";
+import { needsModuleContent } from "@/components/tax-alphonic/blocks/commonBlockTypes";
 import { attachModuleContent } from "@/service/homeContentService";
 import JsonLd from "@/components/seo/JsonLd";
 
@@ -96,7 +96,7 @@ export default async function DynamicPage({ params }) {
   }
   const resolved = await resolvePath(pathname);
   // Homepage blocks placed on this page (Testimonials, Team, FAQ, ...) read their CMS module, as on the homepage.
-  if (resolved?.record?.sections?.some(isHomeSection)) {
+  if (resolved?.record?.sections?.some(needsModuleContent)) {
     resolved.record = { ...resolved.record, sections: await attachModuleContent(resolved.record.sections) };
   }
 

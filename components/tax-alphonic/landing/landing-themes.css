@@ -4,6 +4,8 @@
    1. Each theme sets --t-brand / --t-accent / --t-deep.
    2. Those feed the variables of every block stylesheet (.ta-svc, .ta-home, .ta-cb, landing chrome).
    3. Rules that use literal brand colours (rgba(14,150,172,…)) get themed copies below.
+   A custom theme (data-lp-theme="custom") has no rule in 1.: LandingPage / FormPopupHost set its
+   --t-brand / --t-accent / --t-deep inline (landingThemeStyle).
    Generated from landingThemes.js: keep the colours in sync. */
 
 [data-lp-theme="ocean"] { --t-brand: #2563eb; --t-accent: #f59e0b; --t-deep: #0b1b3f; }

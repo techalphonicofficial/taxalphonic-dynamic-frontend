@@ -1,4 +1,4 @@
-// 404 of a landing page subdomain with no published page (or /landing-host/... opened directly).
+// 404 of a landing page address (/lp/<label>) with no published page (or /landing-host/... opened directly).
 const MAIN_SITE = String(process.env.SITE_URL || "https://taxalphonic.com").replace(/\/$/, "");
 
 export const metadata = { title: "Page not found", robots: { index: false, follow: false } };

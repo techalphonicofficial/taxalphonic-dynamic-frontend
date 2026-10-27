@@ -43,6 +43,7 @@ import {
 
 import { createElement, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";   // sahi
+import { blockLandingNavigation } from "@/lib/landingLinks";
 import { useTheme } from "@/context/ThemeContext";
 
 /* =========================================================
@@ -457,6 +458,7 @@ function NavigationSearch({
 
   const navigateTo = (item) => {
     if (!item?.url) return;
+    if (blockLandingNavigation(item.url, item.title)) return; // website header on a landing page
 
     router.push(item.url);
     setQuery("");

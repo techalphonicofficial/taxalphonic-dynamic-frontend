@@ -662,3 +662,43 @@
     grid-template-columns: repeat(min(var(--cb-cols, 4), 2), minmax(0, 1fr));
   }
 }
+
+/* Free Tool / Calculator (CommonTool): a tool page's calculator on any page. The tool styles are
+   scoped under .ta-tools (tools-page.css); here that wrapper drops its page background and padding,
+   takes the page's brand colour (themes included) and fills its column, sidebar too. */
+.ta-cb .cb-tool-embed.ta-tools {
+  --brand: var(--cb-brand);
+  background: transparent;
+  padding-bottom: 0;
+  overflow-x: visible;
+  max-width: none;
+}
+
+.ta-cb .cb-tool-embed .tool-panel {
+  max-width: none;
+  margin: 0;
+}
+
+.ta-cb.cb-tool .cb-head {
+  margin-bottom: 16px;
+}
+
+/* In a narrow column (right sidebar), stack the calculator's fields and results. */
+.ta-svc .side .ta-cb .cb-tool-embed .tool-panel,
+.home-split .home-side .ta-cb .cb-tool-embed .tool-panel {
+  padding: 18px;
+}
+
+.ta-svc .side .ta-cb .cb-tool-embed :is([class*="grid"], [class*="row"], [class*="cols"]),
+.home-split .home-side .ta-cb .cb-tool-embed :is([class*="grid"], [class*="row"], [class*="cols"]) {
+  grid-template-columns: 1fr;
+}
+
+.ta-cb.cb-tool .cb-buttons {
+  margin-top: 16px;
+}
+
+.ta-svc .side .ta-cb.cb-tool .cb-head h2,
+.home-split .home-side .ta-cb.cb-tool .cb-head h2 {
+  font-size: 20px;
+}

@@ -2,8 +2,9 @@ import { cache } from "react";
 import { apiClient } from "@/service/apiClient";
 import { mapSection } from "@/service/homePageService";
 import { attachModuleContent } from "@/service/homeContentService";
-import { isHomeSection } from "@/components/tax-alphonic/blocks/commonBlockTypes";
+import { needsModuleContent } from "@/components/tax-alphonic/blocks/commonBlockTypes";
 import { isLandingLabel } from "@/lib/landingHost.mjs";
+import { lockLandingLinks } from "@/lib/landingLinks";
 
 /**
  * The live version of a landing page by its subdomain label, or null (draft, archived,
@@ -18,9 +19,12 @@ export const getLandingPage = cache(async function getLandingPage(label) {
     if (!data || data.slug !== label) return null;
     let sections = (Array.isArray(data.sections) ? data.sections : []).map(mapSection).filter(Boolean);
     // Homepage blocks (Testimonials, Team, FAQ, ...) read their CMS module, as on the homepage.
-    if (sections.some(isHomeSection)) sections = await attachModuleContent(sections);
+    if (sections.some(needsModuleContent)) sections = await attachModuleContent(sections);
+    // No navigation away: outbound links become the form popup (lib/landingLinks.js).
+    sections = lockLandingLinks(sections);
     return {
       id: `landing-${data.slug}`,
+      recordId: data.id || null, // the landing page's id (SEO Config type "landing")
       slug: data.slug,
       url: data.url,
       title: String(data.title || "").trim(),

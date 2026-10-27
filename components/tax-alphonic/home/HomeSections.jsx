@@ -1,9 +1,10 @@
 "use client";
 
-import { Fragment, useEffect, useId, useMemo, useState } from "react";
+import { Fragment, useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { openFormPopup } from "@/lib/formPopup";
+import { blockLandingNavigation } from "@/lib/landingLinks";
 import CmsForm from "../forms/CmsForm";
 import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import "./home-page.css";
@@ -35,6 +36,7 @@ function useGo() {
     const target = String(url || "").trim();
     if (!target) return;
     if (openFormPopup(target, label)) return; // "#form-<id>": form popup (FormPopupHost)
+    if (blockLandingNavigation(target, label)) return; // landing pages never navigate away
     if (target.startsWith("#")) scrollToHash(target);
     else if (isExternal(target)) window.open(target, "_blank", "noopener");
     else router.push(target);
@@ -348,8 +350,25 @@ function Stages({ p }) {
   );
 }
 
+/** Latest knowledge strip: one line; the chips scroll sideways (wheel too), "All Taxpedia" stays on the right. */
 function Knowledge({ p }) {
   const items = list(p.items).filter((item) => has(item.label));
+  const chipsRef = useRef(null);
+  useEffect(() => {
+    const el = chipsRef.current;
+    if (!el) return undefined;
+    // A vertical mouse wheel scrolls the chips while they can move; at either end the page scrolls.
+    const onWheel = (event) => {
+      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX) || el.scrollWidth <= el.clientWidth) return;
+      const atStart = el.scrollLeft <= 0 && event.deltaY < 0;
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1 && event.deltaY > 0;
+      if (atStart || atEnd) return;
+      event.preventDefault();
+      el.scrollLeft += event.deltaY;
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
   if (!items.length && !hasButton(p.moreLink)) return null;
   return (
     <div className="ql-strip">
@@ -361,10 +380,10 @@ function Knowledge({ p }) {
             {has(p.badge) && <> <span className="ql-live">{p.badge}</span></>}
           </span>
         )}
-        <div className="ql-chips">
+        <div className="ql-chips" ref={chipsRef}>
           {items.map((item, i) => <A key={i} url={item.url} className="ql-chip">{has(item.icon) && <span className="ql-ic"><Icon value={item.icon} /></span>}{item.label}</A>)}
-          {hasButton(p.moreLink) && <A url={p.moreLink.url} className="ql-chip ql-more">{p.moreLink.text} <span className="ql-arrow">→</span></A>}
         </div>
+        {hasButton(p.moreLink) && <A url={p.moreLink.url} className="ql-chip ql-more">{p.moreLink.text} <span className="ql-arrow">→</span></A>}
       </div>
     </div>
   );
@@ -1027,6 +1046,7 @@ const PLACEMENT_RULES = {
   HomeComparison: { default: "main", options: WIDE },
   HomeIndustries: { default: "main", options: WIDE },
   HomePortfolio: { default: "main", options: WIDE },
+  CommonTool: { default: "main", options: ANY },
 };
 
 function placementOf(section) {

@@ -81,7 +81,8 @@ export function LandingFooterBar({ payload = {}, branding = {}, contact = {} }) 
   const phone = text(payload.phone) || (showContact ? text(contact.phone) : "");
   const email = text(payload.email) || (showContact ? text(contact.email) : "");
   const address = text(payload.address) || (showContact ? text(contact.address) : "");
-  const socials = payload.showSocial === "no" ? [] : list(contact.socials).filter((s) => safeHref(s.url));
+  // Social profiles are other sites: never on a landing page (no navigation away, lib/landingLinks.js).
+  const socials = [];
   const year = String(new Date().getFullYear());
   const copyright = text(payload.copyright || "© {year} {company}. All rights reserved.")
     .replace(/\{year\}/g, year)

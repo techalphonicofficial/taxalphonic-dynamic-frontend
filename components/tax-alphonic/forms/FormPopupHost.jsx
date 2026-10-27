@@ -15,13 +15,13 @@ import "./form-popup.css";
  *
  * defaultForm: { form, heading, subHeading } for "#form" (the first Form block's form). Without
  * it, "#form" scrolls to the page's form (#enquiry) instead. theme: a landing page theme key
- * (landing-themes.css), so the popup has the page's colours.
+ * (landing-themes.css), so the popup has the page's colours; themeStyle: the colours of a custom theme.
  */
 // Mounted hosts; only one handles clicks: the one with the page's own form, else the first.
 const hosts = [];
 const activeHost = () => hosts.find((h) => h.hasDefault) || hosts[0];
 
-export default function FormPopupHost({ defaultForm = null, theme }) {
+export default function FormPopupHost({ defaultForm = null, theme, themeStyle }) {
   const [state, setState] = useState(null); // { loading, form, heading, subHeading, error }
   const cache = useRef(new Map());
   const lastFocus = useRef(null);
@@ -102,7 +102,7 @@ export default function FormPopupHost({ defaultForm = null, theme }) {
   if (!state || typeof document === "undefined") return null;
 
   return createPortal(
-    <div className="ta-svc ta-fp" data-lp-theme={theme} role="presentation" onMouseDown={(event) => event.target === event.currentTarget && close()}>
+    <div className="ta-svc ta-fp" data-lp-theme={theme} style={themeStyle} role="presentation" onMouseDown={(event) => event.target === event.currentTarget && close()}>
       <div className="ta-fp-dialog lead-card" role="dialog" aria-modal="true" aria-label={state.heading || "Enquiry form"}>
         {/* Heading stays on top, the fields scroll, the submit button stays at the bottom (form-popup.css). */}
         <div className="ta-fp-head">

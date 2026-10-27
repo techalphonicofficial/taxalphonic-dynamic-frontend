@@ -17,9 +17,28 @@ export const LANDING_THEMES = [
 ];
 
 const KEYS = new Set(LANDING_THEMES.map((t) => t.key));
+const HEX = /^#[0-9a-f]{6}$/i;
 
-/** The theme key of a landing page's Header block, or "default". */
+/**
+ * A page's own colours (admin "Create your own theme"): pageTheme "custom" with
+ * payload.customTheme { brand, accent, deep }. Only exact hex colours are used (they go into CSS).
+ */
+function customColours(header) {
+  const payload = header?.payload || {};
+  if (payload.pageTheme !== "custom") return null;
+  const custom = payload.customTheme || {};
+  return ["brand", "accent", "deep"].every((c) => HEX.test(String(custom[c] || ""))) ? custom : null;
+}
+
+/** The theme key of a landing page's Header block ("custom" for the page's own colours), or "default". */
 export function landingThemeOf(header) {
+  if (customColours(header)) return "custom";
   const key = String(header?.payload?.pageTheme || "").trim();
   return KEYS.has(key) ? key : "default";
+}
+
+/** Inline CSS variables of a custom theme (landing-themes.css takes the rest), else undefined. */
+export function landingThemeStyle(header) {
+  const custom = customColours(header);
+  return custom ? { "--t-brand": custom.brand, "--t-accent": custom.accent, "--t-deep": custom.deep } : undefined;
 }

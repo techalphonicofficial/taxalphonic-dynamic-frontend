@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { openFormPopup } from "@/lib/formPopup";
+import { blockLandingNavigation } from "@/lib/landingLinks";
 import { HomeBlock } from "../home/HomeSections";
 import CommonBlock from "../blocks/CommonBlocks";
 import BlockBackground from "../blocks/BlockBackground";
@@ -34,6 +35,7 @@ function useGo() {
     const target = String(url || "").trim();
     if (!target) return;
     if (openFormPopup(target, label)) return; // "#form-<id>": form popup (FormPopupHost)
+    if (blockLandingNavigation(target, label)) return; // landing pages never navigate away
     if (target.startsWith("#")) document.getElementById(target.slice(1))?.scrollIntoView({ behavior: "smooth" });
     else if (isExternal(target)) window.open(target, "_blank", "noopener");
     else router.push(target);

@@ -2,6 +2,7 @@
 
 import { startTransition, useActionState, useEffect, useId } from "react";
 import { useRouter } from "next/navigation";
+import { landingLocked } from "@/lib/landingLinks";
 import { submitCmsForm } from "@/service/formSubmission";
 
 const INPUT_TYPES = { text: "text", email: "email", phone: "tel", number: "number", date: "date" };
@@ -94,6 +95,7 @@ export default function CmsForm({ form, compact = false }) {
 
   useEffect(() => {
     if (state.status !== "success" || !state.redirectUrl) return;
+    if (landingLocked()) return; // landing pages: the success message stays, no redirect away
     if (state.redirectUrl.startsWith("/")) router.push(state.redirectUrl);
     else window.location.assign(state.redirectUrl);
   }, [state, router]);

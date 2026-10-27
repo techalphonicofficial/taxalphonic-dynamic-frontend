@@ -1029,11 +1029,30 @@
   animation: qlPulse 2s ease-in-out infinite;
 }
 
+/* One line: the chips scroll sideways (thin hidden scrollbar, faded edge); "All Taxpedia" stays outside. */
 .ta-home .ql-chips {
   display: flex;
   align-items: center;
   gap: 9px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  padding: 4px 2px;
+  -webkit-overflow-scrolling: touch;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
+}
+
+.ta-home .ql-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.ta-home .ql-chip {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .ta-home .ql-chip {
@@ -1083,21 +1102,18 @@
   transform: translateX(3px);
 }
 
+.ta-home .ql-in > .ql-more {
+  flex-shrink: 0;
+}
+
+/* Phones: the label on its own line, then chips (scrolling) and "All Taxpedia" in one row. */
 @media(max-width:760px) {
   .ta-home .ql-in {
-    align-items: flex-start;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 10px;
   }
-  .ta-home .ql-chips {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    width: 100%;
-    padding-bottom: 4px;
-    -webkit-overflow-scrolling: touch;
-  }
-  .ta-home .ql-chip {
-    flex-shrink: 0;
+  .ta-home .ql-label {
+    flex-basis: 100%;
   }
 }
 
