@@ -10,7 +10,7 @@ import { createMetadata } from "@/lib/seoMetadata";
 import { getLandingPage, getLandingThankYou } from "@/service/landingPageService";
 import TrackingCode from "@/components/tax-alphonic/landing/TrackingCode";
 import ThankYouRedirect from "@/components/tax-alphonic/landing/ThankYouRedirect";
-import { LANDING_THANK_YOU_PATH } from "@/lib/landingHost.mjs";
+import { LANDING_THANK_YOU_PATH, landingSiteOrigin } from "@/lib/landingHost.mjs";
 import { getFooterNavigation, getHeaderNavigation } from "@/service/navigationService";
 import { getSiteSettings } from "@/service/siteSettingsService";
 import { withSeoConfig } from "@/service/seoConfigService";
@@ -69,13 +69,19 @@ export default async function LandingHostPage({ params }) {
   ]);
 
   const seo = await seoOf(page);
+  // Thank-you page as a full services.taxalphonic.com URL (LANDING_SITE_URL overrides), never the
+  // main site: no website header / footer there, and the ad tracking runs on the landing host.
+  const h = await headers();
+  const host = (h.get("x-forwarded-host") || h.get("host") || "").split(",")[0].trim();
+  const proto = (h.get("x-forwarded-proto") || "https").split(",")[0].trim();
+  const thanksUrl = `${landingSiteOrigin(host, proto)}${LANDING_THANK_YOU_PATH}?from=${encodeURIComponent(page.slug)}`;
 
   return (
     <>
       <JsonLd value={seo.schemaMarkup} />
       {/* Tracking for every landing page (admin: Landing Pages → Thank-you page & tracking). */}
       <TrackingCode html={thanks?.allHead} page={page.slug} where="head" />
-      {thanks?.enabled && <ThankYouRedirect url={`${LANDING_THANK_YOU_PATH}?from=${page.slug}`} />}
+      {thanks?.enabled && <ThankYouRedirect url={thanksUrl} />}
       <LandingPage
         page={page}
         branding={branding}

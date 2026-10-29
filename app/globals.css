@@ -99,6 +99,8 @@ textarea {
 
 html {
   scroll-behavior: smooth;
+  /* Sticky site header (Header.jsx writes its height): #anchor jumps stop below it. */
+  scroll-padding-top: calc(var(--ta-header-h, 0px) + 12px);
 }
 
 body {

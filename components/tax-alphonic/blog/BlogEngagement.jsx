@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getBlogEngagement, loadBlogComments, postBlogComment, setBlogLike } from "@/service/blogEngagement";
+import MathCaptcha from "../forms/MathCaptcha";
 
 // Likes and comments under a blog post (styles: "Likes and comments" in blog.css).
 // The visitor is anonymous: a random id in localStorage gives one like per browser per post.
@@ -125,6 +126,9 @@ export default function BlogEngagement({ slug, initialLikes = 0 }) {
   const [sending, setSending] = useState(false);
   const [notice, setNotice] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
+  // Arithmetic captcha: a new question after every post attempt the API refused on it, and after a post.
+  const [captchaKey, setCaptchaKey] = useState(0);
+  const [captchaReady, setCaptchaReady] = useState(false);
 
   const listRef = useRef(null);
   const textRef = useRef(null);
@@ -231,6 +235,9 @@ export default function BlogEngagement({ slug, initialLikes = 0 }) {
     const errs = {};
     if (form.name.trim().length < 2) errs.name = "Please enter your name.";
     if (form.body.trim().length < 2) errs.body = "Please write a comment.";
+    const data = new FormData(e.currentTarget);
+    const captcha = { _captcha: String(data.get("_captcha") || ""), _captchaToken: String(data.get("_captchaToken") || "") };
+    if (captchaReady && captcha._captchaToken && !captcha._captcha.trim()) errs._captcha = "Please answer the security question.";
     if (Object.keys(errs).length) {
       setFieldErrors(errs);
       setExpanded(true);
@@ -238,13 +245,16 @@ export default function BlogEngagement({ slug, initialLikes = 0 }) {
     }
     setSending(true);
     setNotice(null);
-    const res = await postBlogComment(slug, visitorRef.current, form);
+    const res = await postBlogComment(slug, visitorRef.current, { ...form, ...captcha });
     setSending(false);
     if (!res.ok) {
       setFieldErrors(res.fieldErrors || {});
+      if (res.fieldErrors?._captcha) setCaptchaKey((k) => k + 1);
       setNotice({ tone: "error", text: res.message });
       return;
     }
+    setFieldErrors({});
+    setCaptchaKey((k) => k + 1);
     saveProfile({ name: form.name.trim(), email: form.email.trim() });
     setForm((f) => ({ ...f, body: "" }));
     if (textRef.current) textRef.current.style.height = "auto";
@@ -307,9 +317,10 @@ export default function BlogEngagement({ slug, initialLikes = 0 }) {
                   </label>
                   <input className="bc-hp" type="text" tabIndex={-1} autoComplete="off" value={form._hp} onChange={update("_hp")} aria-hidden="true" />
                 </div>
+                <MathCaptcha className="bc-captcha" resetKey={captchaKey} onReadyChange={setCaptchaReady} error={fieldErrors._captcha} />
                 <div className="bc-actions">
                   <span className="bc-chars">{form.body.length > 1500 ? `${2000 - form.body.length} left` : ""}</span>
-                  <button type="submit" className="btn-primary" disabled={sending || form.body.trim().length < 2}>{sending ? "Posting…" : "Post"}</button>
+                  <button type="submit" className="btn-primary" disabled={sending || !captchaReady || form.body.trim().length < 2}>{sending ? "Posting…" : "Post"}</button>
                 </div>
               </div>
             </div>

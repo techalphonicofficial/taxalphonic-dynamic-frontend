@@ -420,7 +420,7 @@
 
 .ta-svc .side {
   position: sticky;
-  top: 80px;
+  top: calc(var(--ta-header-h, 64px) + 16px);
   align-self: start;
 }
 

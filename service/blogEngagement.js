@@ -69,6 +69,9 @@ export async function postBlogComment(slug, visitorId, input) {
     email: String(input?.email || "").slice(0, 200),
     body: String(input?.body || "").slice(0, 2500),
     _hp: String(input?._hp || ""),
+    // Arithmetic captcha (MathCaptcha); the backend checks the answer against the signed token.
+    _captcha: String(input?._captcha || "").slice(0, 10),
+    _captchaToken: String(input?._captchaToken || "").slice(0, 600),
   };
   try {
     const res = await apiClient(`${base(slug)}/comments`, {

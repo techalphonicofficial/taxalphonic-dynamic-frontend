@@ -1,10 +1,11 @@
 "use client";
 
-import { startTransition, useActionState, useEffect, useId } from "react";
+import { startTransition, useActionState, useEffect, useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import { landingLocked } from "@/lib/landingLinks";
 import { submitCmsForm } from "@/service/formSubmission";
 import { thankYouUrl } from "../landing/ThankYouRedirect";
+import MathCaptcha from "./MathCaptcha";
 
 const INPUT_TYPES = { text: "text", email: "email", phone: "tel", number: "number", date: "date" };
 const AUTOCOMPLETE = { email: "email", phone: "tel" };
@@ -92,7 +93,14 @@ export default function CmsForm({ form, compact = false }) {
   const router = useRouter();
   const baseId = useId();
   const identifier = form?.slug || form?.id;
-  const [state, formAction, pending] = useActionState(submitCmsForm.bind(null, identifier), initialState);
+  // Arithmetic captcha: a "_captcha" error means the token is used up, so `captchaRound` goes up
+  // and MathCaptcha loads a new question.
+  const [state, formAction, pending] = useActionState(async (prev, formData) => {
+    const next = await submitCmsForm(identifier, prev, formData);
+    return { ...next, captchaRound: (prev.captchaRound || 0) + (next.fieldErrors?._captcha ? 1 : 0) };
+  }, initialState);
+  const [captchaReady, setCaptchaReady] = useState(false);
+  const captchaError = state.fieldErrors?._captcha || "";
 
   useEffect(() => {
     if (state.status !== "success") return;
@@ -153,6 +161,7 @@ export default function CmsForm({ form, compact = false }) {
             </div>
           );
         })}
+        <MathCaptcha resetKey={state.captchaRound || 0} onReadyChange={setCaptchaReady} error={captchaError} />
       </div>
 
       {/* Honeypot: hidden from people, filled in by bots; the API silently drops those submissions. */}
@@ -160,7 +169,7 @@ export default function CmsForm({ form, compact = false }) {
 
       {state.status === "error" && <p className="cms-form-error" role="alert">{state.message}</p>}
 
-      <button type="submit" className="btn-primary" disabled={pending}>
+      <button type="submit" className="btn-primary" disabled={pending || !captchaReady}>
         {pending ? "Submitting…" : form.settings?.submitButtonText || "Submit"}
       </button>
     </form>

@@ -1655,6 +1655,23 @@ export default function Header({ navigation = {}, branding = {} }) {
       )
       .filter(Boolean);
 
+  // Sticky header: its current height goes into --ta-header-h on <html>, so sticky sidebars
+  // (service / home / tools / blog / blocks CSS) and #anchor jumps (scroll-padding-top) stay below it.
+  const headerRef = useRef(null);
+  useLayoutEffect(() => {
+    const el = headerRef.current;
+    if (!el) return undefined;
+    const root = document.documentElement;
+    const write = () => root.style.setProperty("--ta-header-h", `${Math.round(el.getBoundingClientRect().height)}px`);
+    write();
+    const observer = new ResizeObserver(write);
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty("--ta-header-h");
+    };
+  }, []);
+
   return (
     <>
       {/* =====================================================
@@ -1662,8 +1679,10 @@ export default function Header({ navigation = {}, branding = {} }) {
       ===================================================== */}
 
       <header
+        ref={headerRef}
         className="
-          relative
+          sticky
+          top-0
           z-[900]
           w-full
           border-t

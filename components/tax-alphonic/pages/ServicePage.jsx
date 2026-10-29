@@ -46,7 +46,7 @@ export default function ServicePage({ page }) {
             ) : null}
           </div>
 
-          <aside className="self-start lg:sticky lg:top-6">
+          <aside className="self-start lg:sticky lg:top-[calc(var(--ta-header-h,0px)+24px)]">
             <ExpertCard />
             {page.template ? <TemplateInfo template={page.template} variant="list" /> : null}
           </aside>

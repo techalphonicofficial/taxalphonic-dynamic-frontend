@@ -180,7 +180,7 @@
 .ta-blog .blog-post-body .svc-rich h3 { font-size: 20px; margin: 22px 0 8px; }
 .ta-blog .blog-post-body .svc-rich p { margin-bottom: 16px; }
 .ta-blog .blog-post-body .svc-rich blockquote { border-left: 4px solid var(--brand); padding: 8px 18px; margin: 18px 0; background: var(--mist); border-radius: 0 12px 12px 0; }
-.ta-blog .blog-post-side { position: sticky; top: 110px; display: flex; flex-direction: column; gap: 16px; }
+.ta-blog .blog-post-side { position: sticky; top: calc(var(--ta-header-h, 94px) + 16px); display: flex; flex-direction: column; gap: 16px; }
 .ta-blog .blog-side-card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 18px; box-shadow: var(--shadow); }
 .ta-blog .blog-side-card h3 { font-size: 15px; margin-bottom: 12px; }
 .ta-blog .blog-side-cta { background: linear-gradient(135deg, #0b6f80, var(--brand)); border-color: transparent; color: #fff; }

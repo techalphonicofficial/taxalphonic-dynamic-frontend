@@ -725,7 +725,7 @@
 
 .ta-tools .tool-aside {
   position: sticky;
-  top: 90px;
+  top: calc(var(--ta-header-h, 74px) + 16px);
   display: flex;
   flex-direction: column;
   gap: 18px;

@@ -1065,7 +1065,7 @@
 
 .ta-cb .cb-ts-card {
   position: sticky;
-  top: 90px;
+  top: calc(var(--ta-header-h, 74px) + 16px);
   background: #fff;
   border: 1px solid var(--cb-line);
   border-radius: 18px;

@@ -2598,7 +2598,7 @@
 
 .ta-home .home-side {
   position: sticky;
-  top: 90px;
+  top: calc(var(--ta-header-h, 74px) + 16px);
 }
 
 /* Sidebar blocks are narrow: stack their grids into one column. */
