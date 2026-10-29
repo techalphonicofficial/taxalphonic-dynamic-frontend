@@ -85,6 +85,32 @@ function FeatureSections({ sections, collapsedCount, className }) {
   );
 }
 
+/**
+ * Bundle packages: the services the package includes (admin Packages → Services in this package,
+ * resolved by the backend into includedServices [{ title, note, url }]). A published service links
+ * to its page; a custom item, a draft service or a locked landing link ("#form") is plain text.
+ */
+function IncludedServices({ pkg, title }) {
+  const items = (Array.isArray(pkg.includedServices) ? pkg.includedServices : []).filter((item) => item?.title);
+  if (!items.length) return null;
+
+  return (
+    <div className="pkg-includes">
+      {title && <div className="pkg-includes-title">{title}</div>}
+      <ul>
+        {items.map((item, index) => (
+          <li key={`${item.title}-${index}`}>
+            <span className="pkg-inc-name">
+              {/^\/[^/]/.test(item.url || "") ? <a href={item.url}>{item.title}</a> : item.title}
+            </span>
+            {item.note && <span className="pkg-inc-note">{item.note}</span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function TierPicker({ pkg, tiers, value, onChange }) {
   if (tiers.length < 2) return null;
 
@@ -119,6 +145,8 @@ function SinglePackage({ pkg, labels }) {
         </div>
         <TierPicker pkg={pkg} tiers={tiers} value={tierIndex} onChange={setTierIndex} />
       </div>
+
+      <IncludedServices pkg={pkg} title={labels.includesTitle} />
 
       {plans.length > 0 && (
         <div className="pkg-plans">
@@ -178,6 +206,8 @@ function PackageCard({ pkg, labels }) {
 
       {pkg.description && <p className="pkg-desc">{pkg.description}</p>}
 
+      <IncludedServices pkg={pkg} title={labels.includesTitle} />
+
       <TierPicker pkg={pkg} tiers={tiers} value={tierIndex} onChange={(index) => { setTierIndex(index); setPlanIndex(0); }} />
 
       {tier?.plans.length > 1 && (
@@ -217,6 +247,7 @@ export default function PackagesBlock({ payload, config = {}, ctaHref = "" }) {
     bestValueLabel: payload.bestValueLabel || "",
     featuresTitle: payload.featuresTitle || "",
     recommendedLabel: payload.recommendedLabel || "",
+    includesTitle: payload.includesTitle || "",
   };
   const heading = payload.heading || payload.title;
 

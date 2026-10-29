@@ -224,8 +224,13 @@ function Hero({ service, hero, config }) {
     );
   }
 
+  // Hero → "Text alignment" (centre suits a hero without an image or on a background image),
+  // "Image side" (left puts the image before the text) and "Hero height" (auto = by content).
+  const align = hero.align === "center" ? "center" : "left";
+  const imageLeft = image && hero.imageSide === "left";
+  const tall = ["sm", "md", "lg", "xl"].includes(hero.height) ? ` svc-hero-tall svc-hero-h-${hero.height}` : "";
   return (
-    <div className="svc-hero">
+    <div className={`svc-hero svc-hero-align-${align}${imageLeft ? " svc-hero-img-left" : ""}${tall}`}>
       <div className={`svc-hero-grid${image ? "" : " svc-hero-solo"}`}>
         <div>
           {eyebrow && <span className="eyebrow">{eyebrow}</span>}
