@@ -1047,6 +1047,10 @@ const PLACEMENT_RULES = {
   HomeIndustries: { default: "main", options: WIDE },
   HomePortfolio: { default: "main", options: WIDE },
   CommonTool: { default: "main", options: ANY },
+  // Small general blocks (commonBlocks.js): fit a side column.
+  CommonTrust: { default: "main", options: ANY },
+  CommonContact: { default: "main", options: ANY },
+  CommonMiniFaq: { default: "main", options: ANY },
 };
 
 function placementOf(section) {

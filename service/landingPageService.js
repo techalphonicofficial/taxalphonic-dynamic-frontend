@@ -38,3 +38,19 @@ export const getLandingPage = cache(async function getLandingPage(label) {
     return null;
   }
 });
+
+/**
+ * Thank-you page after a landing form + the landing tracking codes (admin: Landing Pages →
+ * Thank-you page & tracking; GET /api/v1/landing-pages/public/thank-you). Cached for 60 s.
+ * { enabled, icon, heading, message, stepsTitle, steps: [{ text }], backText, showCall, callText,
+ *   allHead, allBody (every landing page), thanksHead, thanksBody (thank-you page only) }, or null.
+ */
+export const getLandingThankYou = cache(async function getLandingThankYou() {
+  try {
+    const payload = await apiClient("/api/v1/landing-pages/public/thank-you", { next: { revalidate: 60 } });
+    return payload?.success && payload.data ? payload.data : null;
+  } catch (error) {
+    if (error.status !== 404) console.error("Unable to load the landing thank-you settings", error);
+    return null;
+  }
+});

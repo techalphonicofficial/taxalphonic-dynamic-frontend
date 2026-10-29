@@ -496,3 +496,135 @@
     margin-left: 0;
   }
 }
+
+/* ---------- Thank-you page after a landing form (ThankYouPage.jsx, app/lp/thank-you) ---------- */
+.ta-landing .lp-thanks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 20px 72px;
+  background:
+    radial-gradient(circle at 20% 0%, color-mix(in srgb, var(--lp-brand) 10%, transparent), transparent 55%),
+    radial-gradient(circle at 90% 100%, color-mix(in srgb, var(--lp-brand) 8%, transparent), transparent 50%);
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+}
+
+.ta-landing .lp-thanks-card {
+  width: 100%;
+  max-width: 620px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid var(--lp-line);
+  border-radius: 22px;
+  padding: 44px 36px 36px;
+  box-shadow: 0 24px 60px rgba(10, 14, 26, .08);
+  color: var(--lp-ink);
+}
+
+.ta-landing .lp-thanks-icon {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 18px;
+  display: grid;
+  place-items: center;
+  font-size: 36px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--lp-brand) 12%, #fff);
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--lp-brand) 6%, #fff);
+}
+
+.ta-landing .lp-thanks h1 {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 0 12px;
+  color: var(--lp-ink);
+}
+
+.ta-landing .lp-thanks-msg {
+  font-size: 16px;
+  color: var(--lp-muted);
+  margin: 0 auto 24px;
+  max-width: 480px;
+  line-height: 1.55;
+}
+
+.ta-landing .lp-thanks-steps {
+  text-align: left;
+  background: color-mix(in srgb, var(--lp-brand) 4%, #fff);
+  border: 1px solid var(--lp-line);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin: 0 0 26px;
+}
+
+.ta-landing .lp-thanks-steps-title {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--lp-brand);
+  margin-bottom: 10px;
+}
+
+.ta-landing .lp-thanks-steps ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.ta-landing .lp-thanks-steps li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  color: var(--lp-ink);
+}
+
+.ta-landing .lp-thanks-steps li span {
+  flex: 0 0 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--lp-brand);
+}
+
+.ta-landing .lp-thanks-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.ta-landing .lp-thanks-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  color: var(--lp-ink);
+  border: 1px solid var(--lp-line);
+  background: #fff;
+}
+
+.ta-landing .lp-thanks-btn.solid {
+  color: #fff;
+  border-color: var(--lp-brand);
+  background: var(--lp-brand);
+}
+
+.ta-landing .lp-thanks-btn:hover { filter: brightness(.96); }
+
+@media (max-width: 560px) {
+  .ta-landing .lp-thanks-card { padding: 32px 20px 26px; border-radius: 18px; }
+  .ta-landing .lp-thanks-btn { width: 100%; justify-content: center; }
+}

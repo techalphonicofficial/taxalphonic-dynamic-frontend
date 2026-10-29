@@ -4,6 +4,7 @@ import { startTransition, useActionState, useEffect, useId } from "react";
 import { useRouter } from "next/navigation";
 import { landingLocked } from "@/lib/landingLinks";
 import { submitCmsForm } from "@/service/formSubmission";
+import { thankYouUrl } from "../landing/ThankYouRedirect";
 
 const INPUT_TYPES = { text: "text", email: "email", phone: "tel", number: "number", date: "date" };
 const AUTOCOMPLETE = { email: "email", phone: "tel" };
@@ -94,8 +95,15 @@ export default function CmsForm({ form, compact = false }) {
   const [state, formAction, pending] = useActionState(submitCmsForm.bind(null, identifier), initialState);
 
   useEffect(() => {
-    if (state.status !== "success" || !state.redirectUrl) return;
-    if (landingLocked()) return; // landing pages: the success message stays, no redirect away
+    if (state.status !== "success") return;
+    if (landingLocked()) {
+      // Landing pages: the shared thank-you page (ad conversion tracking) when it is switched on,
+      // otherwise the success message stays; never the form's own redirect away.
+      const thanks = thankYouUrl();
+      if (thanks) window.location.assign(thanks);
+      return;
+    }
+    if (!state.redirectUrl) return;
     if (state.redirectUrl.startsWith("/")) router.push(state.redirectUrl);
     else window.location.assign(state.redirectUrl);
   }, [state, router]);

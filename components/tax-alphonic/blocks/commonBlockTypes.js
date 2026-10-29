@@ -4,6 +4,9 @@
 export const COMMON_BLOCK_TYPES = [
   "CommonText", "CommonImageText", "CommonImage", "CommonVideo", "CommonGallery", "CommonStats",
   "CommonCards", "CommonLogos", "CommonButtons", "CommonSpacer", "CommonEmbed", "CommonTool",
+  // From the reference design (uirefrence.html).
+  "CommonFormHero", "CommonCaseStudy", "CommonAwards", "CommonTimeline", "CommonTabs", "CommonStory",
+  "CommonTrust", "CommonContact", "CommonMiniFaq", "CommonTextSide",
 ];
 
 export const isCommonSection = (section) => COMMON_BLOCK_TYPES.includes(section?.type);

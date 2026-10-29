@@ -7,7 +7,10 @@ import { regionMode, splitLandingSections } from "@/components/tax-alphonic/land
 import { LANDING_HEADER } from "@/lib/landingHost.mjs";
 import JsonLd from "@/components/seo/JsonLd";
 import { createMetadata } from "@/lib/seoMetadata";
-import { getLandingPage } from "@/service/landingPageService";
+import { getLandingPage, getLandingThankYou } from "@/service/landingPageService";
+import TrackingCode from "@/components/tax-alphonic/landing/TrackingCode";
+import ThankYouRedirect from "@/components/tax-alphonic/landing/ThankYouRedirect";
+import { LANDING_THANK_YOU_PATH } from "@/lib/landingHost.mjs";
 import { getFooterNavigation, getHeaderNavigation } from "@/service/navigationService";
 import { getSiteSettings } from "@/service/siteSettingsService";
 import { withSeoConfig } from "@/service/seoConfigService";
@@ -58,10 +61,11 @@ export default async function LandingHostPage({ params }) {
   const siteHeader = regionMode(header) === "site";
   const siteFooter = regionMode(footer) === "site";
   // The website's own header / footer only when a region uses it.
-  const [navigation, footerMenu, { branding, contact }] = await Promise.all([
+  const [navigation, footerMenu, { branding, contact }, thanks] = await Promise.all([
     siteHeader ? getHeaderNavigation() : null,
     siteFooter ? getFooterNavigation() : null,
     getSiteSettings(),
+    getLandingThankYou(),
   ]);
 
   const seo = await seoOf(page);
@@ -69,6 +73,9 @@ export default async function LandingHostPage({ params }) {
   return (
     <>
       <JsonLd value={seo.schemaMarkup} />
+      {/* Tracking for every landing page (admin: Landing Pages → Thank-you page & tracking). */}
+      <TrackingCode html={thanks?.allHead} page={page.slug} where="head" />
+      {thanks?.enabled && <ThankYouRedirect url={`${LANDING_THANK_YOU_PATH}?from=${page.slug}`} />}
       <LandingPage
         page={page}
         branding={branding}
@@ -76,6 +83,7 @@ export default async function LandingHostPage({ params }) {
         siteHeader={siteHeader ? <Header navigation={navigation} branding={branding} /> : null}
         siteFooter={siteFooter ? <Footer menu={footerMenu} branding={branding} contact={contact} /> : null}
       />
+      <TrackingCode html={thanks?.allBody} page={page.slug} where="body" />
     </>
   );
 }

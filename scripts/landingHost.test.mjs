@@ -1,7 +1,7 @@
 // node --test scripts/landingHost.test.mjs  (npm run test:landing)
 import test from "node:test";
 import assert from "node:assert/strict";
-import { isLandingLabel, landingBaseDomains, landingLabelFromHost } from "../lib/landingHost.mjs";
+import { isLandingLabel, isLandingThankYouPath, landingBaseDomains, landingLabelFromHost, landingLabelFromPath } from "../lib/landingHost.mjs";
 
 const domains = ["taxalphonic.com", "localhost"];
 
@@ -56,4 +56,12 @@ test("the landing host and its origin", async () => {
   assert.equal(landingSiteOrigin("cbdt.localhost:3000", "http", domains, ""), "http://services.localhost:3000");
   assert.equal(landingSiteOrigin("localhost:3000", "http", domains, ""), "http://services.localhost:3000");
   assert.equal(landingSiteOrigin("x", "https", domains, "https://lp.example.com/"), "https://lp.example.com");
+});
+
+test("/lp/thank-you is the thank-you page, never a landing label", () => {
+  assert.equal(isLandingThankYouPath("/lp/thank-you"), true);
+  assert.equal(isLandingThankYouPath("/lp/thank-you/"), true);
+  assert.equal(isLandingThankYouPath("/lp/thank-you/x"), false);
+  assert.equal(isLandingLabel("thank-you"), false);
+  assert.equal(landingLabelFromPath("/lp/thank-you"), null);
 });

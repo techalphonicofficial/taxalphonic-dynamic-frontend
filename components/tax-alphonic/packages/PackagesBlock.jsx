@@ -22,6 +22,21 @@ function formatAmount(value) {
   return /^[₹$€£]/.test(text) ? text : `₹${text}`;
 }
 
+/**
+ * A plan's details (admin: the plan's "Details" box, saved as plan.keywords). One line = plain
+ * text; several lines = a ticked list, one point per line.
+ */
+function PlanDetails({ text, className = "pkg-extra" }) {
+  const lines = String(text || "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  if (!lines.length) return null;
+  if (lines.length === 1) return <div className={className}>{lines[0]}</div>;
+  return (
+    <ul className={`${className} pkg-extra-list`}>
+      {lines.map((line, index) => <li key={index}>{line.replace(/^[-•*✓✔✅]\s*/u, "")}</li>)}
+    </ul>
+  );
+}
+
 function linkProps(href) {
   return /^https?:\/\//i.test(href) ? { href, target: "_blank", rel: "noopener noreferrer" } : { href };
 }
@@ -159,7 +174,7 @@ function SinglePackage({ pkg, labels }) {
                 {plan.originalTotal && <s>{formatAmount(plan.originalTotal)}</s>}
                 {plan.savePercentage && <span className="pkg-save">Save {String(plan.savePercentage).replace(/%$/, "")}%</span>}
               </div>
-              {plan.keywords && <div className="pkg-extra">{plan.keywords}</div>}
+              <PlanDetails text={plan.keywords} />
               <PlanButton labels={labels} plan={plan} className={`pbtn ${index === bestIndex ? "solid" : "outline"}`} />
             </div>
           ))}
@@ -194,13 +209,13 @@ function PackageCard({ pkg, labels }) {
       {plan && (
         <>
           <div className="price">{formatAmount(plan.monthlyPrice)}{labels.priceSuffix && <small>{labels.priceSuffix}</small>}</div>
-          {(plan.originalTotal || plan.savePercentage || plan.keywords) && (
+          {(plan.originalTotal || plan.savePercentage) && (
             <div className="pkg-meta">
               {plan.originalTotal && <s>{formatAmount(plan.originalTotal)}</s>}
               {plan.savePercentage && <span className="pkg-save">Save {String(plan.savePercentage).replace(/%$/, "")}%</span>}
-              {plan.keywords && <span>{plan.keywords}</span>}
             </div>
           )}
+          <PlanDetails text={plan.keywords} className="pkg-extra pkg-card-extra" />
         </>
       )}
 

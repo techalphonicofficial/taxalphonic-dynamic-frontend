@@ -26,6 +26,7 @@ const DEFAULT_PLACEMENT = {
   Highlights: "top",
   CallToAction: "bottom",
   LocationsServed: "bottom",
+  CommonFormHero: "top", // hero with a form: full width under the hero
 };
 const PLACEMENTS = ["top", "main", "sidebar", "bottom"];
 

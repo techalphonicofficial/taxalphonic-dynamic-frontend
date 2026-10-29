@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { openFormPopup } from "@/lib/formPopup";
 import { blockLandingNavigation } from "@/lib/landingLinks";
 import { sanitizeHtml } from "@/lib/sanitizeHtml";
+import CmsForm from "../forms/CmsForm";
 import Calculator from "../tools/calculators";
 import "../tools/tools-page.css";
 import "./blocks.css";
@@ -332,7 +333,295 @@ function Tool({ p }) {
   );
 }
 
+// ---- Blocks from the reference design (uirefrence.html) ------------------------------------
+
+/** "Heading with *highlight*": the highlighted words must end the heading (as on the hero). */
+function Highlighted({ text, highlight }) {
+  const heading = String(text || "");
+  const words = String(highlight || "").trim();
+  if (!words || !heading.endsWith(words)) return heading;
+  return <>{heading.slice(0, -words.length)}<em>{words}</em></>;
+}
+
+const telHref = (phone) => `tel:${String(phone || "").replace(/[^\d+]/g, "")}`;
+const waHref = (number, text) => `https://wa.me/${String(number || "").replace(/\D/g, "")}${has(text) ? `?text=${encodeURIComponent(text)}` : ""}`;
+
+/**
+ * Hero with a form (reference: Talk to an expert / Book a meeting): text, points and trust chips
+ * on one side, a CMS form in a card on the other (p.form, filled in by the backend from p.formId).
+ */
+function FormHero({ p }) {
+  const points = list(p.points).filter((x) => has(x.title) || has(x.text));
+  const chips = list(p.chips).filter((x) => has(x.text));
+  const fields = list(p.form?.fields);
+  if (!has(p.heading) && !fields.length) return null;
+  return (
+    <Section type="formhero" p={p}>
+      <div className={`cb-fh${p.formSide === "left" ? " cb-fh-rev" : ""}${fields.length ? "" : " cb-fh-solo"}`}>
+        <div className="cb-fh-text">
+          {has(p.kicker) && <span className="cb-fh-eyebrow">{p.kicker}</span>}
+          {has(p.heading) && <h1 className="cb-fh-h"><Highlighted text={p.heading} highlight={p.highlight} /></h1>}
+          {has(p.text) && <p className="cb-fh-lede">{p.text}</p>}
+          {points.length > 0 && (
+            <div className="cb-fh-points">
+              {points.map((x, i) => (
+                <div key={i} className="cb-fh-point">
+                  {has(x.icon) && <span className="cb-fh-point-ic"><Icon value={x.icon} /></span>}
+                  <div>{has(x.title) && <b>{x.title}</b>}{has(x.text) && <p>{x.text}</p>}</div>
+                </div>
+              ))}
+            </div>
+          )}
+          {chips.length > 0 && (
+            <div className="cb-fh-chips">
+              {chips.map((x, i) => <span key={i}>{has(x.icon) && <Icon value={x.icon} />} {x.text}</span>)}
+            </div>
+          )}
+          {has(p.rating) && <div className="cb-fh-rating"><span className="cb-stars" aria-hidden>★★★★★</span> {p.rating}</div>}
+        </div>
+        {fields.length > 0 && (
+          <div className="cb-fh-card">
+            {has(p.formHeading) && <h3>{p.formHeading}</h3>}
+            {has(p.formSub) && <p className="cb-fh-card-sub">{p.formSub}</p>}
+            <CmsForm form={p.form} compact />
+            {has(p.formNote) && <p className="cb-fh-note">{p.formNote}</p>}
+          </div>
+        )}
+      </div>
+    </Section>
+  );
+}
+
+/** Case study (reference .cs-card): a story with a few result numbers. */
+function CaseStudy({ p }) {
+  const stats = list(p.stats).filter((x) => has(x.value));
+  if (!has(p.text) && !stats.length) return null;
+  return (
+    <Section type="case" p={p}>
+      <Head p={p} />
+      <div className="cb-case">
+        <div className="cb-case-quote" aria-hidden>“</div>
+        <div className="cb-case-body">
+          {has(p.tag) && <div className="cb-case-tag">{p.tag}</div>}
+          {has(p.client) && <b className="cb-case-client">{p.client}</b>}
+          <Paragraphs text={p.text} />
+          {stats.length > 0 && (
+            <div className="cb-case-stats">
+              {stats.map((x, i) => <div key={i} className="cb-case-stat"><b>{x.value}</b>{has(x.label) && <span>{x.label}</span>}</div>)}
+            </div>
+          )}
+          {has(p.note) && <p className="cb-case-note">{p.note}</p>}
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+/** Awards / certifications (reference .award-grid). */
+function Awards({ p }) {
+  const items = list(p.items).filter((x) => has(x.title));
+  if (!items.length) return null;
+  return (
+    <Section type="awards" p={p}>
+      <Head p={p} center />
+      <div className="cb-awards">
+        {items.map((x, i) => (
+          <div key={i} className="cb-award">
+            {has(x.icon) && <div className="cb-award-ic"><Icon value={x.icon} /></div>}
+            <b>{x.title}</b>
+            {has(x.text) && <span>{x.text}</span>}
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+/** Timeline (reference .ind-timeline past / present / future): steps side by side or down the page. */
+function Timeline({ p }) {
+  const items = list(p.items).filter((x) => has(x.title) || has(x.text));
+  if (!items.length) return null;
+  return (
+    <Section type="timeline" p={p}>
+      <Head p={p} />
+      <div className={`cb-timeline${p.layout === "vertical" ? " cb-timeline-v" : ""}`} style={{ "--cb-cols": Math.min(items.length, 4) }}>
+        {items.map((x, i) => (
+          <div key={i} className="cb-tl-item" style={has(x.color) ? { "--tl": x.color } : undefined}>
+            <span className="cb-tl-dot" aria-hidden>{has(x.icon) ? <Icon value={x.icon} /> : i + 1}</span>
+            <div className="cb-tl-body">
+              {has(x.tag) && <span className="cb-tl-tag">{x.tag}</span>}
+              {has(x.title) && <b>{x.title}</b>}
+              {has(x.text) && <p>{x.text}</p>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+/** Lines of a tab text: blank lines = paragraphs, lines starting with "- " = a ticked list. */
+function TabText({ text }) {
+  const blocks = String(text || "").split(/\n\s*\n/).map((b) => b.trim()).filter(Boolean);
+  return blocks.map((block, i) => {
+    const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
+    if (lines.every((l) => /^[-•*]\s+/.test(l))) {
+      return <ul key={i} className="cb-ticks">{lines.map((l, j) => <li key={j}>{l.replace(/^[-•*]\s+/, "")}</li>)}</ul>;
+    }
+    return <Paragraphs key={i} text={block} />;
+  });
+}
+
+/** Tabs (reference .tpx-tabs / .lc-tabs): one panel of text per tab, with an optional button. */
+function Tabs({ p }) {
+  const tabs = list(p.tabs).filter((x) => has(x.label));
+  const [active, setActive] = useState(0);
+  if (!tabs.length) return null;
+  const tab = tabs[Math.min(active, tabs.length - 1)];
+  return (
+    <Section type="tabs" p={p}>
+      <Head p={p} />
+      <div className="cb-tabs" role="tablist">
+        {tabs.map((x, i) => (
+          <button key={i} type="button" role="tab" aria-selected={tab === x} className={`cb-tab${tab === x ? " on" : ""}`} onClick={() => setActive(i)}>
+            {has(x.icon) && <Icon value={x.icon} />} {x.label}
+          </button>
+        ))}
+      </div>
+      <div className="cb-tab-panel" role="tabpanel">
+        {has(tab.heading) && <h3>{tab.heading}</h3>}
+        <TabText text={tab.text} />
+        {hasButton({ text: tab.buttonText }) && <div className="cb-buttons"><Button button={{ text: tab.buttonText, url: tab.buttonUrl }} /></div>}
+      </div>
+    </Section>
+  );
+}
+
+/** Client story (reference .jex-flow): before → what we did → the result. */
+function Story({ p }) {
+  const steps = [
+    { key: "before", tag: p.beforeLabel || "😟 Before", text: p.before },
+    { key: "did", tag: p.didLabel || "🛠️ What we did", text: p.did },
+    { key: "after", tag: p.afterLabel || "🎉 The result", text: p.after },
+  ].filter((s) => has(s.text));
+  if (!steps.length) return null;
+  return (
+    <Section type="story" p={p}>
+      <Head p={p} />
+      <div className="cb-story">
+        {(has(p.client) || has(p.icon)) && (
+          <div className="cb-story-who">{has(p.icon) && <span className="cb-story-avatar"><Icon value={p.icon} /></span>}{has(p.client) && <b>{p.client}</b>}</div>
+        )}
+        <div className="cb-story-flow">
+          {steps.map((s, i) => (
+            <Fragment key={s.key}>
+              {i > 0 && <span className="cb-story-arrow" aria-hidden>→</span>}
+              <div className={`cb-story-step cb-story-${s.key}`}><span className="cb-story-tag">{s.tag}</span><p>{s.text}</p></div>
+            </Fragment>
+          ))}
+        </div>
+        {has(p.note) && <p className="cb-caption">{p.note}</p>}
+      </div>
+    </Section>
+  );
+}
+
+/** Trust badges (reference .side-trust): small icon + text tiles; fits the sidebar too. */
+function Trust({ p }) {
+  const items = list(p.items).filter((x) => has(x.text));
+  if (!items.length) return null;
+  return (
+    <Section type="trust" p={p}>
+      <div className="cb-trust">
+        {has(p.heading) && <b className="cb-trust-h">{p.heading}</b>}
+        <div className="cb-trust-grid" style={{ "--cb-cols": cols(p.columns, 2) }}>
+          {items.map((x, i) => <div key={i} className="cb-trust-item">{has(x.icon) && <span><Icon value={x.icon} /></span>}{x.text}</div>)}
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+/** Contact card (reference sidebar call / WhatsApp card): call, WhatsApp and a button. */
+function Contact({ p }) {
+  const phone = String(p.phone || "").trim();
+  const whatsapp = String(p.whatsapp || "").replace(/\D/g, "");
+  if (!has(p.heading) && !phone && !whatsapp && !hasButton(p.button)) return null;
+  return (
+    <Section type="contact" p={p}>
+      <div className="cb-contact">
+        {has(p.icon) && <div className="cb-contact-ic"><Icon value={p.icon} /></div>}
+        {has(p.heading) && <b className="cb-contact-h">{p.heading}</b>}
+        {has(p.text) && <p>{p.text}</p>}
+        <div className="cb-contact-actions">
+          {hasButton(p.button) && <Button button={p.button} />}
+          {phone && <a className="cb-contact-link" href={telHref(phone)}>📞 {has(p.phoneText) ? p.phoneText : phone}</a>}
+          {whatsapp && <a className="cb-contact-link cb-contact-wa" href={waHref(whatsapp, p.whatsappMessage)} target="_blank" rel="noopener noreferrer">💬 {has(p.whatsappText) ? p.whatsappText : "Chat on WhatsApp"}</a>}
+        </div>
+        {has(p.note) && <p className="cb-contact-note">{p.note}</p>}
+      </div>
+    </Section>
+  );
+}
+
+/** Quick answers (reference .side-faq-mini): a short FAQ that also fits the sidebar. */
+function MiniFaq({ p }) {
+  const items = list(p.items).filter((x) => has(x.question) && has(x.answer));
+  if (!items.length) return null;
+  return (
+    <Section type="minifaq" p={p}>
+      <div className="cb-minifaq">
+        {has(p.heading) && <b className="cb-minifaq-h">{p.heading}</b>}
+        {items.map((x, i) => (
+          <details key={i} className="cb-minifaq-item" open={i === 0 && p.firstOpen === "yes"}>
+            <summary>{x.question}</summary>
+            <p>{x.answer}</p>
+          </details>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+/** Long text with a side card (reference .hc-grid): an SEO intro next to a short points card. */
+function TextSide({ p }) {
+  const points = list(p.points).filter((x) => has(x.text));
+  if (!has(p.heading) && !has(p.text)) return null;
+  const card = has(p.cardTitle) || points.length > 0 || hasButton(p.button);
+  return (
+    <Section type="textside" p={p}>
+      <div className={`cb-ts${card ? "" : " cb-ts-solo"}`}>
+        <div className="cb-ts-main">
+          {has(p.kicker) && <span className="cb-kicker">{p.kicker}</span>}
+          {has(p.heading) && <h2>{p.heading}</h2>}
+          {has(p.lead) && <p className="cb-ts-lead">{p.lead}</p>}
+          <Paragraphs text={p.text} />
+        </div>
+        {card && (
+          <aside className="cb-ts-card">
+            {has(p.cardTitle) && <b className="cb-ts-card-h">{p.cardTitle}</b>}
+            {points.length > 0 && (
+              <ul>{points.map((x, i) => <li key={i}><span>{has(x.icon) ? <Icon value={x.icon} /> : "✓"}</span>{x.text}</li>)}</ul>
+            )}
+            {hasButton(p.button) && <div className="cb-buttons"><Button button={p.button} /></div>}
+          </aside>
+        )}
+      </div>
+    </Section>
+  );
+}
+
 const BLOCKS = {
+  CommonFormHero: FormHero,
+  CommonCaseStudy: CaseStudy,
+  CommonAwards: Awards,
+  CommonTimeline: Timeline,
+  CommonTabs: Tabs,
+  CommonStory: Story,
+  CommonTrust: Trust,
+  CommonContact: Contact,
+  CommonMiniFaq: MiniFaq,
+  CommonTextSide: TextSide,
   CommonText: Text,
   CommonImageText: ImageText,
   CommonImage: Image,
