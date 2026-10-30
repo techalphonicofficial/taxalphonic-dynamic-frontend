@@ -11,6 +11,7 @@ import "./home-page.css";
 import BlockBackground from "../blocks/BlockBackground";
 import CommonBlock from "../blocks/CommonBlocks";
 import { isCommonSection } from "../blocks/commonBlockTypes";
+import ButtonLabel from "../blocks/ButtonLabel";
 
 /*
  * Homepage blocks from the CMS Page Builder (page slug "home"), or DEFAULT_HOME_SECTIONS.
@@ -75,7 +76,7 @@ function Card({ url, className, style, children }) {
 function Button({ button, className = "btn-primary", style }) {
   const go = useGo();
   if (!hasButton(button)) return null;
-  return <button type="button" className={className} style={style} onClick={() => go(button.url, button.text)}>{button.text}</button>;
+  return <button type="button" className={className} style={style} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
 }
 
 /** Emoji/text icon, or an image when the CMS stores a URL. */
@@ -591,13 +592,21 @@ function WhyUs({ p }) {
 function Comparison({ p }) {
   const rows = list(p.rows);
   if (!rows.length) return null;
+  // Optional last column: a button per row (text + link / form popup); shown only when a row has one.
+  const rowButton = (r) => (has(r.buttonText) ? { text: r.buttonText, url: r.buttonUrl, icon: r.buttonIcon } : null);
+  const withButtons = rows.some(rowButton);
   return (
     <div className="compare">
       <div className="wrap">
         <SecHead heading={p.heading} sub={p.sub} />
-        <div className="cmp-table">
-          <div className="cmp-row cmp-head"><div>{p.labelHeader}</div><div className="cmp-us">{p.oursHeader}</div><div>{p.col2Header}</div><div>{p.col3Header}</div></div>
-          {rows.map((r, i) => <div key={i} className="cmp-row"><div>{r.label}</div><div className="cmp-us">{r.ours}</div><div>{r.col2}</div><div>{r.col3}</div></div>)}
+        <div className={`cmp-table${withButtons ? " cmp-has-btn" : ""}`}>
+          <div className="cmp-row cmp-head"><div>{p.labelHeader}</div><div className="cmp-us">{p.oursHeader}</div><div>{p.col2Header}</div><div>{p.col3Header}</div>{withButtons && <div>{p.buttonHeader}</div>}</div>
+          {rows.map((r, i) => (
+            <div key={i} className="cmp-row">
+              <div>{r.label}</div><div className="cmp-us">{r.ours}</div><div>{r.col2}</div><div>{r.col3}</div>
+              {withButtons && <div className="cmp-act">{rowButton(r) && <Button button={rowButton(r)} className="cmp-btn" />}</div>}
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -635,7 +644,7 @@ function ExpertCta({ p }) {
             <div className="eb-cta">
               <Button button={p.primaryButton} style={{ background: "#fff", color: "var(--ink)" }} />
               {/* Shown only with a link, e.g. https://wa.me/91XXXXXXXXXX */}
-              {hasButton(p.secondaryButton) && has(p.secondaryButton.url) && <A url={p.secondaryButton.url} className="eb-wa">{p.secondaryButton.text}</A>}
+              {hasButton(p.secondaryButton) && has(p.secondaryButton.url) && <A url={p.secondaryButton.url} className="eb-wa"><ButtonLabel button={p.secondaryButton} /></A>}
             </div>
           )}
         </div>
@@ -1051,6 +1060,10 @@ const PLACEMENT_RULES = {
   CommonTrust: { default: "main", options: ANY },
   CommonContact: { default: "main", options: ANY },
   CommonMiniFaq: { default: "main", options: ANY },
+  // Cards Grid / Numbers: full width as before, or in a column (they stack there, blocks.css).
+  CommonCards: { default: "full", options: ANY },
+  CommonStats: { default: "full", options: ANY },
+  CommonButtons: { default: "full", options: ANY },
 };
 
 function placementOf(section) {

@@ -88,8 +88,9 @@ function FieldControl({ field, inputId, describedBy, invalid }) {
 /**
  * Renders a CMS form definition (payload.form from a "Form" section) and submits it
  * through the submitCmsForm Server Action. `compact` stacks every field in one column.
+ * `prefill`: starting text for the first multi-line field (a question typed in a Q&A block).
  */
-export default function CmsForm({ form, compact = false }) {
+export default function CmsForm({ form, compact = false, prefill = "" }) {
   const router = useRouter();
   const baseId = useId();
   const identifier = form?.slug || form?.id;
@@ -118,6 +119,7 @@ export default function CmsForm({ form, compact = false }) {
 
   const fields = Array.isArray(form?.fields) ? form.fields.filter((field) => field?.name) : [];
   if (!identifier || !fields.length) return null;
+  const prefillName = prefill ? fields.find((field) => field.type === "textarea")?.name : null;
 
   if (state.status === "success") {
     return <div className="cms-form-success" role="status">✅ {state.message}</div>;
@@ -155,7 +157,7 @@ export default function CmsForm({ form, compact = false }) {
                   {field.label}{field.required && <span className="cms-req"> *</span>}
                 </label>
               )}
-              <FieldControl field={field} inputId={inputId} describedBy={describedBy} invalid={Boolean(error)} />
+              <FieldControl field={field.name === prefillName ? { ...field, defaultValue: prefill } : field} inputId={inputId} describedBy={describedBy} invalid={Boolean(error)} />
               {field.helpText && <small id={helpId} className="cms-help">{field.helpText}</small>}
               {error && <small id={errorId} className="cms-error">{error}</small>}
             </div>

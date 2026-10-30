@@ -108,6 +108,20 @@ body {
   overflow-x: hidden;
 }
 
+/* Icon inside a CMS button (blocks/ButtonLabel.jsx): emoji or a small image, before or after the text. */
+.ta-btn-ic {
+  display: inline-block;
+  line-height: 1;
+  vertical-align: -0.1em;
+}
+.ta-btn-ic-left { margin-right: .45em; }
+.ta-btn-ic-right { margin-left: .45em; }
+.ta-btn-ic-img {
+  width: 1.15em;
+  height: 1.15em;
+  object-fit: contain;
+}
+
 /* Optional: hide scrollbar while keeping horizontal scrolling */
 .scrollbar-none::-webkit-scrollbar {
   display: none;

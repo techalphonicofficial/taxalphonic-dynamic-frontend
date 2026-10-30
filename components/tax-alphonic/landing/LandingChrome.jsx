@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ButtonLabel from "../blocks/ButtonLabel";
 
 /*
  * Page-specific header and footer of a landing page ("Simple" style of the LandingHeader /
@@ -61,7 +62,7 @@ export function LandingHeaderBar({ payload = {}, branding = {}, contact = {} }) 
         )}
         <div className="lp-actions">
           {phone && <a href={telHref(phone)} className="lp-phone">📞 <span>{phone}</span></a>}
-          {button && <Anchor href={button.url} className="lp-btn">{button.text}</Anchor>}
+          {button && <Anchor href={button.url} className="lp-btn"><ButtonLabel button={button} /></Anchor>}
           {links.length > 0 && (
             <button type="button" className="lp-burger" aria-expanded={open} aria-label="Menu" onClick={() => setOpen((v) => !v)}>
               <span /><span /><span />

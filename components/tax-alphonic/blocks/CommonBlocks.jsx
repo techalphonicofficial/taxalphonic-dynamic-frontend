@@ -3,11 +3,12 @@
 import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { openFormPopup } from "@/lib/formPopup";
+import { openFormPopup, prefillFormIn } from "@/lib/formPopup";
 import { blockLandingNavigation } from "@/lib/landingLinks";
 import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import CmsForm from "../forms/CmsForm";
 import Calculator from "../tools/calculators";
+import ButtonLabel from "./ButtonLabel";
 import "../tools/tools-page.css";
 import "./blocks.css";
 
@@ -47,7 +48,7 @@ function A({ url, className, children, label }) {
 function Button({ button, ghost = false }) {
   const go = useGo();
   if (!hasButton(button)) return null;
-  return <button type="button" className={ghost || button.style === "ghost" ? "cb-btn cb-btn-ghost" : "cb-btn"} onClick={() => go(button.url, button.text)}>{button.text}</button>;
+  return <button type="button" className={ghost || button.style === "ghost" ? "cb-btn cb-btn-ghost" : "cb-btn"} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
 }
 
 function Icon({ value }) {
@@ -65,13 +66,20 @@ function Paragraphs({ text }) {
   ));
 }
 
+/** Heading block; `p.subLink` ({ text, url, icon }, Cards Grid) adds a link after the sub text. */
 function Head({ p, center = false }) {
-  if (!has(p.kicker) && !has(p.heading) && !has(p.sub)) return null;
+  const subLink = hasButton(p.subLink) ? p.subLink : null;
+  if (!has(p.kicker) && !has(p.heading) && !has(p.sub) && !subLink) return null;
   return (
     <div className={`cb-head${center || p.align === "center" ? " cb-center" : ""}`}>
       {has(p.kicker) && <span className="cb-kicker">{p.kicker}</span>}
       {has(p.heading) && <h2>{p.heading}</h2>}
-      {has(p.sub) && <p className="cb-sub">{p.sub}</p>}
+      {(has(p.sub) || subLink) && (
+        <p className="cb-sub">
+          {p.sub}
+          {subLink && <>{has(p.sub) && " "}<A url={subLink.url} className="cb-sublink"><ButtonLabel button={subLink} /></A></>}
+        </p>
+      )}
     </div>
   );
 }
@@ -240,7 +248,8 @@ function Cards({ p }) {
   return (
     <Section type="cards" p={p}>
       <Head p={p} center={p.align === "center"} />
-      <div className={`cb-cards${p.style === "plain" ? " cb-cards-plain" : ""}`} style={{ "--cb-cols": cols(p.columns, 3) }}>
+      {/* At least 4 per row on a laptop (older blocks saved 1–3), fewer only when there are fewer cards. */}
+      <div className={`cb-cards${p.style === "plain" ? " cb-cards-plain" : ""}`} style={{ "--cb-cols": Math.min(Math.max(cols(p.columns, 4), 4), items.length) }}>
         {items.map((x, i) => (
           <A key={i} url={x.url} className="cb-card">
             {has(x.icon) && <span className="cb-card-ic"><Icon value={x.icon} /></span>}
@@ -611,7 +620,165 @@ function TextSide({ p }) {
   );
 }
 
+/**
+ * Explore links grid (reference .xhub "Explore everything for your business"): cards, each with an
+ * icon + title (optionally a link) over a list of links with their own icons.
+ */
+function ExploreHub({ p }) {
+  const cards = list(p.cards)
+    .map((c) => ({ ...c, links: list(c.links).filter((l) => has(l.text)) }))
+    .filter((c) => has(c.title) || c.links.length);
+  if (!cards.length) return null;
+  return (
+    <Section type="xhub" p={p}>
+      <Head p={p} center={p.align !== "left"} />
+      <div className="cb-xhub-grid" style={{ "--cb-cols": cols(p.columns, 4) }}>
+        {cards.map((c, i) => (
+          <div key={i} className="cb-xhub-card">
+            {has(c.title) && (
+              <A url={c.url} className="cb-xhub-title">
+                {has(c.icon) && <span className="cb-xhub-ic"><Icon value={c.icon} /></span>}
+                <span>{c.title}</span>
+              </A>
+            )}
+            {c.links.length > 0 && (
+              <ul className="cb-xhub-links">
+                {c.links.map((l, j) => (
+                  <li key={j}>
+                    <A url={l.url} className="cb-xhub-link">
+                      {has(l.icon) && <span className="cb-xhub-lic"><Icon value={l.icon} /></span>}
+                      <span>{l.text}</span>
+                    </A>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+/**
+ * Questions & answers (reference .sp-qna + Taxpedia tabs .tpx): an ask box, optional answered
+ * questions, and a knowledge panel with tabs of link cards and related-topic chips. "Post question"
+ * runs the ask button: a form popup gets the question in its message box (submitted as a CRM lead,
+ * captcha included); a #section scrolls there and fills that form; any other link just opens.
+ */
+function Qna({ p }) {
+  const go = useGo();
+  const [question, setQuestion] = useState("");
+  const [asked, setAsked] = useState([]);
+  const [active, setActive] = useState(0);
+  const items = list(p.items).filter((x) => has(x.question));
+  const tabs = list(p.tabs).map((t) => ({ ...t, cards: list(t.cards).filter((c) => has(c.title) || has(c.text)) })).filter((t) => has(t.label));
+  const topics = list(p.topics).filter((t) => has(t.text));
+  const askButton = hasButton(p.askButton) ? p.askButton : null;
+  const panel = p.showPanel !== "no" && (has(p.panelTitle) || tabs.length > 0 || topics.length > 0);
+  if (!askButton && !items.length && !panel && !has(p.heading)) return null;
+  const tab = tabs[Math.min(active, tabs.length - 1)];
+
+  const ask = (event) => {
+    event.preventDefault();
+    const q = question.trim();
+    if (!q || !askButton) return;
+    const url = String(askButton.url || "").trim();
+    if (!openFormPopup(url, p.askFormHeading || askButton.text, q)) {
+      if (url.startsWith("#")) {
+        const target = document.getElementById(url.slice(1));
+        target?.scrollIntoView({ behavior: "smooth", block: "start" });
+        prefillFormIn(target, q);
+      } else {
+        go(url, askButton.text);
+      }
+    }
+    setAsked((prev) => [...prev, q]);
+    setQuestion("");
+  };
+
+  return (
+    <Section type="qna" p={p}>
+      <Head p={p} center={p.align !== "left"} />
+      {askButton && (
+        <form className="cb-qna-ask" onSubmit={ask}>
+          <input
+            type="text"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder={p.askPlaceholder || "Ask a question"}
+            aria-label={p.askPlaceholder || "Your question"}
+            maxLength={500}
+          />
+          <button type="submit" className="cb-btn" disabled={!question.trim()}><ButtonLabel button={askButton} /></button>
+        </form>
+      )}
+      {(asked.length > 0 || items.length > 0) && (
+        <div className="cb-qna-list">
+          {asked.map((q, i) => (
+            <div key={`a${i}`} className="cb-qna-item cb-qna-new">
+              <b>Q: {q}</b>
+              {has(p.askNote) && <p>{p.askNote}</p>}
+            </div>
+          ))}
+          {items.map((x, i) => (
+            <details key={i} className="cb-qna-item" open={i === 0 && p.firstOpen === "yes"}>
+              <summary><b>Q: {x.question}</b></summary>
+              {has(x.answer) && <Paragraphs text={x.answer} />}
+            </details>
+          ))}
+        </div>
+      )}
+      {panel && (
+        <div className="cb-tpx">
+          {(has(p.panelTitle) || has(p.panelSub) || hasButton(p.panelButton)) && (
+            <div className="cb-tpx-head">
+              <div>
+                {has(p.panelTitle) && <b>{has(p.panelIcon) && <Icon value={p.panelIcon} />} {p.panelTitle}</b>}
+                {has(p.panelSub) && <span>{p.panelSub}</span>}
+              </div>
+              {hasButton(p.panelButton) && <Button button={p.panelButton} ghost />}
+            </div>
+          )}
+          {tabs.length > 0 && (
+            <>
+              <div className="cb-tpx-tabs" role="tablist">
+                {tabs.map((t, i) => (
+                  <button key={i} type="button" role="tab" aria-selected={tab === t} className={`cb-tpx-tab${tab === t ? " on" : ""}`} onClick={() => setActive(i)}>
+                    {has(t.icon) && <Icon value={t.icon} />} {t.label}
+                  </button>
+                ))}
+              </div>
+              {tab.cards.length > 0 && (
+                <div className="cb-tpx-cards" role="tabpanel">
+                  {tab.cards.map((c, i) => (
+                    <A key={i} url={c.url} className="cb-tpx-card">
+                      {has(c.title) && <b>{c.title}</b>}
+                      {has(c.text) && <p>{c.text}</p>}
+                      {has(c.linkText) && <span className="cb-tpx-cta">{c.linkText}</span>}
+                    </A>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+          {topics.length > 0 && (
+            <div className="cb-tpx-topics">
+              {has(p.topicsLabel) && <span className="cb-tpx-label">{p.topicsLabel}</span>}
+              {topics.map((t, i) => (
+                <A key={i} url={t.url} className="cb-tpx-chip">{has(t.icon) && <Icon value={t.icon} />} {t.text}</A>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </Section>
+  );
+}
+
 const BLOCKS = {
+  CommonExploreHub: ExploreHub,
+  CommonQna: Qna,
   CommonFormHero: FormHero,
   CommonCaseStudy: CaseStudy,
   CommonAwards: Awards,

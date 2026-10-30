@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import CmsForm from "./CmsForm";
-import { FORM_POPUP_EVENT, formPopupTarget } from "@/lib/formPopup";
+import { FORM_POPUP_EVENT, formPopupTarget, prefillFormIn } from "@/lib/formPopup";
 import { loadPublicForm } from "@/service/formSubmission";
 import "../service-page.css";
 import "./form-popup.css";
@@ -26,27 +26,31 @@ export default function FormPopupHost({ defaultForm = null, theme, themeStyle })
   const cache = useRef(new Map());
   const lastFocus = useRef(null);
 
-  const open = useCallback(async ({ id, label }) => {
+  // `prefill`: text for the form's first multi-line field (openFormPopup's third argument).
+  const open = useCallback(async ({ id, label, prefill = "" }) => {
     lastFocus.current = document.activeElement;
     if (!id) {
       if (defaultForm?.form) {
-        setState({ form: defaultForm.form, heading: defaultForm.heading || label, subHeading: defaultForm.subHeading });
+        setState({ form: defaultForm.form, heading: defaultForm.heading || label, subHeading: defaultForm.subHeading, prefill });
       } else {
-        document.getElementById("enquiry")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        const enquiry = document.getElementById("enquiry");
+        enquiry?.scrollIntoView({ behavior: "smooth", block: "start" });
+        prefillFormIn(enquiry, prefill);
       }
       return;
     }
     if (defaultForm?.form && String(defaultForm.form.id) === id) {
-      setState({ form: defaultForm.form, heading: label || defaultForm.heading, subHeading: defaultForm.subHeading });
+      setState({ form: defaultForm.form, heading: label || defaultForm.heading, subHeading: defaultForm.subHeading, prefill });
       return;
     }
-    setState({ loading: true, heading: label });
+    setState({ loading: true, heading: label, prefill });
     let form = cache.current.get(id);
     if (form === undefined) {
       form = await loadPublicForm(id).catch(() => null);
       cache.current.set(id, form);
     }
     setState((current) => (current?.loading ? {
+      prefill: current.prefill,
       form,
       heading: label || form?.name,
       subHeading: form?.description,
@@ -113,7 +117,7 @@ export default function FormPopupHost({ defaultForm = null, theme, themeStyle })
         <div className="ta-fp-body">
           {state.loading && <div className="ta-fp-loading" aria-live="polite">Loading…</div>}
           {state.error && <p className="ta-fp-error">{state.error}</p>}
-          {state.form && <CmsForm form={state.form} compact />}
+          {state.form && <CmsForm key={state.prefill || ""} form={state.form} compact prefill={state.prefill} />}
         </div>
       </div>
     </div>,

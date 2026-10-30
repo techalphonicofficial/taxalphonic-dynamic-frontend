@@ -7,6 +7,8 @@ export const COMMON_BLOCK_TYPES = [
   // From the reference design (uirefrence.html).
   "CommonFormHero", "CommonCaseStudy", "CommonAwards", "CommonTimeline", "CommonTabs", "CommonStory",
   "CommonTrust", "CommonContact", "CommonMiniFaq", "CommonTextSide",
+  // Explore links grid and Questions & answers + knowledge tabs (reference .xhub / .sp-qna + .tpx).
+  "CommonExploreHub", "CommonQna",
 ];
 
 export const isCommonSection = (section) => COMMON_BLOCK_TYPES.includes(section?.type);

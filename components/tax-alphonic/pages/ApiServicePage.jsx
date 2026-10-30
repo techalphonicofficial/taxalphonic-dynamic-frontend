@@ -7,6 +7,7 @@ import { HomeBlock } from "../home/HomeSections";
 import CommonBlock from "../blocks/CommonBlocks";
 import BlockBackground, { backgroundOf } from "../blocks/BlockBackground";
 import { isCommonSection, isHomeSection } from "../blocks/commonBlockTypes";
+import ButtonLabel from "../blocks/ButtonLabel";
 import "../service-page.css";
 
 // Markup and class names mirror the #/service/... view in uirefrence.html;
@@ -27,6 +28,7 @@ const DEFAULT_PLACEMENT = {
   CallToAction: "bottom",
   LocationsServed: "bottom",
   CommonFormHero: "top", // hero with a form: full width under the hero
+  CommonExploreHub: "bottom", // explore links grid: full width under the page body
 };
 const PLACEMENTS = ["top", "main", "sidebar", "bottom"];
 
@@ -81,7 +83,7 @@ function toCardItems(items) {
 /** Normalises a CMS button ({ text, url }) and drops it when it has no text. */
 function toButton(value) {
   const text = String(value?.text || "").trim();
-  return text ? { text, url: String(value?.url || "").trim() || "#" } : null;
+  return text ? { text, url: String(value?.url || "").trim() || "#", icon: value?.icon || "", iconSide: value?.iconSide || "" } : null;
 }
 
 function parseSchema(value) {
@@ -137,10 +139,10 @@ function CmsButton({ button, className }) {
   const external = /^https?:\/\//i.test(button.url);
   const internal = button.url.startsWith("/") && !button.url.startsWith("//");
 
-  if (internal) return <Link href={button.url} className={className}>{button.text}</Link>;
+  if (internal) return <Link href={button.url} className={className}><ButtonLabel button={button} /></Link>;
   return (
     <a href={button.url} className={className} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
-      {button.text}
+      <ButtonLabel button={button} />
     </a>
   );
 }

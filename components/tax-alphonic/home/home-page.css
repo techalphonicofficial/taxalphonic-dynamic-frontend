@@ -3168,3 +3168,43 @@
     flex-basis: 100%;
   }
 }
+
+/* Comparison table: optional last column with a button per row (HomeComparison buttonText / buttonUrl). */
+.ta-home .cmp-has-btn {
+  max-width: 1040px;
+}
+.ta-home .cmp-has-btn .cmp-row {
+  grid-template-columns: 1.4fr 1fr 1fr 1fr minmax(128px, .9fr);
+}
+.ta-home .cmp-row > .cmp-act {
+  padding: 10px 12px;
+}
+.ta-home .cmp-btn {
+  background: var(--brand);
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.2;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform .15s, filter .15s;
+}
+.ta-home .cmp-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+}
+@media (max-width: 760px) {
+  /* Five columns do not fit a phone: the table scrolls sideways inside its card. */
+  .ta-home .cmp-has-btn {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ta-home .cmp-has-btn .cmp-row {
+    min-width: 640px;
+    grid-template-columns: 1.2fr .8fr .8fr .8fr 120px;
+  }
+}

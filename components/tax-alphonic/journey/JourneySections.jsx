@@ -9,6 +9,7 @@ import { HomeBlock } from "../home/HomeSections";
 import CommonBlock from "../blocks/CommonBlocks";
 import BlockBackground from "../blocks/BlockBackground";
 import { isCommonSection, isHomeSection } from "../blocks/commonBlockTypes";
+import ButtonLabel from "../blocks/ButtonLabel";
 import "./journey-page.css";
 
 /*
@@ -52,7 +53,7 @@ function A({ url, className, style, title, children }) {
 function Button({ button, className = "btn-primary" }) {
   const go = useGo();
   if (!hasButton(button)) return null;
-  return <button type="button" className={className} onClick={() => go(button.url, button.text)}>{button.text}</button>;
+  return <button type="button" className={className} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
 }
 
 /** Emoji / text icon, or an image when the CMS stores a URL. */
