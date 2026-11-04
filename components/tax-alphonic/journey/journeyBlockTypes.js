@@ -9,3 +9,7 @@ export const JOURNEY_BLOCK_TYPES = [
 ];
 
 export const isJourneySection = (section) => JOURNEY_BLOCK_TYPES.includes(section?.type);
+
+/** A Journey Stage page: other pages may hold Journey blocks too, without becoming one. */
+export const isJourneyPage = (page) => String(page?.slug || "").replace(/^\/+/, "").startsWith("journey/")
+  || Boolean(page?.sections?.some((section) => section?.type === "JourneyHero"));

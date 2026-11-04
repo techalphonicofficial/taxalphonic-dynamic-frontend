@@ -155,6 +155,23 @@
   margin: 0 auto;
 }
 
+.ta-cb .cb-text.cb-right {
+  margin-left: auto;
+  text-align: right;
+}
+
+.ta-cb .cb-text.cb-right .cb-head {
+  margin-left: auto;
+}
+
+.ta-cb .cb-text.cb-right .cb-buttons {
+  justify-content: flex-end;
+}
+
+.ta-cb .cb-text.cb-justify > p {
+  text-align: justify;
+}
+
 /* Image + text */
 .ta-cb .cb-split {
   display: grid;
@@ -780,6 +797,7 @@
 
 .ta-cb .cb-fh-point b { display: block; font-size: 15.5px; }
 .ta-cb .cb-fh-point p { margin: 2px 0 0; font-size: 14px; color: var(--cb-muted); }
+.ta-cb .cb-fh-buttons { margin: 0 0 20px; }
 .ta-cb .cb-fh-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
 
 .ta-cb .cb-fh-chips span {
@@ -1315,3 +1333,103 @@
 .home-split .home-side .ta-cb .cb-buttons .cb-btn { width: 100%; justify-content: center; text-align: center; }
 .ta-svc .side .ta-cb.cb-buttons .cb-head h2,
 .home-split .home-side .ta-cb.cb-buttons .cb-head h2 { font-size: 19px; }
+
+/* Block spacing (admin "Spacing" panel, BlockBackground.jsx): set on the block's own root, so a value
+   can also be smaller than the design. Embedded blocks (AnyBlock) have their root one level deeper. */
+.ta-sp { min-width: 0; }
+.ta-sp-pt > :not(.ta-bg, .ta-svc-embed, .ta-jt-embed, .ta-home-embed),
+.ta-sp-pt > .ta-svc-embed > *,
+.ta-sp-pt > .ta-jt-embed > .wrap > *,
+.ta-sp-pt > .ta-home-embed > .home-page > *,
+.ta-sp-pt > .ta-bg > .ta-bg-content { padding-top: var(--sp-pt) !important; }
+.ta-sp-pb > :not(.ta-bg, .ta-svc-embed, .ta-jt-embed, .ta-home-embed),
+.ta-sp-pb > .ta-svc-embed > *,
+.ta-sp-pb > .ta-jt-embed > .wrap > *,
+.ta-sp-pb > .ta-home-embed > .home-page > *,
+.ta-sp-pb > .ta-bg > .ta-bg-content { padding-bottom: var(--sp-pb) !important; }
+.ta-sp-pl > :not(.ta-bg, .ta-svc-embed, .ta-jt-embed, .ta-home-embed),
+.ta-sp-pl > .ta-svc-embed > *,
+.ta-sp-pl > .ta-jt-embed > .wrap > *,
+.ta-sp-pl > .ta-home-embed > .home-page > *,
+.ta-sp-pl > .ta-bg > .ta-bg-content { padding-left: var(--sp-pl) !important; }
+.ta-sp-pr > :not(.ta-bg, .ta-svc-embed, .ta-jt-embed, .ta-home-embed),
+.ta-sp-pr > .ta-svc-embed > *,
+.ta-sp-pr > .ta-jt-embed > .wrap > *,
+.ta-sp-pr > .ta-home-embed > .home-page > *,
+.ta-sp-pr > .ta-bg > .ta-bg-content { padding-right: var(--sp-pr) !important; }
+.ta-sp-mt { margin-top: var(--sp-mt); }
+.ta-sp-mt > :not(.ta-bg, .ta-svc-embed, .ta-jt-embed, .ta-home-embed),
+.ta-sp-mt > .ta-svc-embed > *,
+.ta-sp-mt > .ta-jt-embed > .wrap > *,
+.ta-sp-mt > .ta-home-embed > .home-page > *,
+.ta-sp-mt > .ta-bg { margin-top: 0 !important; }
+.ta-sp-mb { margin-bottom: var(--sp-mb); }
+.ta-sp-mb > :not(.ta-bg, .ta-svc-embed, .ta-jt-embed, .ta-home-embed),
+.ta-sp-mb > .ta-svc-embed > *,
+.ta-sp-mb > .ta-jt-embed > .wrap > *,
+.ta-sp-mb > .ta-home-embed > .home-page > *,
+.ta-sp-mb > .ta-bg { margin-bottom: 0 !important; }
+@media (max-width: 640px) {
+  .ta-sp-mt { margin-top: min(var(--sp-mt), 56px); }
+  .ta-sp-mb { margin-bottom: min(var(--sp-mb), 56px); }
+  .ta-sp-pt > :not(.ta-bg, .ta-svc-embed, .ta-jt-embed, .ta-home-embed),
+  .ta-sp-pt > .ta-svc-embed > *,
+  .ta-sp-pt > .ta-jt-embed > .wrap > *,
+  .ta-sp-pt > .ta-home-embed > .home-page > *,
+  .ta-sp-pt > .ta-bg > .ta-bg-content { padding-top: min(var(--sp-pt), 56px) !important; }
+  .ta-sp-pb > :not(.ta-bg, .ta-svc-embed, .ta-jt-embed, .ta-home-embed),
+  .ta-sp-pb > .ta-svc-embed > *,
+  .ta-sp-pb > .ta-jt-embed > .wrap > *,
+  .ta-sp-pb > .ta-home-embed > .home-page > *,
+  .ta-sp-pb > .ta-bg > .ta-bg-content { padding-bottom: min(var(--sp-pb), 56px) !important; }
+  .ta-sp-pl > :not(.ta-bg, .ta-svc-embed, .ta-jt-embed, .ta-home-embed),
+  .ta-sp-pl > .ta-svc-embed > *,
+  .ta-sp-pl > .ta-jt-embed > .wrap > *,
+  .ta-sp-pl > .ta-home-embed > .home-page > *,
+  .ta-sp-pl > .ta-bg > .ta-bg-content { padding-left: min(var(--sp-pl), 20px) !important; }
+  .ta-sp-pr > :not(.ta-bg, .ta-svc-embed, .ta-jt-embed, .ta-home-embed),
+  .ta-sp-pr > .ta-svc-embed > *,
+  .ta-sp-pr > .ta-jt-embed > .wrap > *,
+  .ta-sp-pr > .ta-home-embed > .home-page > *,
+  .ta-sp-pr > .ta-bg > .ta-bg-content { padding-right: min(var(--sp-pr), 20px) !important; }
+}
+
+/* Blocks from another builder (AnyBlock.jsx): no page background or page-end padding of their own. */
+.ta-svc.ta-svc-embed,
+.ta-journey.ta-jt-embed,
+.ta-tools.ta-jt-embed { background: transparent; min-height: 0; }
+.ta-journey.ta-jt-embed > .wrap,
+.ta-tools.ta-jt-embed > .wrap { padding-top: 0; padding-bottom: 0; }
+
+/* Block border (admin "Spacing & border" panel, BlockBackground.jsx). */
+.ta-sp-bw > :not(.ta-bg, .ta-svc-embed, .ta-jt-embed, .ta-home-embed),
+.ta-sp-bw > .ta-bg,
+.ta-sp-bw > .ta-svc-embed > *,
+.ta-sp-bw > .ta-jt-embed > .wrap > *,
+.ta-sp-bw > .ta-home-embed > .home-page > * { border: var(--sp-bw) var(--sp-bs, solid) var(--sp-bc, #cbd5e1) !important; box-sizing: border-box; }
+.ta-sp-br > :not(.ta-bg, .ta-svc-embed, .ta-jt-embed, .ta-home-embed),
+.ta-sp-br > .ta-bg,
+.ta-sp-br > .ta-svc-embed > *,
+.ta-sp-br > .ta-jt-embed > .wrap > *,
+.ta-sp-br > .ta-home-embed > .home-page > * { border-radius: var(--sp-br) !important; }
+
+/* Layout sections (LayoutGroup.jsx, admin "Add section"), and the chosen main / sidebar share. */
+.ta-lg-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 28px;
+  align-items: start;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+.ta-svc .ta-lg-body { max-width: none; padding: 0; }
+.ta-lg-w { grid-template-columns: minmax(0, var(--ta-lg-main)) minmax(0, 1fr) !important; }
+.ta-lg-solo { grid-template-columns: minmax(0, 1fr) !important; }
+.ta-lg-body .wrap { max-width: none; padding-left: 0; padding-right: 0; }
+@media (max-width: 980px) {
+  .ta-lg-body,
+  .ta-lg-w { grid-template-columns: minmax(0, 1fr) !important; }
+}

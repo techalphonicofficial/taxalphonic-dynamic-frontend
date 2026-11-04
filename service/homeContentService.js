@@ -2,6 +2,7 @@ import { apiClient } from "@/service/apiClient";
 import { normalizeAssetUrl } from "@/service/servicePageService";
 import { cache } from "react";
 import { getPageBySlug } from "@/service/pageService";
+import { getTools } from "@/service/toolsService";
 
 // Records from the CMS content modules (Testimonials, Team Members, FAQs, Banners,
 // Branches, Partners & Clients, Global Presence, Portfolio) for the homepage blocks that show them.
@@ -157,8 +158,50 @@ async function attachTools(sections) {
     : s));
 }
 
+// Where a blog post opens on this website (Tax Alphonic: /blog/<slug>, Services Plus: /blog-detail/<slug>).
+export const BLOG_POST_BASE = "/blog/";
+
+/**
+ * Latest Blog Posts blocks (CommonBlogPosts): the newest live posts (GET /api/v1/blogs/public,
+ * optional category slug) as payload.posts [{ title, url, excerpt, image, date, readTime, category }].
+ */
+async function attachBlogPosts(sections) {
+  if (!sections.some((s) => s.type === "CommonBlogPosts")) return sections;
+  return Promise.all(sections.map(async (s) => {
+    if (s.type !== "CommonBlogPosts") return s;
+    const p = s.payload || {};
+    const limit = Math.min(12, Math.max(1, parseInt(p.limit, 10) || 3));
+    const query = new URLSearchParams({ page: "1", limit: String(limit) });
+    if (p.category) query.set("category", String(p.category).trim());
+    try {
+      const payload = await apiClient(`/api/v1/blogs/public?${query}`, { next: { revalidate: 60 } });
+      const posts = rows(payload).map((post) => ({
+        id: post.id,
+        title: String(post.title || "").trim(),
+        url: `${BLOG_POST_BASE}${post.slug}`,
+        excerpt: post.excerpt || "",
+        image: asset(post.featuredImage),
+        date: post.date || post.publishDate || post.createdAt || null,
+        readTime: Number(post.readTime) || 0,
+        category: post.category?.name || "",
+      })).filter((post) => post.title);
+      return { ...s, payload: { ...p, posts } };
+    } catch (error) {
+      console.error("Unable to load blog posts for a Latest Blog Posts block.", error);
+      return { ...s, payload: { ...p, posts: [] } };
+    }
+  }));
+}
+
+/** ToolsGrid / ToolMore outside a tool page: the published tool pages. */
+async function attachToolLists(sections) {
+  if (!sections.some((s) => s.type === "ToolsGrid" || s.type === "ToolMore")) return sections;
+  const tools = await getTools();
+  return sections.map((s) => ((s.type === "ToolsGrid" || s.type === "ToolMore") && !s.config?.previewSample ? { ...s, payload: { ...s.payload, tools } } : s));
+}
+
 export async function attachModuleContent(rawSections) {
-  const sections = await attachTools(rawSections);
+  const sections = await attachToolLists(await attachBlogPosts(await attachTools(rawSections)));
   const needed = new Set(
     sections
       .map((s) => MODULE_BLOCKS[s.type])
@@ -170,6 +213,8 @@ export async function attachModuleContent(rawSections) {
   return sections.map((section) => {
     const block = MODULE_BLOCKS[section.type];
     if (!block) return section;
+    // Admin palette preview: its sample records stay (blockSamples.js).
+    if (section.config?.previewSample) return section;
     const payload = section.payload || {};
     if (block.optional && payload.source === "manual") return section;
 

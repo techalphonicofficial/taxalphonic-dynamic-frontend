@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 import {
   LANDING_HEADER,
   LANDING_PATH_PREFIX,
-  LANDING_ROUTE,
   LANDING_SITE_LABEL,
   isLandingSiteHost,
+  isLandingThankYouPath,
   landingLabelFromHost,
   landingLabelFromPath,
   landingSiteOrigin,
@@ -20,14 +20,6 @@ const SINGLE_VALUE_HEADERS = [
 export function proxy(request) {
   const pathname = request.nextUrl.pathname;
   const search = request.nextUrl.search;
-
-  // Internal landing route ko dobara rewrite mat karo.
-  if (
-    pathname === LANDING_ROUTE ||
-    pathname.startsWith(`${LANDING_ROUTE}/`)
-  ) {
-    return NextResponse.next();
-  }
 
   const headers = new Headers(request.headers);
 
@@ -63,16 +55,26 @@ export function proxy(request) {
     .toLowerCase();
 
   const label = landingLabelFromPath(pathname);
+  // /lp/thank-you: thank-you page after every landing form (app/lp/thank-you), on the landing host.
+  const thankYou = isLandingThankYouPath(pathname);
 
   // 1. Landing host: services.taxalphonic.com
   if (isLandingSiteHost(host)) {
+    if (thankYou) {
+      // Header set: app/layout.js leaves out the website header / footer, as on landing pages.
+      headers.set(LANDING_HEADER, "thank-you");
+      return NextResponse.next({
+        request: { headers },
+      });
+    }
+
     if (label) {
       headers.set(LANDING_HEADER, label);
 
-      const rewriteUrl = request.nextUrl.clone();
-      rewriteUrl.pathname = `${LANDING_ROUTE}/${label}`;
-
-      return NextResponse.rewrite(rewriteUrl, {
+      // Route khud app/lp/[label] par hai, isliye rewrite nahi, sirf header ke saath aage bhejo.
+      // Rewrite mat lagana: live par LiteSpeed X-Forwarded-Proto https bhejta hai, Next.js rewrite ko
+      // "external" maan kar khud par proxy karta tha aur form ka Server Action 500 deta tha.
+      return NextResponse.next({
         request: { headers },
       });
     }
@@ -106,10 +108,10 @@ export function proxy(request) {
     );
   }
 
-  // 3. Main website par /lp/<label> ko landing host par redirect karo.
-  if (label) {
+  // 3. Main website par /lp/<label> (aur /lp/thank-you) ko landing host par redirect karo.
+  if (label || thankYou) {
     return NextResponse.redirect(
-      `${landingSiteOrigin(host, proto)}${LANDING_PATH_PREFIX}/${label}${search}`,
+      `${landingSiteOrigin(host, proto)}${LANDING_PATH_PREFIX}/${label || "thank-you"}${search}`,
       308
     );
   }

@@ -5,10 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { openFormPopup } from "@/lib/formPopup";
 import { blockLandingNavigation } from "@/lib/landingLinks";
-import { HomeBlock } from "../home/HomeSections";
-import CommonBlock from "../blocks/CommonBlocks";
+import AnyBlock from "../blocks/AnyBlock";
+import LayoutGroup from "../blocks/LayoutGroup";
+import { splitLayoutSections } from "../blocks/layoutSections";
 import BlockBackground from "../blocks/BlockBackground";
-import { isCommonSection, isHomeSection } from "../blocks/commonBlockTypes";
 import Calculator from "./calculators";
 import CmsForm from "../forms/CmsForm";
 import ButtonLabel from "../blocks/ButtonLabel";
@@ -200,16 +200,44 @@ const BLOCKS = {
   ToolNote: [Note, true],
 };
 
+/** One Tool block on another page; the tool lists come from attachModuleContent (payload.tools). */
+export function ToolBlock({ section }) {
+  const entry = BLOCKS[section?.type];
+  if (!entry) return null;
+  const Component = entry[0];
+  const p = section.payload || {};
+  const ctx = { isHub: false, tools: list(p.tools), page: { slug: "", title: "" } };
+  return (
+    <div className="ta-tools ta-jt-embed">
+      <div className="wrap tool-page-body"><Component p={p} ctx={ctx} /></div>
+    </div>
+  );
+}
+
 /**
  * sections: the page's blocks ({ id, type, payload }); tools: the published tool pages;
  * page: { slug, title }. The page itself is listed among `tools` when it is a draft (preview).
  */
 export default function ToolSections({ sections = [], tools = [], page = {} }) {
-  const blocks = list(sections);
+  const layout = splitLayoutSections(list(sections));
+  const blocks = layout.base;
   const slug = String(page.slug || "").replace(/^\/+|\/+$/g, "");
   const isHub = !blocks.some((s) => s.type === "ToolCalculator") && blocks.some((s) => s.type === "ToolsGrid");
   const hero = blocks.find((s) => s.type === "ToolHero")?.payload || {};
   const ctx = { isHub, tools: list(tools), page: { slug, title: page.title } };
+
+  // A block in a layout section: tool body blocks keep their .wrap.tool-page-body styles.
+  const renderInSection = (section) => {
+    const entry = BLOCKS[section.type];
+    const Component = entry?.[0];
+    return (
+      <Fragment key={section.id}>
+        <BlockBackground config={section.config}>
+          {!entry ? <AnyBlock section={section} /> : entry[1] ? <div className="wrap tool-page-body"><Component p={section.payload || {}} ctx={ctx} /></div> : <Component p={section.payload || {}} ctx={ctx} />}
+        </BlockBackground>
+      </Fragment>
+    );
+  };
 
   // Consecutive body blocks share one column, as in the reference (.wrap.tool-page-body). On a tool
   // page that column is two columns wide: the calculator and texts on the left, the expert strip,
@@ -217,8 +245,8 @@ export default function ToolSections({ sections = [], tools = [], page = {} }) {
   const groups = [];
   for (const section of blocks) {
     const entry = BLOCKS[section.type];
-    // Homepage and general-purpose blocks may be added too: full width, between the page's own blocks.
-    const extra = !entry && (isHomeSection(section) ? <HomeBlock section={section} /> : isCommonSection(section) ? <CommonBlock section={section} /> : null);
+    // Blocks of the other builders may be added too: full width, between the page's own blocks.
+    const extra = !entry && <AnyBlock section={section} />;
     if (!entry && !extra) continue;
     const inBody = entry ? entry[1] : false;
     const Component = entry?.[0];
@@ -244,6 +272,7 @@ export default function ToolSections({ sections = [], tools = [], page = {} }) {
       {groups.map((group) => (group.body
         ? <div key={group.key} className={`wrap ${isHub ? "tools-hub-body" : "tool-page-body"}`}>{bodyContent(group)}</div>
         : <Fragment key={group.key}>{group.nodes}</Fragment>))}
+      {layout.groups.map((group) => <LayoutGroup key={group.id} group={group} render={renderInSection} />)}
     </main>
   );
 }

@@ -4,3 +4,10 @@
 export const TOOL_BLOCK_TYPES = ["ToolHero", "ToolCalculator", "ToolsGrid", "ToolContent", "ToolFaq", "ToolForm", "ToolCta", "ToolMore", "ToolNote"];
 
 export const isToolSection = (section) => TOOL_BLOCK_TYPES.includes(section?.type);
+
+/** A free tool page or the hub: other pages may hold Tool blocks too, without becoming one. */
+export function isToolPage(page) {
+  const slug = String(page?.slug || "").replace(/^\/+/, "");
+  return slug === "tools" || slug.startsWith("tool/")
+    || Boolean(page?.sections?.some((section) => ["ToolHero", "ToolCalculator"].includes(section?.type)));
+}

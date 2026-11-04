@@ -582,17 +582,29 @@
   letter-spacing: .03em;
 }
 
+/* The reveal area always keeps its full height (hover only fades the step in), so a hover never
+   makes the card taller and the content below never moves. */
 .ta-home .ej-reveal {
-  max-height: 24px;
-  overflow: hidden;
-  transition: .32s ease;
   position: relative;
   z-index: 1;
-  margin-top: 12px;
+  margin-top: auto;
+  padding-top: 12px;
 }
 
-.ta-home .ej-stage:hover .ej-reveal {
-  max-height: 90px;
+.ta-home .ej-reveal-row {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .28s ease, transform .28s ease;
+}
+
+.ta-home .ej-stage:hover .ej-reveal-row,
+.ta-home .ej-stage:focus-visible .ej-reveal-row {
+  opacity: 1;
+  transform: none;
+}
+
+@media (hover: none) {
+  .ta-home .ej-reveal-row { opacity: 1; transform: none; }
 }
 
 .ta-home .ej-reveal-row {

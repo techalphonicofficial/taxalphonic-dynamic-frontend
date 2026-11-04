@@ -9,6 +9,8 @@ export const COMMON_BLOCK_TYPES = [
   "CommonTrust", "CommonContact", "CommonMiniFaq", "CommonTextSide",
   // Explore links grid and Questions & answers + knowledge tabs (reference .xhub / .sp-qna + .tpx).
   "CommonExploreHub", "CommonQna",
+  // Carousel / slider, latest blog posts and sticky section tabs (ExtraBlocks.jsx).
+  "CommonCarousel", "CommonBlogPosts", "CommonAnchorNav",
 ];
 
 export const isCommonSection = (section) => COMMON_BLOCK_TYPES.includes(section?.type);
@@ -16,8 +18,13 @@ export const isCommonSection = (section) => COMMON_BLOCK_TYPES.includes(section?
 /** Homepage blocks (HomeHero, HomeFaq, ...) can be placed on any page too. */
 export const isHomeSection = (section) => /^Home[A-Z]/.test(String(section?.type || ""));
 
+/** Service page body blocks (ApiServicePage ServiceBlock), which can also be placed on any page. */
+export const SERVICE_BLOCK_TYPES = ["Overview", "WhyUs", "ServicesIncluded", "OurProcess", "Faq", "Form", "Packages", "Highlights", "Checklist", "CallToAction"];
+export const isServiceSection = (section) => SERVICE_BLOCK_TYPES.includes(section?.type);
+
 /**
  * Blocks whose content is loaded by service/homeContentService.js attachModuleContent: homepage
- * blocks (their CMS module) and the Free Tool block (the calculator of a published tool page).
+ * blocks (their CMS module), the Free Tool block (the calculator of a published tool page) and
+ * Latest Blog Posts (the newest live posts), and the tool lists (the published tool pages).
  */
-export const needsModuleContent = (section) => isHomeSection(section) || section?.type === "CommonTool";
+export const needsModuleContent = (section) => isHomeSection(section) || ["CommonTool", "CommonBlogPosts", "ToolsGrid", "ToolMore"].includes(section?.type);

@@ -44,7 +44,7 @@ function autoTextTheme(bg, overlay) {
   return shade === null ? "" : shade ? "light" : "dark";
 }
 
-export default function BlockBackground({ config, hero = false, children }) {
+function Background({ config, hero = false, children }) {
   const bg = backgroundOf(config);
   if (!bg) return children;
 
@@ -79,4 +79,44 @@ export default function BlockBackground({ config, hero = false, children }) {
       <div className="ta-bg-content">{children}</div>
     </div>
   );
+}
+
+// Spacing of any block (admin: the block's "Spacing" panel, saved as section.config.spacing, in px).
+const HEX_COLOR = /^#[0-9a-f]{6}$/i;
+const SPACING = { marginTop: "mt", marginBottom: "mb", paddingTop: "pt", paddingBottom: "pb", paddingLeft: "pl", paddingRight: "pr" };
+
+function spacingOf(config) {
+  const spacing = config?.spacing;
+  if (!spacing || typeof spacing !== "object") return null;
+  const classes = [];
+  const style = {};
+  for (const [key, side] of Object.entries(SPACING)) {
+    if (spacing[key] === "" || spacing[key] === null || spacing[key] === undefined) continue;
+    const value = Number(spacing[key]);
+    if (!Number.isFinite(value) || value < 0) continue;
+    classes.push(`ta-sp-${side}`);
+    style[`--sp-${side}`] = `${Math.min(400, Math.round(value))}px`;
+  }
+  // Border: width, then style and colour; radius on its own.
+  const borderWidth = Number(spacing.borderWidth);
+  if (borderWidth > 0) {
+    classes.push("ta-sp-bw");
+    style["--sp-bw"] = `${Math.min(40, Math.round(borderWidth))}px`;
+    style["--sp-bs"] = ["dashed", "dotted"].includes(spacing.borderStyle) ? spacing.borderStyle : "solid";
+    if (HEX_COLOR.test(String(spacing.borderColor || ""))) style["--sp-bc"] = spacing.borderColor;
+  }
+  const borderRadius = Number(spacing.borderRadius);
+  if (spacing.borderRadius !== "" && spacing.borderRadius !== null && spacing.borderRadius !== undefined && borderRadius >= 0) {
+    classes.push("ta-sp-br");
+    style["--sp-br"] = `${Math.min(200, Math.round(borderRadius))}px`;
+  }
+  return classes.length ? { className: `ta-sp ${classes.join(" ")}`, style } : null;
+}
+
+export default function BlockBackground({ config, hero = false, children }) {
+  const body = <Background config={config} hero={hero}>{children}</Background>;
+  const spacing = spacingOf(config);
+  const node = spacing ? <div className={spacing.className} style={spacing.style}>{body}</div> : body;
+  // Admin Live Preview only: marks the block being edited, so it can draw the spacing over it.
+  return config?.previewMark ? <div data-ta-block={config.previewMark}>{node}</div> : node;
 }

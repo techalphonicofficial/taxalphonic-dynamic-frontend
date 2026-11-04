@@ -9,8 +9,9 @@ import CmsForm from "../forms/CmsForm";
 import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import "./home-page.css";
 import BlockBackground from "../blocks/BlockBackground";
-import CommonBlock from "../blocks/CommonBlocks";
-import { isCommonSection } from "../blocks/commonBlockTypes";
+import AnyBlock from "../blocks/AnyBlock";
+import LayoutGroup from "../blocks/LayoutGroup";
+import { mainWidthProps, splitLayoutSections } from "../blocks/layoutSections";
 import ButtonLabel from "../blocks/ButtonLabel";
 
 /*
@@ -1064,11 +1065,14 @@ const PLACEMENT_RULES = {
   CommonCards: { default: "full", options: ANY },
   CommonStats: { default: "full", options: ANY },
   CommonButtons: { default: "full", options: ANY },
+  // Carousel / Latest Blog Posts size themselves to their column.
+  CommonCarousel: { default: "full", options: ANY },
+  CommonBlogPosts: { default: "full", options: ANY },
 };
 
 function placementOf(section) {
-  const rule = PLACEMENT_RULES[section.type];
-  if (!rule) return "full";
+  // Blocks without a rule are full width by default and may go in main content.
+  const rule = PLACEMENT_RULES[section.type] || { default: "full", options: WIDE };
   const chosen = section.config?.placement;
   return rule.options.includes(chosen) ? chosen : rule.default;
 }
@@ -1092,8 +1096,7 @@ function groupSections(sections) {
 
 function renderBlock(section, i) {
   const Block = BLOCKS[section.type];
-  const inner = Block ? <Block p={section.payload || {}} /> : isCommonSection(section) ? <CommonBlock section={section} /> : null;
-  if (!inner) return null;
+  const inner = Block ? <Block p={section.payload || {}} /> : <AnyBlock section={section} />;
   // Each block may have its own background (admin: the block's Background panel).
   return (
     <Fragment key={section.id || i}>
@@ -1117,20 +1120,24 @@ export function HomeBlock({ section }) {
 }
 
 export default function HomeSections({ sections = [] }) {
+  const layout = splitLayoutSections(sections);
   return (
     <main className="ta-home">
       <div className="home-page">
-        {groupSections(sections).map((group, g) => {
+        {groupSections(layout.base).map((group, g) => {
           if (group.full) return renderBlock(group.full, g);
           const { main, sidebar } = group.split;
           if (!main.length || !sidebar.length) return <Fragment key={g}>{[...main, ...sidebar].map(renderBlock)}</Fragment>;
           return (
-            <div key={g} className="home-split">
+            <div key={g} className={`home-split${layout.baseMainWidth ? " ta-lg-w" : ""}`} {...mainWidthProps(layout.baseMainWidth)}>
               <div className="home-main">{main.map(renderBlock)}</div>
               <aside className="home-side">{sidebar.map(renderBlock)}</aside>
             </div>
           );
         })}
+        {layout.groups.map((group) => (
+          <LayoutGroup key={group.id} group={group} render={(section) => renderBlock(section)} bodyClass="home-split" mainClass="home-main" sideClass="home-side" />
+        ))}
       </div>
     </main>
   );

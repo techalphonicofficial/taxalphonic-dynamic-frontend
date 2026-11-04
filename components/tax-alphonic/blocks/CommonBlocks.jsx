@@ -9,6 +9,7 @@ import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import CmsForm from "../forms/CmsForm";
 import Calculator from "../tools/calculators";
 import ButtonLabel from "./ButtonLabel";
+import { EXTRA_BLOCKS } from "./ExtraBlocks";
 import "../tools/tools-page.css";
 import "./blocks.css";
 
@@ -103,7 +104,7 @@ function Text({ p }) {
   if (!has(p.heading) && !has(p.text)) return null;
   return (
     <Section type="text" p={p}>
-      <div className={`cb-text${p.align === "center" ? " cb-center" : ""}`}>
+      <div className={`cb-text${p.align === "center" ? " cb-center" : p.align === "right" ? " cb-right" : p.align === "justify" ? " cb-justify" : ""}`}>
         <Head p={p} />
         <Paragraphs text={p.text} />
         {(hasButton(p.primaryButton) || hasButton(p.secondaryButton)) && (
@@ -380,6 +381,9 @@ function FormHero({ p }) {
                 </div>
               ))}
             </div>
+          )}
+          {(hasButton(p.primaryButton) || hasButton(p.secondaryButton)) && (
+            <div className="cb-buttons cb-fh-buttons"><Button button={p.primaryButton} /><Button button={p.secondaryButton} ghost /></div>
           )}
           {chips.length > 0 && (
             <div className="cb-fh-chips">
@@ -801,6 +805,7 @@ const BLOCKS = {
   CommonSpacer: Spacer,
   CommonEmbed: Embed,
   CommonTool: Tool,
+  ...EXTRA_BLOCKS,
 };
 
 /** One general-purpose block ({ id, type, payload }). */

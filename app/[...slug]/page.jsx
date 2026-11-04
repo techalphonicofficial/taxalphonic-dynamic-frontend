@@ -10,10 +10,10 @@ import { createMetadata } from "@/lib/seoMetadata";
 import { permanentRedirect, redirect } from "next/navigation";
 import { resolveMenuAlias } from "@/service/menuExploreService";
 import JourneySections from "@/components/tax-alphonic/journey/JourneySections";
-import { isJourneySection } from "@/components/tax-alphonic/journey/journeyBlockTypes";
+import { isJourneyPage } from "@/components/tax-alphonic/journey/journeyBlockTypes";
 import { getJourneyStages } from "@/service/journeyService";
 import ToolSections from "@/components/tax-alphonic/tools/ToolSections";
-import { isToolSection } from "@/components/tax-alphonic/tools/toolBlockTypes";
+import { isToolPage } from "@/components/tax-alphonic/tools/toolBlockTypes";
 import { getTools } from "@/service/toolsService";
 import { needsModuleContent } from "@/components/tax-alphonic/blocks/commonBlockTypes";
 import { attachModuleContent } from "@/service/homeContentService";
@@ -101,7 +101,7 @@ export default async function DynamicPage({ params }) {
   }
 
   // Journey Stage pages (built from Journey blocks) have their own full-width layout.
-  if (resolved?.kind === "page" && resolved.record.sections?.some(isJourneySection)) {
+  if (resolved?.kind === "page" && isJourneyPage(resolved.record)) {
     const stages = await getJourneyStages();
     return (
       <>
@@ -111,7 +111,7 @@ export default async function DynamicPage({ params }) {
     );
   }
   // Free tool pages and the tools hub (built from Tool blocks).
-  if (resolved?.kind === "page" && resolved.record.sections?.some(isToolSection)) {
+  if (resolved?.kind === "page" && isToolPage(resolved.record)) {
     const tools = await getTools();
     return (
       <>

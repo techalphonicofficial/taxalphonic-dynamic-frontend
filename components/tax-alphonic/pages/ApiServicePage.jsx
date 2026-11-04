@@ -7,7 +7,13 @@ import { HomeBlock } from "../home/HomeSections";
 import CommonBlock from "../blocks/CommonBlocks";
 import BlockBackground, { backgroundOf } from "../blocks/BlockBackground";
 import { isCommonSection, isHomeSection } from "../blocks/commonBlockTypes";
+import { JourneyBlock } from "../journey/JourneySections";
+import { isJourneySection } from "../journey/journeyBlockTypes";
+import { ToolBlock } from "../tools/ToolSections";
+import { isToolSection } from "../tools/toolBlockTypes";
 import ButtonLabel from "../blocks/ButtonLabel";
+import LayoutGroup from "../blocks/LayoutGroup";
+import { mainWidthProps, splitLayoutSections } from "../blocks/layoutSections";
 import "../service-page.css";
 
 // Markup and class names mirror the #/service/... view in uirefrence.html;
@@ -29,6 +35,7 @@ const DEFAULT_PLACEMENT = {
   LocationsServed: "bottom",
   CommonFormHero: "top", // hero with a form: full width under the hero
   CommonExploreHub: "bottom", // explore links grid: full width under the page body
+  CommonAnchorNav: "top", // section tabs: under the hero, then sticks under the site header
 };
 const PLACEMENTS = ["top", "main", "sidebar", "bottom"];
 
@@ -622,7 +629,7 @@ function hasContent(section, locations) {
     case "Stats":
       return list(p.items).some((item) => item?.value);
     case "LocationsServed":
-      return p.show !== "no" && list(locations).length > 0;
+      return p.show !== "no" && list(p.previewLocations || locations).length > 0;
     case "Overview":
       return Boolean(p.content);
     case "WhyUs":
@@ -667,7 +674,7 @@ function ServiceBlock({ section, placement, firstOverviewId, packageCtaHref, loc
     case "Stats":
       return <StatsBlock payload={payload} config={config} />;
     case "LocationsServed":
-      return <LocationsBlock payload={payload} config={config} locations={locations} currentPath={currentPath} serviceTitle={serviceTitle} />;
+      return <LocationsBlock payload={payload} config={config} locations={payload.previewLocations || locations} currentPath={currentPath} serviceTitle={serviceTitle} />;
     case "OurProcess":
       return <ProcessBlock payload={payload} config={config} />;
     case "Faq":
@@ -687,6 +694,8 @@ function ServiceBlock({ section, placement, firstOverviewId, packageCtaHref, loc
       // Homepage blocks and the general-purpose blocks can be placed on any page.
       if (isHomeSection(section)) return <HomeBlock section={section} />;
       if (isCommonSection(section)) return <CommonBlock section={section} />;
+      if (isJourneySection(section)) return <JourneyBlock section={section} />;
+      if (isToolSection(section)) return <ToolBlock section={section} />;
       return <GenericBlock section={section} />;
   }
 }
@@ -705,7 +714,9 @@ export default function ApiServicePage({ service }) {
   const locations = list(service.locations);
   const heroSection = service.sections.find((section) => section.type === "HeroBanner");
   const hero = heroSection?.payload || {};
-  const sections = service.sections.filter((section) => section.type !== "HeroBanner" && hasContent(section, locations));
+  // Repeatable sections come after the page's own areas (blocks/layoutSections.js).
+  const layout = splitLayoutSections(service.sections);
+  const sections = layout.base.filter((section) => section.type !== "HeroBanner" && hasContent(section, locations));
   const hasLocationsBlock = service.sections.some((section) => section.type === "LocationsServed");
 
   const groups = { top: [], main: [], sidebar: [], bottom: [] };
@@ -751,7 +762,7 @@ export default function ApiServicePage({ service }) {
             {groups.top.length > 0 && <div className="svc-top">{groups.top.map((section) => render(section, "top"))}</div>}
 
             {groups.main.length > 0 && (
-              <div className={`svc-body${groups.sidebar.length ? "" : " svc-body-full"}`} id="details">
+              <div className={`svc-body${groups.sidebar.length ? (layout.baseMainWidth ? " ta-lg-w" : "") : " svc-body-full"}`} id="details" {...(groups.sidebar.length ? mainWidthProps(layout.baseMainWidth) : {})}>
                 <div>{groups.main.map((section) => render(section, "main"))}</div>
                 {groups.sidebar.length > 0 && (
                   <aside className="side">{groups.sidebar.map((section) => render(section, "sidebar"))}</aside>
@@ -762,9 +773,23 @@ export default function ApiServicePage({ service }) {
             {groups.bottom.length > 0 && (
               <div className="svc-full svc-bottom">{groups.bottom.map((section) => render(section, "bottom"))}</div>
             )}
+
+            {layout.groups.map((group) => (
+              <LayoutGroup key={group.id} group={{ ...group, items: group.items.filter((section) => hasContent(section, locations)) }} render={render} bodyClass="svc-body" sideClass="side" />
+            ))}
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/** One service page block on another page (homepage, journey, tool): it brings its styles with it. */
+export function ServiceBodyBlock({ section }) {
+  if (!hasContent(section, [])) return null;
+  return (
+    <div className="ta-svc ta-svc-embed">
+      <ServiceBlock section={section} placement="main" firstOverviewId={section.type === "Overview" ? section.id : undefined} locations={[]} />
     </div>
   );
 }
@@ -774,22 +799,32 @@ export default function ApiServicePage({ service }) {
  * Needs a `.ta-svc` ancestor for the styles. HeroBanner and empty blocks are skipped.
  */
 export function ContentBlocks({ sections }) {
-  const items = list(sections).filter((section) => section.type !== "HeroBanner" && hasContent(section, []));
+  const layout = splitLayoutSections(sections);
+  const items = layout.base.filter((section) => section.type !== "HeroBanner" && hasContent(section, []));
   const firstOverviewId = items.find((section) => section.type === "Overview")?.id;
   const firstForm = items.find((section) => section.type === "Form");
   const packageCtaHref = firstForm ? `#${firstForm.config?.anchorId || "enquiry"}` : "";
 
-  return items.map((section) => (
+  const render = (section, placement = "main") => (
     <Fragment key={section.id}>
       <BlockBackground config={section.config}>
         <ServiceBlock
           section={section}
-          placement="main"
+          placement={placement}
           firstOverviewId={firstOverviewId}
           packageCtaHref={packageCtaHref}
           locations={[]}
         />
       </BlockBackground>
     </Fragment>
-  ));
+  );
+
+  return (
+    <>
+      {items.map((section) => render(section))}
+      {layout.groups.map((group) => (
+        <LayoutGroup key={group.id} group={{ ...group, items: group.items.filter((section) => hasContent(section, [])) }} render={render} bodyClass="svc-body" sideClass="side" />
+      ))}
+    </>
+  );
 }

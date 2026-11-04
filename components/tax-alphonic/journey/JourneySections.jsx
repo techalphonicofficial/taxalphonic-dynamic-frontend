@@ -5,10 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { openFormPopup } from "@/lib/formPopup";
 import { blockLandingNavigation } from "@/lib/landingLinks";
-import { HomeBlock } from "../home/HomeSections";
-import CommonBlock from "../blocks/CommonBlocks";
+import AnyBlock from "../blocks/AnyBlock";
+import LayoutGroup from "../blocks/LayoutGroup";
+import { splitLayoutSections } from "../blocks/layoutSections";
 import BlockBackground from "../blocks/BlockBackground";
-import { isCommonSection, isHomeSection } from "../blocks/commonBlockTypes";
 import ButtonLabel from "../blocks/ButtonLabel";
 import "./journey-page.css";
 
@@ -523,6 +523,20 @@ function stageOf(sections, page = {}) {
   };
 }
 
+/** One Journey block on another page (no stage of its own: default colour, no stage list). */
+export function JourneyBlock({ section }) {
+  const entry = BLOCKS[section?.type];
+  if (!entry) return null;
+  const Component = entry[0];
+  const stage = stageOf([], {});
+  const ctx = { stage, stages: [stage], index: 0, counts: { steps: 0, services: 0 }, readMinutes: 1 };
+  return (
+    <div className="ta-journey ta-jt-embed" style={{ "--jc": stage.color }}>
+      <div className="wrap jbody"><Component p={section.payload || {}} ctx={ctx} /></div>
+    </div>
+  );
+}
+
 /**
  * sections: the page's blocks ({ id, type, config, payload }); stages: the published Journey
  * pages; page: { slug, title }. A page that is not in `stages` yet (draft, preview) is placed in
@@ -542,12 +556,26 @@ export default function JourneySections({ sections = [], stages = [], page = {} 
   const words = JSON.stringify(list(sections).map((s) => s.payload || {})).replace(/"[a-zA-Z]+":/g, " ").split(/\s+/).filter((w) => /[a-z]/i.test(w)).length;
   const ctx = { stage, stages: all, index, counts, readMinutes: Math.max(1, Math.round(words / 220)) };
 
+  const layout = splitLayoutSections(list(sections));
+  // A block in a layout section: journey body blocks keep their .wrap.jbody styles.
+  const renderInSection = (section) => {
+    const entry = BLOCKS[section.type];
+    const Component = entry?.[0];
+    return (
+      <Fragment key={section.id}>
+        <BlockBackground config={section.config}>
+          {!entry ? <AnyBlock section={section} /> : entry[1] ? <div className="wrap jbody"><Component p={section.payload || {}} ctx={ctx} /></div> : <Component p={section.payload || {}} ctx={ctx} />}
+        </BlockBackground>
+      </Fragment>
+    );
+  };
+
   // Consecutive body blocks share one .wrap.jbody column, as in the reference.
   const groups = [];
-  for (const section of list(sections)) {
+  for (const section of layout.base) {
     const entry = BLOCKS[section.type];
-    // Homepage and general-purpose blocks may be added too: full width, between the page's own blocks.
-    const extra = !entry && (isHomeSection(section) ? <HomeBlock section={section} /> : isCommonSection(section) ? <CommonBlock section={section} /> : null);
+    // Blocks of the other builders may be added too: full width, between the page's own blocks.
+    const extra = !entry && <AnyBlock section={section} />;
     if (!entry && !extra) continue;
     const inBody = entry ? entry[1] : false;
     const Component = entry?.[0];
@@ -567,6 +595,7 @@ export default function JourneySections({ sections = [], stages = [], page = {} 
   return (
     <main className="ta-journey" style={{ "--jc": stage.color }}>
       {groups.map((group) => (group.body ? <div key={group.key} className="wrap jbody">{group.nodes}</div> : <Fragment key={group.key}>{group.nodes}</Fragment>))}
+      {layout.groups.map((group) => <LayoutGroup key={group.id} group={group} render={renderInSection} />)}
     </main>
   );
 }

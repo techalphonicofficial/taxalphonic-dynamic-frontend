@@ -41,13 +41,14 @@ async function hydrateSection(section) {
   const payload = section?.payload && typeof section.payload === "object" ? section.payload : {};
 
   if (section.type === "Form") {
-    return { ...section, payload: { ...payload, form: await loadForm(payload.formId) } };
+    // payload.form without an id: the sample form of the admin's block preview.
+    return { ...section, payload: { ...payload, form: payload.formId ? await loadForm(payload.formId) : payload.form || null } };
   }
 
   if (section.type === "Packages") {
     const ids = Array.isArray(payload.packageIds) ? payload.packageIds.slice(0, 20) : [];
     const packages = (await Promise.all(ids.map(loadPackage))).filter(Boolean);
-    return { ...section, payload: { ...payload, packages } };
+    return { ...section, payload: { ...payload, packages: ids.length ? packages : payload.packages || [] } };
   }
 
   // Any other block that picks a CMS form (homepage Form / Expert banner, ToolForm, ...).
@@ -96,12 +97,7 @@ export async function buildServicePreview(draft) {
  */
 export async function buildHomePreview(draft) {
   const raw = Array.isArray(draft?.sections) ? draft.sections.slice(0, 80) : [];
-  const sections = await Promise.all(
-    raw.map(mapSection).filter(Boolean).map(async (section) => {
-      const formId = section.payload?.formId;
-      return formId ? { ...section, payload: { ...section.payload, form: await loadForm(formId) } } : section;
-    })
-  );
+  const sections = await Promise.all(raw.map(mapSection).filter(Boolean).map(hydrateSection));
   return attachModuleContent(sections);
 }
 
