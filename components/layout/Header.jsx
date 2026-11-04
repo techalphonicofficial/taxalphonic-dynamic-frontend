@@ -1152,6 +1152,9 @@ function DesktopDropdown({
         absolute
         top-full
         z-[999]
+        flex
+        max-h-[min(80vh,calc(100vh-var(--ta-header-h,140px)-16px))]
+        flex-col
         overflow-hidden
         rounded-2xl
         border
@@ -1178,7 +1181,8 @@ function DesktopDropdown({
 
       <div
         className="
-          max-h-[calc(100vh-145px)]
+          min-h-0
+          flex-1
           overflow-y-auto
           overscroll-contain
 
