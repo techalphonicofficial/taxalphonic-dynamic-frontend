@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ButtonLabel from "./ButtonLabel";
 import "./blocks.css";
+import "./center-grids.css";
 
 /*
  * Background of any Page Builder block (admin: the block's "Background" panel, saved as

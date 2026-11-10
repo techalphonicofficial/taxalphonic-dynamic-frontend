@@ -1,0 +1,88 @@
+/*
+ * Centred card grids: when a row has fewer cards than columns (e.g. 4 tools in a 6-column row, or the
+ * last row of 7 cards), the cards keep their normal width and sit in the middle instead of leaving a
+ * gap on the right. The grids below become flex-wrap rows; each card is one column wide:
+ *   (100% - (columns - 1) × gap) / columns
+ * Columns follow the width of the grid's own box (container queries on its parent), so the same rules
+ * work full width, in a main column and in a sidebar:
+ *   default --cols · under 1000px max 4 · under 760px max 3 · under 560px max --cols-sm (2) · under 300px 1.
+ * Each grid sets --cols (its usual column count, or the block's own setting) and --g (its gap).
+ */
+:is(
+  .ta-home .catgrid, .ta-home .sec-grid, .ta-home .why .why-grid, .ta-home .ind-grid, .ta-home .ttm-grid,
+  .ta-home .tool-grid, .ta-tools .tool-grid, .ta-home .bundle-grid, .ta-home .team-grid, .ta-home .branch-grid, .ta-home .pf-grid,
+  .ta-svc .wc-grid, .ta-svc .bgrid, .ta-svc .incl-grid, .ta-svc .side-trust-grid,
+  .ta-cb .cb-cards, .ta-cb .cb-stats, .ta-cb .cb-eco-pillars, .ta-cb .cb-tc-grid, .ta-cb .cb-db-stats, .ta-cb .cb-trust-grid,
+  .ta-cb .cb-awards, .ta-cb .cb-xhub-grid, .ta-cb .cb-gallery,
+  .ta-journey .jres-grid, .ta-journey .jsector-grid, .ta-journey .jugc-grid, .ta-journey .ikb-grid
+) {
+  display: flex !important;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: var(--g, 16px) !important;
+  grid-template-columns: none !important;
+}
+:is(
+  .ta-home .catgrid, .ta-home .sec-grid, .ta-home .why .why-grid, .ta-home .ind-grid, .ta-home .ttm-grid,
+  .ta-home .tool-grid, .ta-tools .tool-grid, .ta-home .bundle-grid, .ta-home .team-grid, .ta-home .branch-grid, .ta-home .pf-grid,
+  .ta-svc .wc-grid, .ta-svc .bgrid, .ta-svc .incl-grid, .ta-svc .side-trust-grid,
+  .ta-cb .cb-cards, .ta-cb .cb-stats, .ta-cb .cb-eco-pillars, .ta-cb .cb-tc-grid, .ta-cb .cb-db-stats, .ta-cb .cb-trust-grid,
+  .ta-cb .cb-awards, .ta-cb .cb-xhub-grid, .ta-cb .cb-gallery,
+  .ta-journey .jres-grid, .ta-journey .jsector-grid, .ta-journey .jugc-grid, .ta-journey .ikb-grid
+) > * {
+  flex: 0 0 calc((100% - (var(--c) - 1) * var(--g, 16px)) / var(--c));
+  max-width: calc((100% - (var(--c) - 1) * var(--g, 16px)) / var(--c));
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Column count and gap of each grid (as their own CSS had them). */
+.ta-home .catgrid { --cols: 4; --g: 16px; }
+.ta-home .sec-grid { --cols: 3; --g: 16px; }
+.ta-home .why .why-grid { --cols: var(--why-cols, 4); --g: 18px; }
+.ta-home .ind-grid { --cols: 6; --g: 14px; }
+.ta-home .ttm-grid { --cols: 3; --g: 16px; --cols-sm: 1; }
+.ta-home .tool-grid, .ta-tools .tool-grid { --cols: 6; --g: 14px; }
+.ta-home .bundle-grid { --cols: 3; --g: 18px; --cols-sm: 1; }
+.ta-home .team-grid { --cols: 4; --g: 18px; }
+.ta-home .branch-grid { --cols: 4; --g: 16px; --cols-sm: 1; }
+.ta-home .pf-grid { --cols: 4; --g: 18px; }
+.ta-svc .wc-grid { --cols: var(--wc-cols, 3); --g: 16px; --cols-sm: 1; }
+.ta-svc .bgrid { --cols: 2; --g: 14px; --cols-sm: 1; }
+.ta-svc .incl-grid { --cols: 2; --g: 12px; --cols-sm: 1; }
+.ta-svc .side-trust-grid { --cols: 2; --g: 10px; }
+.ta-cb .cb-cards { --cols: var(--cb-cols, 4); --g: 14px; --cols-sm: 1; }
+.ta-cb .cb-stats { --cols: var(--cb-cols, 4); --g: 14px; }
+.ta-cb .cb-eco-pillars { --cols: var(--eco-cols, 6); --g: 14px; }
+.ta-cb .cb-tc-grid { --cols: var(--tc-cols, 4); --g: 16px; --cols-sm: 1; }
+.ta-cb .cb-db-stats { --cols: var(--db-cols, 6); --g: 14px; }
+.ta-cb .cb-trust-grid { --cols: var(--cb-cols, 2); --g: 8px; }
+.ta-cb .cb-awards { --cols: 5; --g: 14px; }
+.ta-cb .cb-xhub-grid { --cols: var(--cb-cols, 4); --g: 14px; --cols-sm: 1; }
+.ta-cb .cb-gallery { --cols: var(--cb-cols, 3); --g: 14px; }
+.ta-journey .jres-grid { --cols: 4; --g: 14px; }
+.ta-journey .jsector-grid { --cols: 3; --g: 14px; }
+.ta-journey .jugc-grid { --cols: 3; --g: 18px; --cols-sm: 1; }
+.ta-journey .ikb-grid { --cols: 3; --g: 10px; }
+
+/* Columns in use: the full count, lowered by the container rules below (same or higher specificity, later). */
+:is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid) { --c: var(--cols, 4); }
+
+/* The grid's parent is the box the columns follow. */
+:has(> :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid,
+  .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid,
+  .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid)) {
+  container-type: inline-size;
+}
+@container (max-width: 999px) {
+  :is(.ta-home, .ta-svc, .ta-cb, .ta-tools, .ta-journey) :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid) { --c: min(var(--cols, 4), 4); }
+}
+@container (max-width: 759px) {
+  :is(.ta-home, .ta-svc, .ta-cb, .ta-tools, .ta-journey) :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid) { --c: min(var(--cols, 4), 3); }
+}
+@container (max-width: 559px) {
+  :is(.ta-home, .ta-svc, .ta-cb, .ta-tools, .ta-journey) :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid) { --c: min(var(--cols, 4), var(--cols-sm, 2)); }
+}
+@container (max-width: 299px) {
+  :is(.ta-home, .ta-svc, .ta-cb, .ta-tools, .ta-journey) :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid) { --c: 1; }
+}

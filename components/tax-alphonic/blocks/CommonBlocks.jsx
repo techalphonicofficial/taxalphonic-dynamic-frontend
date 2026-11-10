@@ -230,7 +230,8 @@ function Stats({ p }) {
   const items = list(p.items).filter((x) => has(x.value));
   if (!items.length) return null;
   // Automatic = every number in one row, at most 6.
-  const n = cols(p.columns, Math.min(items.length, 6));
+  // Always 6 columns: fewer numbers keep that width and sit in the middle (center-grids.css).
+  const n = 6;
   return (
     <Section type="stats" p={p}>
       <Head p={p} center />
@@ -267,8 +268,8 @@ function Cards({ p }) {
   return (
     <Section type="cards" p={p}>
       <Head p={p} center={p.align === "center"} />
-      {/* At least 4 per row on a laptop (older blocks saved 1–3), fewer only when there are fewer cards. */}
-      <div className={`cb-cards${p.style === "plain" ? " cb-cards-plain" : ""}`} style={{ "--cb-cols": Math.min(Math.max(cols(p.columns, 4), 4), items.length) }}>
+      {/* At least 4 per row on a laptop (older blocks saved 1–3); fewer cards keep their width and sit in the middle (center-grids.css). */}
+      <div className={`cb-cards${p.style === "plain" ? " cb-cards-plain" : ""}`} style={{ "--cb-cols": Math.max(cols(p.columns, 4), 4) }}>
         {items.map((x, i) => {
           const buttons = [[x.btn1, x.btn1Style], [x.btn2, x.btn2Style]].filter(([b]) => hasButton(b));
           const inner = (
@@ -942,7 +943,7 @@ function DataBand({ p }) {
       <Head p={p} center={p.align !== "left"} />
       {hasCards && <div className="cb-db-grid">{donut}{bars}{rings}</div>}
       {stats.length > 0 && (
-        <div className="cb-db-stats" style={{ "--db-cols": cols(p.statColumns, Math.min(6, stats.length)) }}>
+        <div className="cb-db-stats" style={{ "--db-cols": 6 }}>
           {stats.map((s, i) => (
             <DbItem key={i} url={s.url} className="cb-db-stat">
               {has(s.icon) && <span className="cb-db-stat-ic"><Icon value={s.icon} /></span>}
