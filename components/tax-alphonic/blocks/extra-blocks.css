@@ -355,3 +355,25 @@
 @container (max-width: 420px) {
   .ta-cb.cb-carousel .cb-car-arrow { display: none; }
 }
+
+/* Blog Posts: "View all" link under the heading (or at the bottom), category chips (CommonBlogPosts). */
+.ta-cb.cb-blogposts .cb-posts-head-stack { flex-direction: column; align-items: flex-start; gap: 4px; }
+.ta-cb.cb-blogposts .cb-posts-head-stack.cb-center { align-items: center; text-align: center; }
+.ta-cb.cb-blogposts .cb-post-viewall:not(.cb-btn) {
+  background: none; border: 0; padding: 2px 0; cursor: pointer; font: 600 14.5px/1.4 var(--font-inter), Inter, sans-serif;
+  color: var(--cb-ink); display: inline-flex; align-items: center; gap: 6px;
+}
+.ta-cb.cb-blogposts .cb-post-viewall:not(.cb-btn):hover { color: var(--cb-brand); text-decoration: underline; text-underline-offset: 4px; }
+.ta-cb.cb-blogposts .cb-post-viewall-row { display: flex; justify-content: center; margin-top: 22px; }
+.ta-cb.cb-blogposts .cb-post-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.ta-cb.cb-blogposts .cb-post-chips.cb-center { justify-content: center; }
+.ta-cb.cb-blogposts .cb-post-chips + * { margin-top: 22px; }
+.ta-cb.cb-blogposts .cb-post-chip {
+  display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 99px; background: #fff;
+  border: 1px solid var(--cb-line); font-size: 13.5px; font-weight: 600; color: var(--cb-ink); text-decoration: none; transition: .18s;
+}
+.ta-cb.cb-blogposts .cb-post-chip:hover { border-color: var(--cb-brand); color: var(--cb-brand); transform: translateY(-2px); }
+/* Fewer posts than columns: the cards keep their width and sit in the middle. */
+.ta-cb.cb-blogposts .cb-posts-grid { justify-content: center; grid-template-columns: repeat(var(--cb-cols, 3), minmax(0, 360px)); }
+@container (max-width: 900px) { .ta-cb.cb-blogposts .cb-posts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@container (max-width: 560px) { .ta-cb.cb-blogposts .cb-posts-grid { grid-template-columns: minmax(0, 1fr); } }

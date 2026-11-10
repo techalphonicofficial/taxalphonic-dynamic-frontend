@@ -281,22 +281,44 @@ function PostMeta({ post }) {
   return parts.length ? <div className="cb-post-meta">{parts.join(" · ")}</div> : null;
 }
 
-function PostCard({ post, featured, showExcerpt }) {
+function PostCard({ post, featured, showExcerpt, readMore }) {
   return (
     <Link href={post.url} className={`cb-post${featured ? " cb-post-featured" : ""}${post.image ? "" : " cb-post-noimg"}`}>
       {post.image && (
         <div className="cb-post-img">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={post.image} alt="" loading="lazy" />
+          <img src={post.image} alt={post.title} loading="lazy" />
         </div>
       )}
       <div className="cb-post-body">
         <PostMeta post={post} />
         <h3>{post.title}</h3>
         {showExcerpt && has(post.excerpt) && <p>{post.excerpt}</p>}
-        <span className="cb-post-more">Read article →</span>
+        <span className="cb-post-more">{has(readMore) ? readMore : "Read article →"}</span>
       </div>
     </Link>
+  );
+}
+
+/** A link: outside links in a new tab, site links through next/link. */
+function A({ url, className, children }) {
+  const href = String(url || "").trim();
+  if (isExternal(href)) return <a href={href} className={className} target="_blank" rel="noopener noreferrer">{children}</a>;
+  return <Link href={href || "/"} className={className}>{children}</Link>;
+}
+
+/** Category chips: payload.categories (automatic, filled on the server) or chipItems (manual). */
+function PostChips({ p }) {
+  const chips = p.chips === "no" ? []
+    : p.chips === "manual" ? list(p.chipItems).filter((c) => has(c.text)).map((c) => ({ name: c.text, url: c.url, icon: c.icon }))
+      : list(p.categories);
+  if (!chips.length) return null;
+  return (
+    <div className={`cb-post-chips${p.align === "left" ? "" : " cb-center"}`}>
+      {chips.map((c, i) => (
+        <A key={i} url={c.url || "/blog"} className="cb-post-chip">{has(c.icon) && <span aria-hidden="true">{c.icon}</span>}{c.name}</A>
+      ))}
+    </div>
   );
 }
 
@@ -306,28 +328,33 @@ function BlogPosts({ p }) {
   if (!posts.length) return null;
   const showExcerpt = p.excerpt !== "no";
   const featured = p.layout !== "grid" && posts.length > 1;
+  const viewAll = has(p.button?.text) && (
+    <button type="button" className={`cb-post-viewall${p.buttonPlace === "side" ? " cb-btn cb-btn-ghost" : ""}`} onClick={() => go(p.button.url || "/blog", p.button.text)}>
+      <ButtonLabel button={p.button} />
+    </button>
+  );
+  const place = ["side", "bottom"].includes(p.buttonPlace) ? p.buttonPlace : "under";
+  const centered = p.align !== "left";
   return (
     <Section type="blogposts" p={p}>
-      <div className="cb-posts-head">
-        <Head p={p} />
-        {has(p.button?.text) && (
-          <button type="button" className="cb-btn cb-btn-ghost" onClick={() => go(p.button.url || "/blog", p.button.text)}>
-            <ButtonLabel button={p.button} />
-          </button>
-        )}
+      <div className={`cb-posts-head${place === "side" ? "" : " cb-posts-head-stack"}${centered && place !== "side" ? " cb-center" : ""}`}>
+        <Head p={p} center={centered && place !== "side"} />
+        {place !== "bottom" && viewAll}
       </div>
+      <PostChips p={p} />
       {featured ? (
         <div className="cb-posts-featured">
-          <PostCard post={posts[0]} featured showExcerpt={showExcerpt} />
+          <PostCard post={posts[0]} featured showExcerpt={showExcerpt} readMore={p.readMore} />
           <div className="cb-posts-side">
-            {posts.slice(1).map((post) => <PostCard key={post.id || post.url} post={post} showExcerpt={false} />)}
+            {posts.slice(1).map((post) => <PostCard key={post.id || post.url} post={post} showExcerpt={false} readMore={p.readMore} />)}
           </div>
         </div>
       ) : (
-        <div className="cb-posts-grid" style={{ "--cb-cols": clampInt(p.columns, 1, 4, 3) }}>
-          {posts.map((post) => <PostCard key={post.id || post.url} post={post} showExcerpt={showExcerpt} />)}
+        <div className="cb-posts-grid" style={{ "--cb-cols": Math.min(clampInt(p.columns, 1, 4, 3), posts.length) }}>
+          {posts.map((post) => <PostCard key={post.id || post.url} post={post} showExcerpt={showExcerpt} readMore={p.readMore} />)}
         </div>
       )}
+      {place === "bottom" && viewAll && <div className="cb-post-viewall-row">{viewAll}</div>}
     </Section>
   );
 }

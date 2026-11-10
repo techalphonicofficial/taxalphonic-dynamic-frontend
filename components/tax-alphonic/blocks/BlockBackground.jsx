@@ -1,3 +1,5 @@
+import Link from "next/link";
+import ButtonLabel from "./ButtonLabel";
 import "./blocks.css";
 
 /*
@@ -113,10 +115,51 @@ function spacingOf(config) {
   return classes.length ? { className: `ta-sp ${classes.join(" ")}`, style } : null;
 }
 
+// Extra buttons of any block (admin: the block's "Buttons" panel, saved as section.config.buttons =
+// { items: [{ text, url, icon, iconSide, style, size, color }], align, position: below | above }).
+// Plain links, so form popups ("#form-<id>", FormPopupHost), #anchors and the landing link guard all
+// work as with any CMS link. Styles: .ta-blk-btns in blocks.css.
+const BTN_STYLES = new Set(["solid", "outline", "soft", "dark", "white", "link", "gradient"]);
+const BTN_SIZES = new Set(["sm", "md", "lg"]);
+const isExternal = (url) => /^(?:https?:)?\/\//i.test(url) || /^(mailto|tel):/i.test(url);
+
+function buttonsOf(config) {
+  const set = config?.buttons;
+  const items = Array.isArray(set?.items) ? set.items.filter((b) => b && String(b.text || "").trim()) : [];
+  return items.length ? { ...set, items } : null;
+}
+
+function BlockButtons({ set }) {
+  const align = ["center", "right", "stretch"].includes(set.align) ? set.align : "left";
+  return (
+    <div className={`ta-blk-btns ta-blk-btns-${align} ta-blk-btns-${set.position === "above" ? "above" : "below"}`}>
+      {set.items.map((b, i) => {
+        const url = String(b.url || "").trim();
+        const style = BTN_STYLES.has(b.style) ? b.style : "solid";
+        const size = BTN_SIZES.has(b.size) ? b.size : "md";
+        const className = `ta-blk-btn ta-blk-btn-${style} ta-blk-btn-${size}`;
+        const css = HEX_COLOR.test(String(b.color || "")) ? { "--bb-c": b.color } : undefined;
+        const label = <ButtonLabel button={b} />;
+        if (!url) return <span key={i} className={className} style={css}>{label}</span>;
+        if (isExternal(url)) return <a key={i} href={url} className={className} style={css} target={/^(mailto|tel):/i.test(url) ? undefined : "_blank"} rel="noopener noreferrer">{label}</a>;
+        if (url.startsWith("#")) return <a key={i} href={url} className={className} style={css}>{label}</a>;
+        return <Link key={i} href={url} className={className} style={css}>{label}</Link>;
+      })}
+    </div>
+  );
+}
+
 export default function BlockBackground({ config, hero = false, children }) {
-  const body = <Background config={config} hero={hero}>{children}</Background>;
+  const buttons = buttonsOf(config);
+  const inner = buttons
+    ? (buttons.position === "above" ? <><BlockButtons set={buttons} />{children}</> : <>{children}<BlockButtons set={buttons} /></>)
+    : children;
+  const body = <Background config={config} hero={hero}>{inner}</Background>;
   const spacing = spacingOf(config);
   const node = spacing ? <div className={spacing.className} style={spacing.style}>{body}</div> : body;
   // Admin Live Preview only: marks the block being edited, so it can draw the spacing over it.
-  return config?.previewMark ? <div data-ta-block={config.previewMark}>{node}</div> : node;
+  const marked = config?.previewMark ? <div data-ta-block={config.previewMark}>{node}</div> : node;
+  // Admin Live Preview only: every block carries its id, so a click on it opens it in the editor.
+  // display: contents, so the page layout stays exactly the same.
+  return config?.previewId ? <div data-ta-bid={config.previewId} style={{ display: "contents" }}>{marked}</div> : marked;
 }

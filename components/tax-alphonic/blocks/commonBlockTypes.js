@@ -9,6 +9,14 @@ export const COMMON_BLOCK_TYPES = [
   "CommonTrust", "CommonContact", "CommonMiniFaq", "CommonTextSide",
   // Explore links grid and Questions & answers + knowledge tabs (reference .xhub / .sp-qna + .tpx).
   "CommonExploreHub", "CommonQna",
+  // Numbers dashboard: donut, bars, percentage rings and a key-numbers strip (reference .databand).
+  "CommonDataBand",
+  // Opens a CMS form in a popup a few seconds after the page loads (AutoPopup.jsx).
+  "CommonAutoPopup",
+  // Centre badge with the platform pillars under it (reference .eco3d).
+  "CommonEcosystem",
+  // Tabs, each with its own grid of cards (reference .lc labour law section).
+  "CommonTabCards",
   // Carousel / slider, latest blog posts and sticky section tabs (ExtraBlocks.jsx).
   "CommonCarousel", "CommonBlogPosts", "CommonAnchorNav",
 ];

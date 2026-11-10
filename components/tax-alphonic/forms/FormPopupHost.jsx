@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import CmsForm from "./CmsForm";
-import { FORM_POPUP_EVENT, formPopupTarget, prefillFormIn } from "@/lib/formPopup";
+import { FORM_POPUP_CLOSED_EVENT, FORM_POPUP_EVENT, formPopupTarget, prefillFormIn } from "@/lib/formPopup";
 import { loadPublicForm } from "@/service/formSubmission";
 import "../service-page.css";
 import "./form-popup.css";
@@ -27,11 +27,12 @@ export default function FormPopupHost({ defaultForm = null, theme, themeStyle })
   const lastFocus = useRef(null);
 
   // `prefill`: text for the form's first multi-line field (openFormPopup's third argument).
-  const open = useCallback(async ({ id, label, prefill = "" }) => {
+  // `subHeading` replaces the form's description; `source` comes back in FORM_POPUP_CLOSED_EVENT.
+  const open = useCallback(async ({ id, label, prefill = "", subHeading = "", source = "" }) => {
     lastFocus.current = document.activeElement;
     if (!id) {
       if (defaultForm?.form) {
-        setState({ form: defaultForm.form, heading: defaultForm.heading || label, subHeading: defaultForm.subHeading, prefill });
+        setState({ form: defaultForm.form, heading: defaultForm.heading || label, subHeading: subHeading || defaultForm.subHeading, prefill, source });
       } else {
         const enquiry = document.getElementById("enquiry");
         enquiry?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -40,10 +41,10 @@ export default function FormPopupHost({ defaultForm = null, theme, themeStyle })
       return;
     }
     if (defaultForm?.form && String(defaultForm.form.id) === id) {
-      setState({ form: defaultForm.form, heading: label || defaultForm.heading, subHeading: defaultForm.subHeading, prefill });
+      setState({ form: defaultForm.form, heading: label || defaultForm.heading, subHeading: subHeading || defaultForm.subHeading, prefill, source });
       return;
     }
-    setState({ loading: true, heading: label, prefill });
+    setState({ loading: true, heading: label, prefill, source });
     let form = cache.current.get(id);
     if (form === undefined) {
       form = await loadPublicForm(id).catch(() => null);
@@ -51,9 +52,10 @@ export default function FormPopupHost({ defaultForm = null, theme, themeStyle })
     }
     setState((current) => (current?.loading ? {
       prefill: current.prefill,
+      source: current.source,
       form,
       heading: label || form?.name,
-      subHeading: form?.description,
+      subHeading: subHeading || form?.description,
       error: form ? "" : "This form is not available right now. Please try again later.",
     } : current));
   }, [defaultForm]);
@@ -64,6 +66,8 @@ export default function FormPopupHost({ defaultForm = null, theme, themeStyle })
     const me = { hasDefault: Boolean(defaultForm?.form) };
     hosts.push(me);
     window.__taFormPopup = true;
+    // The page has its own form for "#form" (landing pages): the Auto Popup block may use it.
+    window.__taFormPopupDefault = hosts.some((h) => h.hasDefault);
     const onEvent = (event) => activeHost() === me && open(event.detail || {});
     const onClick = (event) => {
       if (activeHost() !== me) return;
@@ -81,13 +85,19 @@ export default function FormPopupHost({ defaultForm = null, theme, themeStyle })
     return () => {
       hosts.splice(hosts.indexOf(me), 1);
       window.__taFormPopup = hosts.length > 0;
+      window.__taFormPopupDefault = hosts.some((h) => h.hasDefault);
       window.removeEventListener(FORM_POPUP_EVENT, onEvent);
       document.removeEventListener("click", onClick, true);
     };
   }, [open, defaultForm]);
 
+  const openState = useRef(null);
+  useEffect(() => { openState.current = state; }, [state]);
+
   const close = useCallback(() => {
+    const current = openState.current;
     setState(null);
+    if (current) window.dispatchEvent(new CustomEvent(FORM_POPUP_CLOSED_EVENT, { detail: { source: current.source || "" } }));
     lastFocus.current?.focus?.();
   }, []);
 

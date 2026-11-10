@@ -1,0 +1,38 @@
+/*
+ * Compact look for every CMS form (CmsForm.jsx: service / page sidebars, Form blocks, homepage,
+ * landing pages, form popups). Smaller fields, labels, gaps and button than the page styles
+ * (service-page.css / home-page.css .field rules). The doubled .cms-form class wins over those rules.
+ */
+.cms-form.cms-form .field { margin-bottom: 9px; }
+.cms-form.cms-form .field :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
+  padding: 9px 12px;
+  font-size: 13.5px;
+  line-height: 1.4;
+  border-radius: 9px;
+  min-height: 0;
+}
+.cms-form.cms-form .field select { padding-right: 30px; }
+.cms-form.cms-form .field textarea { min-height: 72px; }
+.cms-form.cms-form .cms-label { font-size: 12.5px; margin-bottom: 4px; }
+.cms-form.cms-form :is(.cms-help, .cms-error) { font-size: 11.5px; margin-top: 3px; }
+.cms-form.cms-form .cms-choice-group { gap: 6px; }
+.cms-form.cms-form .cms-choice { font-size: 13.5px; }
+.cms-form.cms-form .cms-form-grid { column-gap: 10px; }
+.cms-form.cms-form button[type="submit"] {
+  padding: 11px 18px;
+  font-size: 14.5px;
+  border-radius: 10px;
+  margin-top: 2px;
+}
+.cms-form.cms-form .cms-form-error { font-size: 12.5px; padding: 8px 10px; }
+.cms-form.cms-form .cms-form-success { font-size: 13.5px; padding: 12px 14px; }
+
+/* Captcha row in the same size as the fields. */
+.cms-form.cms-form .ta-captcha .ta-captcha-q { min-height: 37px; padding: 0 12px; font-size: 15px; }
+.cms-form.cms-form .ta-captcha .ta-captcha-new { width: 34px; height: 34px; flex-basis: 34px; }
+.cms-form.cms-form .ta-captcha.ta-captcha .ta-captcha-row input.ta-captcha-input { width: 80px; flex-basis: 80px; }
+
+/* The card around a sidebar / Form-block form. */
+.ta-svc .lead-card:has(.cms-form) { padding: 20px; }
+.ta-svc .lead-card:has(.cms-form) h3 { font-size: 17px; }
+.ta-svc .lead-card:has(.cms-form) .csub { font-size: 12.5px; margin-bottom: 12px; }

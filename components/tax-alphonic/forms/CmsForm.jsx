@@ -6,6 +6,7 @@ import { landingLocked } from "@/lib/landingLinks";
 import { submitCmsForm } from "@/service/formSubmission";
 import { thankYouUrl } from "../landing/ThankYouRedirect";
 import MathCaptcha from "./MathCaptcha";
+import "./cms-form.css";
 
 const INPUT_TYPES = { text: "text", email: "email", phone: "tel", number: "number", date: "date" };
 const AUTOCOMPLETE = { email: "email", phone: "tel" };

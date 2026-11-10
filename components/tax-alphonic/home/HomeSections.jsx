@@ -13,6 +13,7 @@ import AnyBlock from "../blocks/AnyBlock";
 import LayoutGroup from "../blocks/LayoutGroup";
 import { mainWidthProps, splitLayoutSections } from "../blocks/layoutSections";
 import ButtonLabel from "../blocks/ButtonLabel";
+import NewsletterBox from "./NewsletterBox";
 
 /*
  * Homepage blocks from the CMS Page Builder (page slug "home"), or DEFAULT_HOME_SECTIONS.
@@ -732,10 +733,8 @@ function Newsletter({ p }) {
         {form ? (
           <div className="news-cms-form"><CmsForm form={form} compact /></div>
         ) : has(p.buttonText) && (
-          <div className="news-form">
-            <input placeholder={p.placeholder || ""} aria-label={p.placeholder || "Email address"} />
-            <button type="button" className="btn-primary">{p.buttonText}</button>
-          </div>
+          // Without a CMS form: the email goes to the newsletter list (admin: Newsletter Subscribers).
+          <NewsletterBox placeholder={p.placeholder} buttonText={p.buttonText} />
         )}
       </div>
     </div>

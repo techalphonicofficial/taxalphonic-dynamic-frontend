@@ -35,6 +35,7 @@ const DEFAULT_PLACEMENT = {
   LocationsServed: "bottom",
   CommonFormHero: "top", // hero with a form: full width under the hero
   CommonExploreHub: "bottom", // explore links grid: full width under the page body
+  CommonDataBand: "bottom", // numbers dashboard: full width under the page body
   CommonAnchorNav: "top", // section tabs: under the hero, then sticks under the site header
 };
 const PLACEMENTS = ["top", "main", "sidebar", "bottom"];

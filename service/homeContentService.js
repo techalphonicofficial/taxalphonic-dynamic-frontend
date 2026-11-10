@@ -161,34 +161,72 @@ async function attachTools(sections) {
 // Where a blog post opens on this website (Tax Alphonic: /blog/<slug>, Services Plus: /blog-detail/<slug>).
 export const BLOG_POST_BASE = "/blog/";
 
+const list = (value) => (Array.isArray(value) ? value.filter(Boolean) : []);
+
+/** One live blog post as the Blog Posts block shows it. */
+const toPostCard = (post) => ({
+  id: post.id,
+  title: String(post.title || "").trim(),
+  url: `${BLOG_POST_BASE}${post.slug}`,
+  excerpt: post.excerpt || "",
+  image: asset(post.featuredImage),
+  date: post.date || post.publishDate || post.createdAt || null,
+  readTime: Number(post.readTime) || 0,
+  category: post.category?.name || "",
+});
+
+/** Live blog categories with posts, for the chips (cached per request). */
+const loadBlogCategories = cache(async function loadBlogCategories() {
+  try {
+    const payload = await apiClient("/api/v1/blogs/public/categories", { next: { revalidate: 60 } });
+    return rows(payload).filter((c) => c?.slug && Number(c.count ?? 1) > 0);
+  } catch (error) {
+    console.error("Unable to load blog categories for a Blog Posts block.", error);
+    return [];
+  }
+});
+
+/** The picked posts (payload.picked [{ slug }]) in their order; a post that is not live is left out. */
+async function pickedPosts(picked) {
+  const slugs = list(picked).map((x) => String(x?.slug || "").trim()).filter((slug) => /^[A-Za-z0-9_-]{1,190}$/.test(slug)).slice(0, 12);
+  const found = await Promise.all(slugs.map(async (slug) => {
+    try {
+      const payload = await apiClient(`/api/v1/blogs/public/${encodeURIComponent(slug)}`, { next: { revalidate: 60 } });
+      return payload?.data ? toPostCard(payload.data.post || payload.data) : null;
+    } catch {
+      return null; // unpublished, expired or deleted
+    }
+  }));
+  return found.filter((post) => post?.title);
+}
+
 /**
- * Latest Blog Posts blocks (CommonBlogPosts): the newest live posts (GET /api/v1/blogs/public,
- * optional category slug) as payload.posts [{ title, url, excerpt, image, date, readTime, category }].
+ * Blog Posts blocks (CommonBlogPosts): payload.posts [{ title, url, excerpt, image, date, readTime,
+ * category }] = the newest live posts (GET /api/v1/blogs/public, optional category slug, `limit`),
+ * or with source "pick" the posts chosen in the admin (`picked`), in that order. With chips "auto"
+ * (default) also payload.categories [{ name, url }] from the live blog categories.
  */
 async function attachBlogPosts(sections) {
   if (!sections.some((s) => s.type === "CommonBlogPosts")) return sections;
   return Promise.all(sections.map(async (s) => {
     if (s.type !== "CommonBlogPosts") return s;
     const p = s.payload || {};
+    // Admin palette preview: its sample posts stay (blockSamples.js).
+    if (s.config?.previewSample && list(p.posts).length) return s;
+    const categories = p.chips === "no" || p.chips === "manual" ? [] : (await loadBlogCategories())
+      .slice(0, Math.min(16, Math.max(1, parseInt(p.chipsLimit, 10) || 8)))
+      .map((c) => ({ name: c.name, url: `/blog?category=${encodeURIComponent(c.slug)}` }));
+    if (p.source === "pick") return { ...s, payload: { ...p, posts: await pickedPosts(p.picked), categories } };
     const limit = Math.min(12, Math.max(1, parseInt(p.limit, 10) || 3));
     const query = new URLSearchParams({ page: "1", limit: String(limit) });
     if (p.category) query.set("category", String(p.category).trim());
     try {
       const payload = await apiClient(`/api/v1/blogs/public?${query}`, { next: { revalidate: 60 } });
-      const posts = rows(payload).map((post) => ({
-        id: post.id,
-        title: String(post.title || "").trim(),
-        url: `${BLOG_POST_BASE}${post.slug}`,
-        excerpt: post.excerpt || "",
-        image: asset(post.featuredImage),
-        date: post.date || post.publishDate || post.createdAt || null,
-        readTime: Number(post.readTime) || 0,
-        category: post.category?.name || "",
-      })).filter((post) => post.title);
-      return { ...s, payload: { ...p, posts } };
+      const posts = rows(payload).map(toPostCard).filter((post) => post.title);
+      return { ...s, payload: { ...p, posts, categories } };
     } catch (error) {
-      console.error("Unable to load blog posts for a Latest Blog Posts block.", error);
-      return { ...s, payload: { ...p, posts: [] } };
+      console.error("Unable to load blog posts for a Blog Posts block.", error);
+      return { ...s, payload: { ...p, posts: [], categories } };
     }
   }));
 }

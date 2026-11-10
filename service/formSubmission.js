@@ -69,3 +69,24 @@ export async function loadPublicForm(identifier) {
     return null;
   }
 }
+
+/**
+ * Server Action for the Newsletter block's email box (no CMS form picked): forwards the address to
+ * POST /api/v1/newsletter/subscribe (admin: Newsletter Subscribers). `_hp` is the honeypot.
+ */
+export async function subscribeNewsletter({ email, source, _hp } = {}) {
+  const requestHeaders = await headers();
+  const forwardedFor = requestHeaders.get("x-forwarded-for") || requestHeaders.get("x-real-ip");
+  try {
+    const payload = await apiClient("/api/v1/newsletter/subscribe", {
+      method: "POST",
+      cache: "no-store",
+      headers: { "Content-Type": "application/json", ...(forwardedFor ? { "X-Forwarded-For": forwardedFor } : {}) },
+      body: JSON.stringify({ email: String(email || "").slice(0, 200), source: String(source || "").slice(0, 255), _hp: String(_hp || "") }),
+    });
+    return { status: "success", message: payload?.message || "Thank you for subscribing!" };
+  } catch (error) {
+    if (!error.status || error.status >= 500) console.error("Newsletter subscribe failed", error);
+    return { status: "error", message: error.body?.errors?.[0]?.message || error.body?.message || "Something went wrong. Please try again in a moment." };
+  }
+}

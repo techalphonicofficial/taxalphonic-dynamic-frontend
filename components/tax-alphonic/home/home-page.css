@@ -3220,3 +3220,12 @@
     grid-template-columns: 1.2fr .8fr .8fr .8fr 120px;
   }
 }
+
+/* Newsletter email box (NewsletterBox.jsx): message under the box, honeypot hidden. */
+.ta-home .news-form { flex-wrap: wrap; }
+.ta-home .news-form input[type="email"] { min-width: 0; min-height: 40px; }
+.ta-home .news-form .news-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.ta-home .news-form .btn-primary:disabled { opacity: .7; cursor: progress; }
+.ta-home .news-form .news-msg { flex-basis: 100%; margin: 2px 6px 4px; font-size: 13px; font-weight: 600; }
+.ta-home .news-form .news-msg.is-ok { color: #15803d; }
+.ta-home .news-form .news-msg.is-err { color: #dc2626; }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { openFormPopup, prefillFormIn } from "@/lib/formPopup";
@@ -8,6 +8,7 @@ import { blockLandingNavigation } from "@/lib/landingLinks";
 import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import CmsForm from "../forms/CmsForm";
 import Calculator from "../tools/calculators";
+import AutoPopup from "./AutoPopup";
 import ButtonLabel from "./ButtonLabel";
 import { EXTRA_BLOCKS } from "./ExtraBlocks";
 import "../tools/tools-page.css";
@@ -39,11 +40,11 @@ function useGo() {
   };
 }
 
-function A({ url, className, children, label }) {
+function A({ url, className, children, label, style }) {
   const href = String(url || "").trim();
-  if (!href) return <span className={className}>{children}</span>;
-  if (isExternal(href)) return <a href={href} className={className} aria-label={label} target="_blank" rel="noopener noreferrer">{children}</a>;
-  return <Link href={href} className={className} aria-label={label}>{children}</Link>;
+  if (!href) return <span className={className} style={style}>{children}</span>;
+  if (isExternal(href)) return <a href={href} className={className} style={style} aria-label={label} target="_blank" rel="noopener noreferrer">{children}</a>;
+  return <Link href={href} className={className} style={style} aria-label={label}>{children}</Link>;
 }
 
 function Button({ button, ghost = false }) {
@@ -52,11 +53,12 @@ function Button({ button, ghost = false }) {
   return <button type="button" className={ghost || button.style === "ghost" ? "cb-btn cb-btn-ghost" : "cb-btn"} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
 }
 
-function Icon({ value }) {
+/** Emoji / text, or an image URL; `alt` describes an image icon (empty = decorative). */
+function Icon({ value, alt = "" }) {
   const icon = String(value || "").trim();
   if (!icon) return null;
   // eslint-disable-next-line @next/next/no-img-element
-  if (isImage(icon)) return <img src={icon} alt="" className="cb-icon-img" />;
+  if (isImage(icon)) return <img src={icon} alt={alt} className="cb-icon-img" />;
   return icon;
 }
 
@@ -227,10 +229,12 @@ function Gallery({ p }) {
 function Stats({ p }) {
   const items = list(p.items).filter((x) => has(x.value));
   if (!items.length) return null;
+  // Automatic = every number in one row, at most 6.
+  const n = cols(p.columns, Math.min(items.length, 6));
   return (
     <Section type="stats" p={p}>
       <Head p={p} center />
-      <div className="cb-stats" style={{ "--cb-cols": cols(p.columns, Math.min(items.length, 4)) }}>
+      <div className={`cb-stats${n > 3 ? " cb-stats-many" : ""}${n > 2 ? " cb-stats-wide" : ""}`} style={{ "--cb-cols": n }}>
         {items.map((x, i) => (
           <div key={i} className="cb-stat">
             {has(x.icon) && <span className="cb-stat-ic"><Icon value={x.icon} /></span>}
@@ -243,6 +247,20 @@ function Stats({ p }) {
   );
 }
 
+const CARD_LOOKS = new Set(["link", "solid", "outline", "soft"]);
+
+/** Buttons inside a card ([button, look] pairs): a text link or a small button (blocks.css .ta-blk-btn-*). */
+function CardButtons({ buttons }) {
+  return buttons.map(([b, look], i) => {
+    const style = CARD_LOOKS.has(look) ? look : "link";
+    return (
+      <A key={i} url={b.url} className={`ta-blk-btn ta-blk-btn-${style} ta-blk-btn-sm cb-card-btn`} label={b.text}>
+        <ButtonLabel button={style === "link" && !has(b.icon) ? { ...b, icon: "→", iconSide: "right" } : b} />
+      </A>
+    );
+  });
+}
+
 function Cards({ p }) {
   const items = list(p.items).filter((x) => has(x.title) || has(x.text));
   if (!items.length) return null;
@@ -251,14 +269,25 @@ function Cards({ p }) {
       <Head p={p} center={p.align === "center"} />
       {/* At least 4 per row on a laptop (older blocks saved 1–3), fewer only when there are fewer cards. */}
       <div className={`cb-cards${p.style === "plain" ? " cb-cards-plain" : ""}`} style={{ "--cb-cols": Math.min(Math.max(cols(p.columns, 4), 4), items.length) }}>
-        {items.map((x, i) => (
-          <A key={i} url={x.url} className="cb-card">
-            {has(x.icon) && <span className="cb-card-ic"><Icon value={x.icon} /></span>}
-            {has(x.title) && <b>{x.title}</b>}
-            {has(x.text) && <p>{x.text}</p>}
-            {has(x.url) && <i>{x.linkText || "Learn more →"}</i>}
-          </A>
-        ))}
+        {items.map((x, i) => {
+          const buttons = [[x.btn1, x.btn1Style], [x.btn2, x.btn2Style]].filter(([b]) => hasButton(b));
+          const inner = (
+            <>
+              {has(x.icon) && <span className="cb-card-ic"><Icon value={x.icon} alt={x.iconAlt || ""} /></span>}
+              {has(x.title) && <b>{x.title}</b>}
+              {has(x.text) && <p>{x.text}</p>}
+            </>
+          );
+          // With its own buttons the card is not one big link (no link inside a link): the title links instead.
+          if (!buttons.length) return <A key={i} url={x.url} className="cb-card">{inner}{has(x.url) && <i>{x.linkText || "Learn more →"}</i>}</A>;
+          return (
+            <div key={i} className="cb-card cb-card-btns">
+              {inner}
+              {has(x.url) && <A url={x.url} className="cb-card-more">{x.linkText || "Learn more →"}</A>}
+              <div className="cb-card-actions"><CardButtons buttons={buttons} /></div>
+            </div>
+          );
+        })}
       </div>
     </Section>
   );
@@ -568,6 +597,12 @@ function Contact({ p }) {
         {has(p.text) && <p>{p.text}</p>}
         <div className="cb-contact-actions">
           {hasButton(p.button) && <Button button={p.button} />}
+          {/* Second button (optional): outline by default, under the main one. */}
+          {hasButton(p.button2) && (
+            <A url={p.button2.url} className={`ta-blk-btn ta-blk-btn-${CARD_LOOKS.has(p.button2Style) ? p.button2Style : "outline"} ta-blk-btn-md cb-contact-btn2`} label={p.button2.text}>
+              <ButtonLabel button={p.button2} />
+            </A>
+          )}
           {phone && <a className="cb-contact-link" href={telHref(phone)}>📞 {has(p.phoneText) ? p.phoneText : phone}</a>}
           {whatsapp && <a className="cb-contact-link cb-contact-wa" href={waHref(whatsapp, p.whatsappMessage)} target="_blank" rel="noopener noreferrer">💬 {has(p.whatsappText) ? p.whatsappText : "Chat on WhatsApp"}</a>}
         </div>
@@ -780,7 +815,269 @@ function Qna({ p }) {
   );
 }
 
+// ---- Numbers dashboard (reference .databand): donut, bars, rings and a stats strip -------------
+
+/** First number in a text such as "12,400+", "₹50Cr" or "96%"; 0 when there is none. */
+const numberIn = (value) => {
+  const m = String(value ?? "").replace(/,/g, "").match(/-?\d+(?:\.\d+)?/);
+  return m ? Number(m[0]) : 0;
+};
+const DB_COLORS = ["#0E96AC", "#E8521E", "#F5A623", "#7C3AED", "#16A34A", "#DB2777", "#2563EB", "#64748B"];
+const HEX = /^#[0-9a-f]{3}(?:[0-9a-f]{3})?$/i;
+const colorOr = (value, fallback) => (HEX.test(String(value || "").trim()) ? String(value).trim() : fallback);
+
+function DbButton({ button, className = "" }) {
+  const go = useGo();
+  if (!hasButton(button)) return null;
+  return <button type="button" className={`cb-db-btn ${className}`.trim()} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
+}
+
+/** Link when it has a URL, plain element otherwise. */
+function DbItem({ url, className, children }) {
+  return has(url) ? <A url={url} className={`${className} cb-db-link`}>{children}</A> : <div className={className}>{children}</div>;
+}
+
+function DbDonut({ p }) {
+  const segments = list(p.segments).filter((s) => has(s.label) || has(s.value));
+  if (!segments.length && !has(p.donutValue)) return null;
+  const amounts = segments.map((s) => Math.max(0, has(s.amount) ? numberIn(s.amount) : numberIn(s.value)));
+  const total = amounts.reduce((a, b) => a + b, 0);
+  const C = 2 * Math.PI * 48;
+  let offset = 0;
+  return (
+    <div className="cb-db-card">
+      {has(p.donutTitle) && <h4>{p.donutTitle}</h4>}
+      <div className="cb-db-donut">
+        <svg viewBox="0 0 120 120" role="img" aria-label={p.donutTitle || "Chart"}>
+          <circle cx="60" cy="60" r="48" fill="none" stroke="var(--cb-mist)" strokeWidth="20" />
+          {total > 0 && segments.map((s, i) => {
+            const len = (amounts[i] / total) * C;
+            const arc = <circle key={i} cx="60" cy="60" r="48" fill="none" stroke={colorOr(s.color, DB_COLORS[i % DB_COLORS.length])} strokeWidth="20" strokeDasharray={`${len} ${C}`} strokeDashoffset={-offset} transform="rotate(-90 60 60)" />;
+            offset += len;
+            return arc;
+          })}
+        </svg>
+        {(has(p.donutValue) || has(p.donutLabel)) && (
+          <div className="cb-db-donut-center">{has(p.donutValue) && <b>{p.donutValue}</b>}{has(p.donutLabel) && <span>{p.donutLabel}</span>}</div>
+        )}
+      </div>
+      {segments.length > 0 && (
+        <div className="cb-db-legend">
+          {segments.map((s, i) => (
+            <DbItem key={i} url={s.url} className="cb-db-legend-item">
+              <i style={{ background: colorOr(s.color, DB_COLORS[i % DB_COLORS.length]) }} />
+              <span>{s.label}</span>
+              {has(s.value) && <b>{s.value}</b>}
+            </DbItem>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DbBars({ p }) {
+  const bars = list(p.bars).filter((b) => has(b.label) || has(b.value));
+  const ref = useRef(null);
+  const [shown, setShown] = useState(false);
+  // Bars grow when the chart scrolls into view (at once without IntersectionObserver).
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") { setShown(true); return undefined; }
+    const io = new IntersectionObserver((entries) => { if (entries.some((e) => e.isIntersecting)) { setShown(true); io.disconnect(); } }, { threshold: 0.2 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [bars.length]);
+  if (!bars.length) return null;
+  const max = Math.max(...bars.map((b) => numberIn(b.value)), 0) || 1;
+  const from = colorOr(p.barColor, "var(--cb-brand)");
+  const to = colorOr(p.barColor2, "#E8521E");
+  return (
+    <div className="cb-db-card">
+      {(has(p.barsTitle) || has(p.barsTag)) && <h4>{p.barsTitle} {has(p.barsTag) && <span className="cb-db-tag">{p.barsTag}</span>}</h4>}
+      <div className="cb-db-bars" ref={ref}>
+        {bars.map((b, i) => (
+          <div key={i} className="cb-db-bar-col">
+            {has(b.value) && <span className="cb-db-bar-val">{b.value}</span>}
+            <div className="cb-db-bar" style={{ height: shown ? `${Math.max(4, (numberIn(b.value) / max) * 100)}%` : "4%", background: `linear-gradient(180deg, ${from}, ${to})` }} />
+            {has(b.label) && <span className="cb-db-bar-label">{b.label}</span>}
+          </div>
+        ))}
+      </div>
+      {has(p.barsNote) && <p className="cb-db-note">{p.barsNote}</p>}
+      <DbButton button={p.barsButton} />
+    </div>
+  );
+}
+
+function DbRings({ p }) {
+  const rings = list(p.rings).filter((r) => has(r.value) || has(r.label));
+  if (!rings.length) return null;
+  const color = colorOr(p.ringColor, "var(--cb-brand)");
+  return (
+    <div className="cb-db-card cb-db-rings">
+      {has(p.ringsTitle) && <h4>{p.ringsTitle}</h4>}
+      {rings.map((r, i) => (
+        <DbItem key={i} url={r.url} className="cb-db-ring-row">
+          <div className="cb-db-ring" style={{ "--p": Math.max(0, Math.min(100, numberIn(r.value))), "--rc": color }}><b>{r.value}</b></div>
+          <span>{r.label}</span>
+        </DbItem>
+      ))}
+      <DbButton button={p.ringsButton} className="cb-db-btn-end" />
+    </div>
+  );
+}
+
+function DataBand({ p }) {
+  const stats = list(p.stats).filter((s) => has(s.value) || has(s.label));
+  const donut = p.showDonut !== "no" && <DbDonut p={p} />;
+  const bars = p.showBars !== "no" && <DbBars p={p} />;
+  const rings = p.showRings !== "no" && <DbRings p={p} />;
+  const hasCards = (p.showDonut !== "no" && (list(p.segments).length > 0 || has(p.donutValue)))
+    || (p.showBars !== "no" && list(p.bars).length > 0)
+    || (p.showRings !== "no" && list(p.rings).length > 0);
+  if (!hasCards && !stats.length) return null;
+  return (
+    <Section type="databand" p={p}>
+      <Head p={p} center={p.align !== "left"} />
+      {hasCards && <div className="cb-db-grid">{donut}{bars}{rings}</div>}
+      {stats.length > 0 && (
+        <div className="cb-db-stats" style={{ "--db-cols": cols(p.statColumns, Math.min(6, stats.length)) }}>
+          {stats.map((s, i) => (
+            <DbItem key={i} url={s.url} className="cb-db-stat">
+              {has(s.icon) && <span className="cb-db-stat-ic"><Icon value={s.icon} /></span>}
+              {has(s.value) && <b>{s.value}</b>}
+              {has(s.label) && <span>{s.label}</span>}
+            </DbItem>
+          ))}
+        </div>
+      )}
+      {has(p.disclaimer) && <p className="cb-db-disclaimer">{p.disclaimer}</p>}
+    </Section>
+  );
+}
+
+// ---- Platform pillars (reference .eco3d): a centre badge with the pillars under it ------------------
+
+const ECO_ICON = { small: "22px", medium: "30px", large: "40px", xl: "52px" };
+
+function Ecosystem({ p }) {
+  const pillars = list(p.pillars).filter((x) => has(x.title) || has(x.icon));
+  const lines = String(p.centerText || "").split(/\n|<br\s*\/?>/i).map((t) => t.trim()).filter(Boolean);
+  const hasCenter = p.showCenter !== "no" && (lines.length > 0 || has(p.centerImage));
+  if (!pillars.length && !hasCenter) return null;
+  const n = cols(p.columns, Math.min(Math.max(pillars.length, 1), 6));
+  const centre = hasCenter && (
+    <>
+      {has(p.centerImage)
+        // eslint-disable-next-line @next/next/no-img-element
+        ? <img src={p.centerImage} alt={p.centerImageAlt || lines.join(" ")} className="cb-eco-center-img" />
+        : lines.map((line, i) => <span key={i}>{line}</span>)}
+    </>
+  );
+  const centerStyle = {
+    "--eco-c1": colorOr(p.centerColor, "#0e96ac"),
+    "--eco-c2": colorOr(p.centerColor2, "#0a1840"),
+  };
+  return (
+    <Section type="eco" p={p}>
+      <Head p={p} center={p.align !== "left"} />
+      <div className={`cb-eco${p.boxed === "no" ? " cb-eco-plain" : ""}`} style={{ "--eco-ic": ECO_ICON[p.iconSize] || ECO_ICON.medium }}>
+        {hasCenter && (has(p.centerUrl)
+          ? <A url={p.centerUrl} className="cb-eco-center" style={centerStyle}>{centre}</A>
+          : <div className="cb-eco-center" style={centerStyle}>{centre}</div>)}
+        {pillars.length > 0 && (
+          <div className={`cb-eco-pillars${n > 3 ? " cb-eco-many" : ""}`} style={{ "--eco-cols": n }}>
+            {pillars.map((x, i) => (
+              <DbItem key={i} url={x.url} className="cb-eco-pillar">
+                {has(x.icon) && <span className="cb-eco-ic"><Icon value={x.icon} alt={x.iconAlt || ""} /></span>}
+                {has(x.title) && <b>{x.title}</b>}
+                {has(x.text) && <small>{x.text}</small>}
+              </DbItem>
+            ))}
+          </div>
+        )}
+      </div>
+    </Section>
+  );
+}
+
+// ---- Tabbed cards (reference .lc labour law section): tabs, each with its own grid of cards ------------
+
+/** Heading text with *stars* around words shown in the brand gradient (<em>). */
+function StarHighlight({ text }) {
+  return String(text || "").split(/\*([^*]+)\*/g).map((part, i) => (i % 2 ? <em key={i}>{part}</em> : <Fragment key={i}>{part}</Fragment>));
+}
+
+/** Card text: each line a line, **bold** words. */
+function CardLines({ text }) {
+  return String(text || "").split(/\n/).map((line) => line.trim()).filter(Boolean).map((line, i) => (
+    <p key={i}>{line.split(/\*\*(.+?)\*\*/g).map((part, j) => (j % 2 ? <b key={j}>{part}</b> : <Fragment key={j}>{part}</Fragment>))}</p>
+  ));
+}
+
+function TabCards({ p }) {
+  const tabs = list(p.tabs).map((t) => ({ ...t, cards: list(t.cards).filter((c) => has(c.title) || has(c.text)) })).filter((t) => t.cards.length);
+  const [active, setActive] = useState(0);
+  if (!tabs.length && !has(p.heading)) return null;
+  const current = tabs[Math.min(active, Math.max(tabs.length - 1, 0))];
+  const n = cols(current?.columns, cols(p.columns, 4));
+  const left = p.align === "left";
+  return (
+    <Section type="tabcards" p={p}>
+      {(has(p.kicker) || has(p.heading) || has(p.sub)) && (
+        <div className={`cb-tc-head${left ? " cb-tc-left" : ""}`}>
+          {has(p.kicker) && <span className="cb-tc-kicker">{p.kicker}</span>}
+          {has(p.heading) && <h2><StarHighlight text={p.heading} /></h2>}
+          {has(p.sub) && <p className="cb-sub">{p.sub}</p>}
+        </div>
+      )}
+      {tabs.length > 1 && (
+        <div className="cb-tc-tabs" role="tablist">
+          {tabs.map((t, i) => (
+            <button key={i} type="button" role="tab" aria-selected={t === current} className={`cb-tc-tab${t === current ? " is-active" : ""}`} onClick={() => setActive(i)}>
+              {has(t.icon) && <Icon value={t.icon} />}{t.label || `Tab ${i + 1}`}
+            </button>
+          ))}
+        </div>
+      )}
+      {current && (
+        <div className={`cb-tc-grid${n > 3 ? " cb-tc-many" : ""}`} style={{ "--tc-cols": n }} role="tabpanel">
+          {current.cards.map((c, i) => {
+            const style = HEX.test(String(c.color || "").trim()) ? { "--tc": c.color.trim() } : undefined;
+            const body = (
+              <>
+                {(has(c.icon) || has(c.tag)) && (
+                  <div className="cb-tc-top">
+                    {has(c.icon) ? <div className="cb-tc-ic"><Icon value={c.icon} alt={c.iconAlt || ""} /></div> : <span />}
+                    {has(c.tag) && <span className="cb-tc-tag">{c.tag}</span>}
+                  </div>
+                )}
+                {has(c.title) && <h3>{c.title}</h3>}
+                {has(c.text) && <div className="cb-tc-text"><CardLines text={c.text} /></div>}
+                {(has(c.chip) || has(c.url)) && (
+                  <div className="cb-tc-foot">
+                    {has(c.chip) && <span className="cb-tc-chip">{c.chip}</span>}
+                    {has(c.url) && <span className="cb-tc-go">{c.linkText || "Details →"}</span>}
+                  </div>
+                )}
+              </>
+            );
+            return has(c.url)
+              ? <A key={`${active}-${i}`} url={c.url} className="cb-tc-card" style={style}>{body}</A>
+              : <div key={`${active}-${i}`} className="cb-tc-card" style={style}>{body}</div>;
+          })}
+        </div>
+      )}
+    </Section>
+  );
+}
+
 const BLOCKS = {
+  CommonTabCards: TabCards,
+  CommonEcosystem: Ecosystem,
+  CommonDataBand: DataBand,
+  CommonAutoPopup: AutoPopup,
   CommonExploreHub: ExploreHub,
   CommonQna: Qna,
   CommonFormHero: FormHero,
