@@ -2401,3 +2401,18 @@
   color: var(--brand);
   font-weight: 800;
 }
+
+/* Why Choose Us (WhyUs): heading / card alignment and cards per row from the admin (min 3, default 3).
+   Narrow screens: 2 per row, phones 1. Centre / right cards put the icon above the text. */
+.ta-svc .wc-grid { grid-template-columns: repeat(var(--wc-cols, 3), minmax(0, 1fr)); }
+.ta-svc .wc-h-center > :is(.kicker, h2, p) { text-align: center; }
+.ta-svc .wc-h-right > :is(.kicker, h2, p) { text-align: right; }
+.ta-svc .wc-c-center .wc-item { flex-direction: column; align-items: center; text-align: center; }
+.ta-svc .wc-c-right .wc-item { flex-direction: column; align-items: flex-end; text-align: right; }
+@media (max-width: 1100px) { .ta-svc .wc-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .ta-svc .wc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .ta-svc .wc-grid { grid-template-columns: minmax(0, 1fr); } }
+.ta-svc .side .wc-grid { grid-template-columns: minmax(0, 1fr); }
+/* Centre / right heading: the h2 shrinks to its text so its accent bar moves with it. */
+.ta-svc .blk.wc-h-center > h2 { width: fit-content; margin-left: auto; margin-right: auto; }
+.ta-svc .blk.wc-h-right > h2 { width: fit-content; margin-left: auto; margin-right: 0; }

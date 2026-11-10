@@ -11,7 +11,7 @@ import { JourneyBlock } from "../journey/JourneySections";
 import { isJourneySection } from "../journey/journeyBlockTypes";
 import { ToolBlock } from "../tools/ToolSections";
 import { isToolSection } from "../tools/toolBlockTypes";
-import ButtonLabel from "../blocks/ButtonLabel";
+import ButtonLabel, { lookClass } from "../blocks/ButtonLabel";
 import LayoutGroup from "../blocks/LayoutGroup";
 import { mainWidthProps, splitLayoutSections } from "../blocks/layoutSections";
 import "../service-page.css";
@@ -91,7 +91,7 @@ function toCardItems(items) {
 /** Normalises a CMS button ({ text, url }) and drops it when it has no text. */
 function toButton(value) {
   const text = String(value?.text || "").trim();
-  return text ? { text, url: String(value?.url || "").trim() || "#", icon: value?.icon || "", iconSide: value?.iconSide || "" } : null;
+  return text ? { text, url: String(value?.url || "").trim() || "#", icon: value?.icon || "", iconSide: value?.iconSide || "", style: value?.style || "" } : null;
 }
 
 function parseSchema(value) {
@@ -147,9 +147,10 @@ function CmsButton({ button, className }) {
   const external = /^https?:\/\//i.test(button.url);
   const internal = button.url.startsWith("/") && !button.url.startsWith("//");
 
-  if (internal) return <Link href={button.url} className={className}><ButtonLabel button={button} /></Link>;
+  const cls = `${className || ""}${lookClass(button)}`.trim();
+  if (internal) return <Link href={button.url} className={cls}><ButtonLabel button={button} /></Link>;
   return (
-    <a href={button.url} className={className} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+    <a href={button.url} className={cls} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
       <ButtonLabel button={button} />
     </a>
   );
@@ -303,10 +304,13 @@ function OverviewBlock({ payload, config, first }) {
 
 function WhyUsBlock({ payload, config }) {
   const items = toCardItems(payload.reasons);
+  // Admin: heading / card alignment and cards per row (3–6, default 3).
+  const align = (v) => (v === "center" || v === "right" ? v : "left");
+  const cols = Math.min(6, Math.max(3, parseInt(payload.columns, 10) || 3));
 
   return (
-    <Block config={config} defaultId="whychoose" title={payload.title} intro={payload.intro}>
-      <div className="wc-grid">
+    <Block config={config} defaultId="whychoose" title={payload.title} intro={payload.intro} className={`wc-h-${align(payload.headAlign)} wc-c-${align(payload.cardAlign)}`}>
+      <div className="wc-grid" style={{ "--wc-cols": cols }}>
         {items.map((item, index) => (
           <div key={`${item.title}-${index}`} className="wc-item">
             <Icon value={item.icon} className="wc-ic" />

@@ -9,7 +9,7 @@ import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import CmsForm from "../forms/CmsForm";
 import Calculator from "../tools/calculators";
 import AutoPopup from "./AutoPopup";
-import ButtonLabel from "./ButtonLabel";
+import ButtonLabel, { lookClass } from "./ButtonLabel";
 import { EXTRA_BLOCKS } from "./ExtraBlocks";
 import "../tools/tools-page.css";
 import "./blocks.css";
@@ -50,7 +50,7 @@ function A({ url, className, children, label, style }) {
 function Button({ button, ghost = false }) {
   const go = useGo();
   if (!hasButton(button)) return null;
-  return <button type="button" className={ghost || button.style === "ghost" ? "cb-btn cb-btn-ghost" : "cb-btn"} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
+  return <button type="button" className={`${ghost || button.style === "ghost" ? "cb-btn cb-btn-ghost" : "cb-btn"}${lookClass(button)}`} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
 }
 
 /** Emoji / text, or an image URL; `alt` describes an image icon (empty = decorative). */
@@ -749,7 +749,7 @@ function Qna({ p }) {
             aria-label={p.askPlaceholder || "Your question"}
             maxLength={500}
           />
-          <button type="submit" className="cb-btn" disabled={!question.trim()}><ButtonLabel button={askButton} /></button>
+          <button type="submit" className={`cb-btn${lookClass(askButton)}`} disabled={!question.trim()}><ButtonLabel button={askButton} /></button>
         </form>
       )}
       {(asked.length > 0 || items.length > 0) && (
@@ -829,7 +829,7 @@ const colorOr = (value, fallback) => (HEX.test(String(value || "").trim()) ? Str
 function DbButton({ button, className = "" }) {
   const go = useGo();
   if (!hasButton(button)) return null;
-  return <button type="button" className={`cb-db-btn ${className}`.trim()} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
+  return <button type="button" className={`cb-db-btn ${className}${lookClass(button)}`.trim()} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
 }
 
 /** Link when it has a URL, plain element otherwise. */
@@ -1073,7 +1073,54 @@ function TabCards({ p }) {
   );
 }
 
+// ---- Banner with link cards (reference .hloan "Business Loans"): text, numbers and buttons on a colour
+// panel, with a stack of link cards beside it ---------------------------------------------------------
+
+function LoanBanner({ p }) {
+  const stats = list(p.stats).filter((x) => has(x.value));
+  const cards = list(p.cards).filter((x) => has(x.title));
+  if (!has(p.heading) && !has(p.text) && !cards.length) return null;
+  const from = HEX.test(String(p.colorFrom || "").trim()) ? p.colorFrom.trim() : "";
+  const to = HEX.test(String(p.colorTo || "").trim()) ? p.colorTo.trim() : "";
+  const style = from || to ? { "--lb-from": from || undefined, "--lb-to": to || undefined } : undefined;
+  return (
+    <Section type="loanbanner" p={p}>
+      <div className={`cb-lb${cards.length ? "" : " cb-lb-solo"}${p.cardsSide === "left" ? " cb-lb-cards-left" : ""}`} style={style}>
+        <div className="cb-lb-left">
+          {has(p.kicker) && <span className="cb-lb-kicker">{p.kicker}</span>}
+          {has(p.heading) && <h2>{p.heading}</h2>}
+          {has(p.text) && <p className="cb-lb-text">{p.text}</p>}
+          {stats.length > 0 && (
+            <div className="cb-lb-stats">
+              {stats.map((x, i) => <div key={i}><b>{x.value}</b>{has(x.label) && <span>{x.label}</span>}</div>)}
+            </div>
+          )}
+          {(hasButton(p.primaryButton) || hasButton(p.secondaryButton)) && (
+            <div className="cb-lb-cta">
+              {hasButton(p.primaryButton) && <A url={p.primaryButton.url} className={`cb-lb-btn${lookClass(p.primaryButton)}`} label={p.primaryButton.text}><ButtonLabel button={p.primaryButton} /></A>}
+              {hasButton(p.secondaryButton) && <A url={p.secondaryButton.url} className={`cb-lb-btn cb-lb-btn-ghost${lookClass(p.secondaryButton)}`} label={p.secondaryButton.text}><ButtonLabel button={p.secondaryButton} /></A>}
+            </div>
+          )}
+        </div>
+        {cards.length > 0 && (
+          <div className="cb-lb-cards">
+            {cards.map((c, i) => (
+              <A key={i} url={c.url} className="cb-lb-card" label={c.title}>
+                {has(c.icon) && <span className="cb-lb-card-ic"><Icon value={c.icon} alt={c.iconAlt || ""} /></span>}
+                <b>{c.title}</b>
+                {has(c.meta) && <span className="cb-lb-card-meta">{c.meta}</span>}
+                {p.cardLink !== "no" && <i>{has(c.linkText) ? c.linkText : has(p.cardLinkText) ? p.cardLinkText : "View →"}</i>}
+              </A>
+            ))}
+          </div>
+        )}
+      </div>
+    </Section>
+  );
+}
+
 const BLOCKS = {
+  CommonLoanBanner: LoanBanner,
   CommonTabCards: TabCards,
   CommonEcosystem: Ecosystem,
   CommonDataBand: DataBand,

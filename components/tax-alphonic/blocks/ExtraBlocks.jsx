@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { openFormPopup } from "@/lib/formPopup";
 import { blockLandingNavigation } from "@/lib/landingLinks";
-import ButtonLabel from "./ButtonLabel";
+import ButtonLabel, { lookClass } from "./ButtonLabel";
 import "./blocks.css";
 import "./extra-blocks.css";
 
@@ -329,7 +329,7 @@ function BlogPosts({ p }) {
   const showExcerpt = p.excerpt !== "no";
   const featured = p.layout !== "grid" && posts.length > 1;
   const viewAll = has(p.button?.text) && (
-    <button type="button" className={`cb-post-viewall${p.buttonPlace === "side" ? " cb-btn cb-btn-ghost" : ""}`} onClick={() => go(p.button.url || "/blog", p.button.text)}>
+    <button type="button" className={`cb-post-viewall${p.buttonPlace === "side" ? " cb-btn cb-btn-ghost" : ""}${lookClass(p.button)}`} onClick={() => go(p.button.url || "/blog", p.button.text)}>
       <ButtonLabel button={p.button} />
     </button>
   );

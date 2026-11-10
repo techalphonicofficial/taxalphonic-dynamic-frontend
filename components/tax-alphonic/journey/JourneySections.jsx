@@ -9,7 +9,7 @@ import AnyBlock from "../blocks/AnyBlock";
 import LayoutGroup from "../blocks/LayoutGroup";
 import { splitLayoutSections } from "../blocks/layoutSections";
 import BlockBackground from "../blocks/BlockBackground";
-import ButtonLabel from "../blocks/ButtonLabel";
+import ButtonLabel, { lookClass } from "../blocks/ButtonLabel";
 import "./journey-page.css";
 
 /*
@@ -53,7 +53,7 @@ function A({ url, className, style, title, children }) {
 function Button({ button, className = "btn-primary" }) {
   const go = useGo();
   if (!hasButton(button)) return null;
-  return <button type="button" className={className} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
+  return <button type="button" className={`${className}${lookClass(button)}`} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
 }
 
 /** Emoji / text icon, or an image when the CMS stores a URL. */
@@ -421,7 +421,8 @@ function Resources({ p, ctx }) {
             <span><Icon value={x.icon} /></span>
             <b>{x.title}</b>
             {has(x.text) && <p>{fill(x.text, stage)}</p>}
-            <i>→</i>
+            {/* Admin: "Link text" per card, else the block's, else the arrow; hidden with showLink "no". */}
+            {p.showLink !== "no" && <i>{fill(has(x.linkText) ? x.linkText : has(p.linkText) ? p.linkText : "→", stage)}</i>}
           </A>
         ))}
       </div>

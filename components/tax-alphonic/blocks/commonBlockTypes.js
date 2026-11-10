@@ -17,6 +17,8 @@ export const COMMON_BLOCK_TYPES = [
   "CommonEcosystem",
   // Tabs, each with its own grid of cards (reference .lc labour law section).
   "CommonTabCards",
+  // Colour banner with text, numbers, buttons and link cards (reference .hloan Business Loans).
+  "CommonLoanBanner",
   // Carousel / slider, latest blog posts and sticky section tabs (ExtraBlocks.jsx).
   "CommonCarousel", "CommonBlogPosts", "CommonAnchorNav",
 ];

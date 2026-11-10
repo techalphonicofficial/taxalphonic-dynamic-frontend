@@ -18,3 +18,13 @@ export default function ButtonLabel({ button }) {
     : <span className={className} aria-hidden="true">{icon}</span>;
   return right ? <>{text}{mark}</> : <>{mark}{text}</>;
 }
+
+// The admin's button "Look" (button.style): filled, outline, soft, gradient, dark, white or text link.
+// Empty (and the older "primary" / "ghost") keeps the block's own design. Styles: blocks.css .ta-look-*.
+const LOOKS = new Set(["solid", "outline", "soft", "gradient", "dark", "white", "link"]);
+
+/** Extra class names for a CMS button element (" ta-look ta-look-outline"), or "". */
+export function lookClass(button) {
+  const style = String(button?.style || "").trim();
+  return LOOKS.has(style) ? ` ta-look ta-look-${style}` : "";
+}

@@ -3229,3 +3229,43 @@
 .ta-home .news-form .news-msg { flex-basis: 100%; margin: 2px 6px 4px; font-size: 13px; font-weight: 600; }
 .ta-home .news-form .news-msg.is-ok { color: #15803d; }
 .ta-home .news-form .news-msg.is-err { color: #dc2626; }
+
+/* Why Us (HomeWhyUs): heading / card text alignment and cards per row from the admin (min 3,
+   default 4). Tablets keep 3 per row, phones 2; a home side column stays one per row. */
+.ta-home .why .why-grid { grid-template-columns: repeat(var(--why-cols, 4), minmax(0, 1fr)); }
+.ta-home .why-h-left .sec-head { text-align: left; }
+.ta-home .why-h-right .sec-head { text-align: right; }
+.ta-home .why-h-left .sec-head .sub { margin-left: 0; }
+.ta-home .why-h-right .sec-head .sub { margin-right: 0; }
+.ta-home .why-c-left .why-card { text-align: left; }
+.ta-home .why-c-right .why-card { text-align: right; }
+.ta-home .why-c-left .why-card .ic { margin-left: 0; margin-right: auto; }
+.ta-home .why-c-right .why-card .ic { margin-left: auto; margin-right: 0; }
+@media (max-width: 1199px) { .ta-home .why .why-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .ta-home .why .why-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } .ta-home .why .why-card { padding: 16px; } }
+.ta-home .home-side .why .why-grid { grid-template-columns: minmax(0, 1fr); }
+
+/* Expert banner (HomeExpertCta) "Button position": below the text (left / centre / right) or beside it. */
+.ta-home .eb-cta-below-center .eb-cta { justify-content: center; }
+.ta-home .eb-cta-below-right .eb-cta { justify-content: flex-end; }
+.ta-home .eb-cta-below-center, .ta-home .eb-cta-below-center h2, .ta-home .eb-cta-below-center p { text-align: inherit; }
+@media (min-width: 821px) {
+  .ta-home .eb-left:is(.eb-cta-right, .eb-cta-left) { display: grid; column-gap: 32px; align-items: center; }
+  .ta-home .eb-cta-right { grid-template-columns: minmax(0, 1fr) auto; }
+  .ta-home .eb-cta-left { grid-template-columns: auto minmax(0, 1fr); }
+  .ta-home .eb-cta-right > :not(.eb-cta) { grid-column: 1; }
+  .ta-home .eb-cta-left > :not(.eb-cta) { grid-column: 2; }
+  .ta-home .eb-left:is(.eb-cta-right, .eb-cta-left) > .eb-cta { grid-row: 1 / span 8; flex-direction: column; align-items: stretch; }
+  .ta-home .eb-cta-right > .eb-cta { grid-column: 2; }
+  .ta-home .eb-cta-left > .eb-cta { grid-column: 1; }
+  .ta-home .eb-left:is(.eb-cta-right, .eb-cta-left) > :is(h2, p, .eyebrow) { justify-self: start; }
+  .ta-home .eb-left:is(.eb-cta-right, .eb-cta-left) > p:last-of-type { margin-bottom: 0; }
+}
+
+/* Expert banner second link with a button Look (admin): it is a plain link, so it gets the size and
+   shape of the main button (the Look gives the colours). "Text link" stays a link. */
+.ta-home .eb-wa.ta-look:not(.ta-look-link) {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px 24px; border-radius: 12px; font-size: 15.5px; line-height: 1.35; text-decoration: none;
+}
+.ta-home .eb-wa.ta-look:not(.ta-look-link):hover { text-decoration: none; }

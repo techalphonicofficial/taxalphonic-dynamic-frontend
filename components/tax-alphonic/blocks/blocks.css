@@ -1748,3 +1748,71 @@ a.ta-rt-btn-outline:hover { background: var(--rt-b); color: #fff; }
 .ta-svc .svc-rich .ta-rt-check-body p { font-size: 14.5px; color: #5b6478; }
 .ta-svc .svc-rich .ta-rt-note { padding: 16px 20px; border-left-width: 4px; }
 .ta-svc .svc-rich .ta-rt-checks { padding: 0; }
+
+/* ---- Button "Look" chosen in the admin on any CMS button (ButtonLabel.jsx lookClass: .ta-look-*) ----
+   Overrides each block's own button design (hence !important); the size and shape stay the block's.
+   Colours follow a landing theme (--t-*) or the site's. */
+.ta-look { --lk: var(--t-brand, #0e96ac); --lk-accent: var(--t-accent, #e8521e); --lk-deep: var(--t-deep, #0a0e1a); transition: background .18s, color .18s, box-shadow .18s, transform .18s; }
+.ta-look.ta-look-solid { background: var(--lk) !important; color: #fff !important; border: 2px solid var(--lk) !important; }
+.ta-look.ta-look-outline { background: transparent !important; color: var(--lk) !important; border: 2px solid var(--lk) !important; box-shadow: none !important; }
+.ta-look.ta-look-outline:hover { background: var(--lk) !important; color: #fff !important; }
+.ta-look.ta-look-soft { background: color-mix(in srgb, var(--lk) 13%, #fff) !important; color: var(--lk) !important; border: 2px solid transparent !important; box-shadow: none !important; }
+.ta-look.ta-look-gradient { background: linear-gradient(120deg, var(--lk), var(--lk-accent)) !important; color: #fff !important; border: 0 !important; }
+.ta-look.ta-look-dark { background: var(--lk-deep) !important; color: #fff !important; border: 2px solid var(--lk-deep) !important; }
+.ta-look.ta-look-white { background: #fff !important; color: var(--lk-deep) !important; border: 2px solid rgba(10, 14, 26, .1) !important; }
+.ta-look.ta-look-link { background: none !important; color: var(--lk) !important; border: 0 !important; box-shadow: none !important; padding-left: 0 !important; padding-right: 0 !important; text-decoration: underline; text-underline-offset: 4px; }
+.ta-look:is(.ta-look-solid, .ta-look-gradient, .ta-look-dark, .ta-look-white, .ta-look-soft):hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(10, 14, 26, .16) !important; }
+.ta-look.ta-look-link:hover { transform: none; text-decoration-thickness: 2px; }
+
+/* ---- Banner with link cards (CommonLoanBanner; reference .hloan "Business Loans") ------------------
+   Colour panel (--lb-from → --lb-to) with text, numbers and two buttons, and link cards beside it.
+   Stacks under 820px of block width (container query). */
+.ta-cb.cb-loanbanner .cb-wrap { container-type: inline-size; }
+.ta-cb .cb-lb {
+  --lb-from: var(--cb-brand); --lb-to: #0a1840;
+  position: relative; overflow: hidden; border-radius: 28px; padding: 44px;
+  display: grid; grid-template-columns: 1.2fr .8fr; gap: 40px; align-items: center;
+  background: linear-gradient(135deg, var(--lb-from), color-mix(in srgb, var(--lb-from) 55%, var(--lb-to)) 60%, var(--lb-to));
+  color: #fff;
+}
+.ta-cb .cb-lb::after { content: ""; position: absolute; top: -60px; right: -60px; width: 260px; height: 260px; border-radius: 50%; background: rgba(255, 255, 255, .08); pointer-events: none; }
+.ta-cb .cb-lb.cb-lb-solo { grid-template-columns: 1fr; }
+.ta-cb .cb-lb.cb-lb-cards-left { grid-template-columns: .8fr 1.2fr; }
+.ta-cb .cb-lb.cb-lb-cards-left .cb-lb-cards { order: -1; }
+.ta-cb .cb-lb-left, .ta-cb .cb-lb-cards { position: relative; z-index: 1; min-width: 0; }
+.ta-cb .cb-lb-kicker { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #fff; opacity: .9; background: rgba(255, 255, 255, .14); padding: 6px 13px; border-radius: 99px; margin-bottom: 14px; }
+.ta-cb .cb-lb h2 { color: #fff; font-size: clamp(24px, 3vw, 32px); margin: 0 0 12px; }
+.ta-cb .cb-lb .cb-lb-text { color: rgba(255, 255, 255, .9); font-size: 15px; line-height: 1.6; margin: 0 0 22px; }
+.ta-cb .cb-lb-stats { display: flex; flex-wrap: wrap; gap: 18px 28px; margin-bottom: 24px; }
+.ta-cb .cb-lb-stats b { display: block; font: 800 26px/1 var(--font-sora), Sora, sans-serif; color: #fff; }
+.ta-cb .cb-lb-stats span { font-size: 12.5px; color: rgba(255, 255, 255, .78); }
+.ta-cb .cb-lb-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+.ta-cb a.cb-lb-btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 12px;
+  font-weight: 700; font-size: 14.5px; text-decoration: none; transition: .18s;
+  background: color-mix(in srgb, var(--lb-from) 80%, #000); color: #fff; border: 1px solid rgba(255, 255, 255, .18);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .18);
+}
+.ta-cb a.cb-lb-btn:hover { transform: translateY(-2px); color: #fff; }
+.ta-cb a.cb-lb-btn.cb-lb-btn-ghost { background: rgba(255, 255, 255, .15); border-color: rgba(255, 255, 255, .3); box-shadow: none; }
+.ta-cb a.cb-lb-btn.cb-lb-btn-ghost:hover { background: rgba(255, 255, 255, .25); }
+.ta-cb .cb-lb-cards { display: flex; flex-direction: column; gap: 12px; }
+.ta-cb a.cb-lb-card, .ta-cb span.cb-lb-card {
+  display: flex; align-items: center; gap: 14px; background: rgba(255, 255, 255, .95); border-radius: 16px; padding: 18px 20px;
+  color: var(--cb-ink); text-decoration: none; transition: .2s;
+}
+.ta-cb a.cb-lb-card:hover { transform: translateX(5px); background: #fff; }
+.ta-cb .cb-lb-card-ic { font-size: 26px; line-height: 1; flex-shrink: 0; }
+.ta-cb .cb-lb-card-ic .cb-icon-img { width: 30px; height: 30px; }
+.ta-cb .cb-lb-card b { font-size: 15px; flex: 1; min-width: 0; }
+.ta-cb .cb-lb-card-meta { font-size: 12.5px; color: var(--cb-muted); white-space: nowrap; }
+.ta-cb .cb-lb-card i { font-style: normal; font-weight: 700; font-size: 13px; color: var(--lb-from, var(--cb-brand)); white-space: nowrap; }
+@container (max-width: 819px) {
+  .ta-cb .cb-lb { grid-template-columns: 1fr; padding: 32px 24px; gap: 28px; }
+  .ta-cb .cb-lb.cb-lb-cards-left { grid-template-columns: 1fr; }
+  .ta-cb .cb-lb.cb-lb-cards-left .cb-lb-cards { order: 0; }
+}
+@container (max-width: 459px) {
+  .ta-cb .cb-lb { padding: 26px 18px; border-radius: 20px; }
+  .ta-cb .cb-lb-card-meta { display: none; }
+}

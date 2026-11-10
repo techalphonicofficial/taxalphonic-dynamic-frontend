@@ -12,7 +12,7 @@ import BlockBackground from "../blocks/BlockBackground";
 import AnyBlock from "../blocks/AnyBlock";
 import LayoutGroup from "../blocks/LayoutGroup";
 import { mainWidthProps, splitLayoutSections } from "../blocks/layoutSections";
-import ButtonLabel from "../blocks/ButtonLabel";
+import ButtonLabel, { lookClass } from "../blocks/ButtonLabel";
 import NewsletterBox from "./NewsletterBox";
 
 /*
@@ -78,7 +78,7 @@ function Card({ url, className, style, children }) {
 function Button({ button, className = "btn-primary", style }) {
   const go = useGo();
   if (!hasButton(button)) return null;
-  return <button type="button" className={className} style={style} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
+  return <button type="button" className={`${className || ""}${lookClass(button)}`.trim()} style={style} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
 }
 
 /** Emoji/text icon, or an image when the CMS stores a URL. */
@@ -579,11 +579,14 @@ function Bundles({ p }) {
 function WhyUs({ p }) {
   const items = list(p.items);
   if (!items.length) return null;
+  // Admin: heading / card text alignment and cards per row (3–6, default 4).
+  const align = (v) => (v === "left" || v === "right" ? v : "center");
+  const cols = Math.min(6, Math.max(3, parseInt(p.columns, 10) || 4));
   return (
-    <div className="why">
+    <div className={`why why-h-${align(p.headAlign)} why-c-${align(p.cardAlign)}`}>
       <div className="wrap">
         <SecHead heading={p.heading} sub={p.sub} />
-        <div className="why-grid">
+        <div className="why-grid" style={{ "--why-cols": cols }}>
           {items.map((item, i) => <div key={i} className="why-card"><div className="ic"><Icon value={item.icon} /></div><h4>{item.title}</h4>{has(item.text) && <p>{item.text}</p>}</div>)}
         </div>
       </div>
@@ -638,7 +641,8 @@ function ExpertCta({ p }) {
   return (
     <div className="wrap">
       <div className="expert-banner" id={p.anchorId || undefined} style={form ? undefined : { gridTemplateColumns: "1fr" }}>
-        <div className="eb-left">
+        {/* Admin "Button position": below (left / centre / right), or beside the text (right / left). */}
+        <div className={`eb-left eb-cta-${["below-center", "below-right", "right", "left"].includes(p.ctaPosition) ? p.ctaPosition : "below"}`}>
           {has(p.eyebrow) && <span className="eyebrow" style={{ color: "#fff", background: "rgba(255,255,255,.15)" }}>{p.eyebrow}</span>}
           {has(p.heading) && <h2>{p.heading}</h2>}
           {has(p.text) && <p>{p.text}</p>}
@@ -646,7 +650,7 @@ function ExpertCta({ p }) {
             <div className="eb-cta">
               <Button button={p.primaryButton} style={{ background: "#fff", color: "var(--ink)" }} />
               {/* Shown only with a link, e.g. https://wa.me/91XXXXXXXXXX */}
-              {hasButton(p.secondaryButton) && has(p.secondaryButton.url) && <A url={p.secondaryButton.url} className="eb-wa"><ButtonLabel button={p.secondaryButton} /></A>}
+              {hasButton(p.secondaryButton) && has(p.secondaryButton.url) && <A url={p.secondaryButton.url} className={`eb-wa${lookClass(p.secondaryButton)}`}><ButtonLabel button={p.secondaryButton} /></A>}
             </div>
           )}
         </div>

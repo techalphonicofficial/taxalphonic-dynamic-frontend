@@ -11,7 +11,7 @@ import { splitLayoutSections } from "../blocks/layoutSections";
 import BlockBackground from "../blocks/BlockBackground";
 import Calculator from "./calculators";
 import CmsForm from "../forms/CmsForm";
-import ButtonLabel from "../blocks/ButtonLabel";
+import ButtonLabel, { lookClass } from "../blocks/ButtonLabel";
 import "./tools-page.css";
 
 /*
@@ -53,7 +53,7 @@ function A({ url, className, children }) {
 function Button({ button, className = "btn-primary" }) {
   const go = useGo();
   if (!hasButton(button)) return null;
-  return <button type="button" className={className} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
+  return <button type="button" className={`${className}${lookClass(button)}`} onClick={() => go(button.url, button.text)}><ButtonLabel button={button} /></button>;
 }
 
 function Icon({ value }) {

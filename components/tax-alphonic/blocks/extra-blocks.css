@@ -377,3 +377,5 @@
 .ta-cb.cb-blogposts .cb-posts-grid { justify-content: center; grid-template-columns: repeat(var(--cb-cols, 3), minmax(0, 360px)); }
 @container (max-width: 900px) { .ta-cb.cb-blogposts .cb-posts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @container (max-width: 560px) { .ta-cb.cb-blogposts .cb-posts-grid { grid-template-columns: minmax(0, 1fr); } }
+/* "View all" (text style) with a button Look: button size and shape. */
+.ta-cb.cb-blogposts .cb-post-viewall.ta-look:not(.cb-btn):not(.ta-look-link) { padding: 10px 20px; border-radius: 11px; text-decoration: none; }
