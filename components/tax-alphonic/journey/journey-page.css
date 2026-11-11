@@ -1648,3 +1648,10 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Space between a block heading and its cards / content (sub text sat on the cards), and a block
+   padding that shrinks on narrow screens so cards keep their width. Admin "Heading & cards" panel
+   can still set "Space under heading" (center-grids.css .ta-ly-hg). */
+.ta-journey .jblock-head { margin-bottom: 18px; }
+.ta-journey .jblock-head p { margin: 0; color: var(--muted, #5b6478); }
+.ta-journey .jblock2 { padding: clamp(18px, 4vw, 34px); }

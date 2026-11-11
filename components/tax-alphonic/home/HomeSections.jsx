@@ -480,28 +480,50 @@ function Journey({ p }) {
   );
 }
 
+const MIN_STRIP = 14;
+
+/** Client logo image; a logo whose file is missing hides itself (the client name still shows). */
+function ClientLogo({ src, alt }) {
+  const ref = useRef(null);
+  const [broken, setBroken] = useState(false);
+  // An image that failed before React hydrated never fires onError: check it once mounted.
+  useEffect(() => {
+    const img = ref.current;
+    if (img && img.complete && img.naturalWidth === 0) setBroken(true);
+  }, [src]);
+  if (broken) return null;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img ref={ref} src={src} alt={alt} className="client-logo-img" loading="lazy" onError={() => setBroken(true)} />;
+}
+
 function Clients({ p }) {
   const items = list(p.items).filter((item) => has(item.name) || has(item.logo));
   const headingId = useId();
   if (!items.length) return null;
-  const cards = (copy) => items.map((item, i) => {
+  // The strip must be wider than any screen: each half repeats the logos up to at least
+  // MIN_STRIP cards (few clients no longer leave the right side empty), and the track holds two
+  // halves so translateX(-50%) loops seamlessly. Speed stays the same whatever the count.
+  const perHalf = Math.max(1, Math.ceil(MIN_STRIP / items.length));
+  const half = Array.from({ length: perHalf }, () => items).flat();
+  const cards = (copy) => half.map((item, i) => {
     const logo = isImage(item.logo)
-      // eslint-disable-next-line @next/next/no-img-element
-      ? <img src={item.logo} alt={item.name || ""} className="client-logo-img" />
+      ? <ClientLogo src={item.logo} alt={item.name || ""} />
       : <span className="client-logo"><Icon value={item.logo} /></span>;
-    return copy ? (
-      <div key={`${copy}-${i}`} className="client-card" aria-hidden="true">{logo}{has(item.name) && <b>{item.name}</b>}</div>
-    ) : (
+    // Only the first set is real (links, screen readers); repeats are decoration.
+    const first = copy === 0 && i < items.length;
+    return first ? (
       <Card key={`${copy}-${i}`} url={item.url} className="client-card">{logo}{has(item.name) && <b>{item.name}</b>}</Card>
+    ) : (
+      <div key={`${copy}-${i}`} className="client-card client-dup" aria-hidden="true">{logo}{has(item.name) && <b>{item.name}</b>}</div>
     );
   });
   return (
-    <section className="clients" aria-labelledby={has(p.heading) ? headingId : undefined}>
+    <section className={`clients${p.logoColors === "gray" ? " clients-gray" : ""}`} aria-labelledby={has(p.heading) ? headingId : undefined}>
       <div className="wrap">
         <SecHead eyebrow={p.eyebrow} heading={p.heading} sub={p.sub} id={headingId} />
         <div className="clients-marquee">
           {/* The track holds the logos twice so the marquee loops seamlessly. */}
-          <div className="clients-track">{cards(0)}{cards(1)}</div>
+          <div className="clients-track" style={{ "--cl-dur": `${Math.round(half.length * 3.2)}s` }}>{cards(0)}{cards(1)}</div>
         </div>
         {has(p.note) && <p className="clients-note">{p.note}</p>}
       </div>
@@ -594,25 +616,119 @@ function WhyUs({ p }) {
   );
 }
 
+/*
+ * Comparison table (admin HomeComparison).
+ *   Columns: `columns` 2–7 (default 4): headers labelHeader, oursHeader (highlighted), col2Header … col6Header,
+ *   row values label, ours, col2 … col6; optional button column (row buttonText / buttonUrl / buttonIcon).
+ *   Table layout: tableWidth (medium | wide | full | custom + tableWidthPx), featureCol / oursCol (% of the
+ *   width; the other columns share the rest), textWrap ("nowrap" = one line, the table scrolls sideways when
+ *   needed), cellAlign (left), textSize (sm | lg), rowSize (compact | roomy), mobile ("scroll").
+ *   Side panel: sidePosition left | right, sideWidth (%), sideImage (+ sideImageAlt), sideKicker, sideHeading,
+ *   sideText, sideButton, sideAlign (top | center), sideStyle (card | plain).
+ */
+const CMP_KEYS = [["labelHeader", "label"], ["oursHeader", "ours"], ["col2Header", "col2"], ["col3Header", "col3"], ["col4Header", "col4"], ["col5Header", "col5"], ["col6Header", "col6"]];
+const cmpColumnCount = (p) => Math.min(7, Math.max(2, parseInt(p.columns, 10) || 4));
+
+/** Longest text (characters) per column: headers and every row. */
+function textLengths(p, keys) {
+  return keys.map(([head, cell]) => Math.max(String(p[head] || "").length, ...list(p.rows).map((r) => String(r[cell] || "").length + (cell === "buttonText" ? 4 : 0))));
+}
+
+const CMP_WIDTH = { medium: "1100px", wide: "1300px", full: "100%" };
+function compareLayout(p, keys, withButtons) {
+  const columns = keys.length;
+  const classes = [];
+  const style = {};
+  const pct = (v, min, max) => {
+    const n = Number(v);
+    return v === "" || v === undefined || v === null || !Number.isFinite(n) ? null : Math.max(min, Math.min(max, n));
+  };
+  const width = p.tableWidth === "custom" ? pct(p.tableWidthPx, 400, 3000) : null;
+  if (CMP_WIDTH[p.tableWidth] || width) style["--cmp-max"] = CMP_WIDTH[p.tableWidth] || `${width}px`;
+  const feature = pct(p.featureCol, 10, 70);
+  const ours = pct(p.oursCol, 10, 60);
+  const nowrap = p.textWrap === "nowrap";
+  // The stylesheet's default grid is 4 columns (+ button); any other count always needs its own.
+  if (feature !== null || ours !== null || nowrap || cmpColumnCount(p) !== 4) {
+    // Shares (fr): the design's 1.4 / 1 / 1 … (button .9) unless the editor set the first two in %.
+    const design = [1.4, ...Array(columns - 1 - (withButtons ? 1 : 0)).fill(1), ...(withButtons ? [0.9] : [])];
+    const total = design.reduce((x, y) => x + y, 0);
+    let shares = design.map((n) => (100 * n) / total);
+    if (feature !== null || ours !== null) {
+      const f = feature ?? shares[0];
+      const o = ours ?? shares[1];
+      const rest = Math.max(4, (100 - f - o) / Math.max(1, columns - 2));
+      shares = [f, o, ...Array(columns - 2).fill(rest)];
+    }
+    // One line per cell: every column is at least as wide as its longest text, the same for all rows
+    // (each row is its own grid), and the table scrolls sideways when the sum is wider than the card.
+    const mins = nowrap ? textLengths(p, keys).map((len) => Math.round(len * 7.4 + 40)) : null;
+    style["--cmp-cols"] = shares.map((n, i) => `minmax(${mins ? `${mins[i]}px` : "0"}, ${n.toFixed(2)}fr)`).join(" ");
+    if (mins) style["--cmp-min"] = `${mins.reduce((x, y) => x + y, 0)}px`;
+  }
+  if (nowrap) classes.push("cmp-nowrap");
+  if (p.cellAlign === "left") classes.push("cmp-left");
+  if (["sm", "lg"].includes(p.textSize)) classes.push(`cmp-text-${p.textSize}`);
+  if (["compact", "roomy"].includes(p.rowSize)) classes.push(`cmp-rows-${p.rowSize}`);
+  if (p.mobile === "scroll") classes.push("cmp-scroll");
+  return { className: classes.length ? ` ${classes.join(" ")}` : "", style: Object.keys(style).length ? style : undefined };
+}
+
+/** Text / image / button beside the table (admin "Beside the table"). */
+function CompareSide({ p }) {
+  const button = p.sideButton && has(p.sideButton.text) ? p.sideButton : null;
+  if (!has(p.sideImage) && !has(p.sideKicker) && !has(p.sideHeading) && !has(p.sideText) && !button) return null;
+  return (
+    <aside className={`cmp-side${p.sideStyle === "plain" ? " cmp-side-plain" : ""}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {has(p.sideImage) && <img src={p.sideImage} alt={p.sideImageAlt || p.sideHeading || ""} className="cmp-side-img" loading="lazy" />}
+      {has(p.sideKicker) && <span className="eyebrow">{p.sideKicker}</span>}
+      {has(p.sideHeading) && <h3>{p.sideHeading}</h3>}
+      {has(p.sideText) && String(p.sideText).split(/\n+/).filter((t) => t.trim()).map((t, i) => <p key={i}><RichText text={t} /></p>)}
+      {button && <Button button={button} className="btn-primary cmp-side-btn" />}
+    </aside>
+  );
+}
+
 function Comparison({ p }) {
   const rows = list(p.rows);
   if (!rows.length) return null;
   // Optional last column: a button per row (text + link / form popup); shown only when a row has one.
   const rowButton = (r) => (has(r.buttonText) ? { text: r.buttonText, url: r.buttonUrl, icon: r.buttonIcon } : null);
   const withButtons = rows.some(rowButton);
+  const columns = CMP_KEYS.slice(0, cmpColumnCount(p));
+  const keys = withButtons ? [...columns, ["buttonHeader", "buttonText"]] : columns;
+  const { className: layoutClass, style: layoutStyle } = compareLayout(p, keys, withButtons);
+  const table = (
+    <div className={`cmp-table${withButtons ? " cmp-has-btn" : ""}${layoutClass}`} style={layoutStyle}>
+      <div className="cmp-row cmp-head">
+        {columns.map(([head], c) => <div key={head} className={c === 1 ? "cmp-us" : undefined}>{p[head]}</div>)}
+        {withButtons && <div>{p.buttonHeader}</div>}
+      </div>
+      {rows.map((r, i) => (
+        <div key={i} className="cmp-row">
+          {columns.map(([, cell], c) => <div key={cell} className={c === 1 ? "cmp-us" : undefined}>{r[cell]}</div>)}
+          {withButtons && <div className="cmp-act">{rowButton(r) && <Button button={rowButton(r)} className="cmp-btn" />}</div>}
+        </div>
+      ))}
+    </div>
+  );
+  const side = ["left", "right"].includes(p.sidePosition) ? <CompareSide p={p} /> : null;
+  const sideWidth = Math.min(50, Math.max(15, parseInt(p.sideWidth, 10) || 30));
   return (
     <div className="compare">
       <div className="wrap">
         <SecHead heading={p.heading} sub={p.sub} />
-        <div className={`cmp-table${withButtons ? " cmp-has-btn" : ""}`}>
-          <div className="cmp-row cmp-head"><div>{p.labelHeader}</div><div className="cmp-us">{p.oursHeader}</div><div>{p.col2Header}</div><div>{p.col3Header}</div>{withButtons && <div>{p.buttonHeader}</div>}</div>
-          {rows.map((r, i) => (
-            <div key={i} className="cmp-row">
-              <div>{r.label}</div><div className="cmp-us">{r.ours}</div><div>{r.col2}</div><div>{r.col3}</div>
-              {withButtons && <div className="cmp-act">{rowButton(r) && <Button button={rowButton(r)} className="cmp-btn" />}</div>}
-            </div>
-          ))}
-        </div>
+        {side ? (
+          <div
+            className={`cmp-layout cmp-layout-${p.sidePosition}${p.sideAlign === "center" ? " cmp-layout-center" : ""}`}
+            style={{ "--cmp-side": `${sideWidth}%` }}
+          >
+            {p.sidePosition === "left" && side}
+            <div className="cmp-main">{table}</div>
+            {p.sidePosition === "right" && side}
+          </div>
+        ) : table}
       </div>
     </div>
   );

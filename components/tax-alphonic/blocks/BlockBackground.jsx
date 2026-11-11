@@ -90,11 +90,68 @@ const SPACING = { marginTop: "mt", marginBottom: "mb", paddingTop: "pt", padding
 
 const CONTENT_WIDTH = { full: "100%", wide: "1600px", site: "", medium: "1200px", narrow: "960px" };
 
+/*
+ * "Heading & cards" panel (admin CardLayoutSettings.jsx, section.config.layout): cards per row
+ * (desktop / tablet / phone), gap, card padding, short-row position, text inside cards, heading
+ * alignment and space under it. Classes / variables for blocks/center-grids.css.
+ */
+const ALIGN = new Set(["left", "center", "right"]);
+function layoutInto(layout, classes, style) {
+  if (!layout || typeof layout !== "object") return;
+  const int = (value, min, max) => {
+    if (value === "" || value === null || value === undefined) return null;
+    const n = Math.round(Number(value));
+    return Number.isFinite(n) ? Math.max(min, Math.min(max, n)) : null;
+  };
+  const cols = int(layout.cols, 1, 8);
+  const md = int(layout.colsTablet, 1, 6);
+  const sm = int(layout.colsPhone, 1, 3);
+  const gap = int(layout.gap, 0, 80);
+  const pad = int(layout.cardPadding, 0, 80);
+  const headGap = int(layout.headGap, 0, 120);
+  if (cols) { classes.push("ta-ly-cols"); style["--ly-cols"] = cols; }
+  if (md) { classes.push("ta-ly-md"); style["--ly-cols-md"] = md; }
+  if (sm) { classes.push("ta-ly-sm"); style["--ly-cols-sm"] = sm; }
+  if (gap !== null) { classes.push("ta-ly-gap"); style["--ly-g"] = `${gap}px`; }
+  if (pad !== null) { classes.push("ta-ly-cp"); style["--ly-cp"] = `${pad}px`; }
+  if (headGap !== null) { classes.push("ta-ly-hg"); style["--ly-hg"] = `${headGap}px`; }
+  if (layout.rowAlign === "left") classes.push("ta-ly-rl");
+  if (layout.rowAlign === "right") classes.push("ta-ly-rr");
+  if (ALIGN.has(layout.cardAlign)) classes.push(`ta-ly-ca-${layout.cardAlign}`);
+  if (ALIGN.has(layout.headAlign)) classes.push(`ta-ly-ha-${layout.headAlign}`);
+
+  // Heading / sub text width: "full" = no reading-width cap, "line" = one line on wide screens.
+  if (["full", "line"].includes(layout.headWidth)) classes.push(`ta-ly-hw-${layout.headWidth}`);
+  if (["full", "line"].includes(layout.subWidth)) classes.push(`ta-ly-sw-${layout.subWidth}`);
+  // Colours and heading size.
+  const colours = { headColor: ["ta-ly-hc", "--ly-hc"], subColor: ["ta-ly-sc", "--ly-sc"], kickerColor: ["ta-ly-kc", "--ly-kc"] };
+  for (const [key, [cls, prop]] of Object.entries(colours)) {
+    if (HEX_COLOR.test(String(layout[key] || ""))) { classes.push(cls); style[prop] = layout[key]; }
+  }
+  const headSize = int(layout.headSize, 14, 96);
+  if (headSize) { classes.push("ta-ly-hs"); style["--ly-hs"] = `${headSize}px`; }
+  // Two-tone highlight (*words* / <em> in headings): colour 1 covers hlShare % of the words,
+  // then blends (hlBlend %) into colour 2.
+  const from = HEX_COLOR.test(String(layout.hlFrom || "")) ? layout.hlFrom : "";
+  const to = HEX_COLOR.test(String(layout.hlTo || "")) ? layout.hlTo : "";
+  const share = int(layout.hlShare, 0, 100);
+  const blend = int(layout.hlBlend, 0, 100);
+  if (from || to || share !== null || blend !== null) {
+    const s = share ?? 50;
+    const b = blend ?? 60;
+    classes.push("ta-ly-hl");
+    if (from) style["--ly-hl-1"] = from;
+    if (to) style["--ly-hl-2"] = to;
+    style["--ly-hl-a"] = `${Math.max(0, s - b / 2)}%`;
+    style["--ly-hl-b"] = `${Math.min(100, s + b / 2)}%`;
+  }
+}
+
 function spacingOf(config) {
-  const spacing = config?.spacing;
-  if (!spacing || typeof spacing !== "object") return null;
+  const spacing = config?.spacing && typeof config.spacing === "object" ? config.spacing : {};
   const classes = [];
   const style = {};
+  layoutInto(config?.layout, classes, style);
   for (const [key, side] of Object.entries(SPACING)) {
     if (spacing[key] === "" || spacing[key] === null || spacing[key] === undefined) continue;
     const value = Number(spacing[key]);

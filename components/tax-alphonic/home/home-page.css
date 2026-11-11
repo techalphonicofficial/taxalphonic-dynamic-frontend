@@ -701,9 +701,13 @@
 
 .ta-home .clients-track {
   display: flex;
-  gap: 18px;
   width: max-content;
-  animation: clientScroll 32s linear infinite;
+  animation: clientScroll var(--cl-dur, 32s) linear infinite;
+}
+
+/* Space after every card (not flex gap), so the two halves are exactly equal and the loop has no jump. */
+.ta-home .clients-track > .client-card {
+  margin-right: 18px;
 }
 
 .ta-home .clients-marquee:hover .clients-track {
@@ -725,14 +729,18 @@
   flex-shrink: 0;
 }
 
+/* Logos in colour; admin "Logo colours: grey" (.clients-gray) greys them until hover. */
 .ta-home .client-logo {
   font-size: 28px;
-  filter: grayscale(1);
-  opacity: .7;
   transition: .2s;
 }
 
-.ta-home .client-card:hover .client-logo {
+.ta-home .clients-gray .client-logo {
+  filter: grayscale(1);
+  opacity: .7;
+}
+
+.ta-home .clients-gray .client-card:hover .client-logo {
   filter: none;
   opacity: 1;
 }
@@ -757,6 +765,10 @@
     flex-wrap: wrap;
     justify-content: center;
     width: auto;
+    gap: 18px 0;
+  }
+  .ta-home .clients-track > .client-dup {
+    display: none;
   }
   .ta-home .clients-marquee {
     -webkit-mask-image: none;
@@ -2265,12 +2277,15 @@
   max-height: 38px;
   max-width: 120px;
   object-fit: contain;
-  filter: grayscale(1);
-  opacity: .75;
   transition: .2s;
 }
 
-.ta-home .client-card:hover .client-logo-img {
+.ta-home .clients-gray .client-logo-img {
+  filter: grayscale(1);
+  opacity: .75;
+}
+
+.ta-home .clients-gray .client-card:hover .client-logo-img {
   filter: none;
   opacity: 1;
 }
@@ -3276,3 +3291,56 @@
 .ta-home .hh.hh-center .hero-text { text-align: center; }
 .ta-home .hh.hh-center .hero-text :is(h1, .lede, .hero-search) { margin-left: auto; margin-right: auto; }
 .ta-home .hh.hh-center .hero-text :is(.hero-stats, .hh-cta, .hero-trust) { justify-content: center; }
+
+/* ---------- Comparison table layout (admin "Table layout", HomeSections.jsx compareLayout) ---------- */
+.ta-home .cmp-table[style*="--cmp-max"] { max-width: var(--cmp-max); }
+.ta-home .cmp-table[style*="--cmp-cols"] .cmp-row { grid-template-columns: var(--cmp-cols) !important; }
+/* One line per cell: the table keeps its columns and scrolls sideways inside its card when too narrow. */
+.ta-home .cmp-nowrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.ta-home .cmp-nowrap .cmp-row { min-width: var(--cmp-min, 100%); }
+.ta-home .cmp-nowrap .cmp-row > div { white-space: nowrap; }
+.ta-home .cmp-left .cmp-row > div { text-align: left; }
+.ta-home .cmp-text-sm .cmp-row > div { font-size: 12.5px; }
+.ta-home .cmp-text-lg .cmp-row > div { font-size: 15px; }
+.ta-home .cmp-rows-compact .cmp-row > div { padding-top: 9px; padding-bottom: 9px; }
+.ta-home .cmp-rows-roomy .cmp-row > div { padding-top: 20px; padding-bottom: 20px; }
+/* Phones: squeezed to fit as before; "Scroll sideways" keeps readable columns and scrolls inside the card. */
+@media (max-width: 760px) {
+  .ta-home .cmp-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .ta-home .cmp-scroll .cmp-row { min-width: max(560px, var(--cmp-min, 0px)); }
+  .ta-home .cmp-nowrap .cmp-row { min-width: var(--cmp-min, 100%) !important; }
+}
+
+/* ---------- Comparison: text / image beside the table (admin "Beside the table") ---------- */
+.ta-home .cmp-layout {
+  display: grid;
+  gap: 28px;
+  align-items: start;
+}
+.ta-home .cmp-layout-left { grid-template-columns: minmax(0, var(--cmp-side, 30%)) minmax(0, 1fr); }
+.ta-home .cmp-layout-right { grid-template-columns: minmax(0, 1fr) minmax(0, var(--cmp-side, 30%)); }
+.ta-home .cmp-layout-center { align-items: center; }
+.ta-home .cmp-main { min-width: 0; }
+/* Beside a panel the table fills its column unless the editor set a table width. */
+.ta-home .cmp-main .cmp-table:not([style*="--cmp-max"]) { max-width: none; }
+.ta-home .cmp-side {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 22px;
+  min-width: 0;
+}
+.ta-home .cmp-side-plain { background: transparent; border: 0; box-shadow: none; padding: 0; }
+.ta-home .cmp-side-img { display: block; width: 100%; height: auto; border-radius: 12px; margin-bottom: 14px; }
+.ta-home .cmp-side .eyebrow { margin-bottom: 10px; }
+.ta-home .cmp-side h3 { font-size: 20px; font-weight: 700; margin: 0 0 8px; }
+.ta-home .cmp-side p { color: var(--muted); font-size: 14.5px; margin: 0 0 10px; }
+.ta-home .cmp-side-btn { display: inline-flex; margin-top: 6px; }
+/* Narrow screens: the panel goes above (left) or below (right) the table. */
+@media (max-width: 900px) {
+  .ta-home :is(.cmp-layout-left, .cmp-layout-right) { grid-template-columns: minmax(0, 1fr); }
+}
+/* The side image never grows taller than the table area (stacked on narrow screens it would fill the page). */
+.ta-home .cmp-side-img { max-height: 320px; object-fit: cover; }
+@media (max-width: 900px) { .ta-home .cmp-side-img { max-height: 220px; } }

@@ -300,7 +300,7 @@ function Logos({ p }) {
   return (
     <Section type="logos" p={p}>
       <Head p={p} center />
-      <div className={`cb-logos${p.grayscale === "no" ? "" : " cb-logos-gray"}`}>
+      <div className={`cb-logos${p.grayscale === "yes" ? " cb-logos-gray" : ""}`}>
         {items.map((x, i) => (
           <A key={i} url={x.url} className="cb-logo" label={x.name}>
             {/* eslint-disable-next-line @next/next/no-img-element */}

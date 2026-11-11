@@ -86,3 +86,123 @@
 @container (max-width: 299px) {
   :is(.ta-home, .ta-svc, .ta-cb, .ta-tools, .ta-journey) :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid) { --c: 1; }
 }
+
+
+/*
+ * ===== Block "Heading & cards" panel (admin CardLayoutSettings.jsx, saved as section.config.layout) =====
+ * BlockBackground.jsx puts classes / variables on the block wrapper (.ta-sp):
+ *   .ta-ly-cols + --ly-cols   cards per row (desktop)      .ta-ly-md + --ly-cols-md  tablets (grid box < 1000px)
+ *   .ta-ly-sm + --ly-cols-sm  phones (grid box < 560px)    .ta-ly-gap + --ly-g       space between cards
+ *   .ta-ly-rl / .ta-ly-rr     short / last row left / right (default centre)
+ *   .ta-ly-ca-*               text inside cards left | center | right
+ *   .ta-ly-ha-*               heading area left | center | right   .ta-ly-hg + --ly-hg space under the heading
+ *   .ta-ly-cp + --ly-cp       padding inside each card
+ * Grids that are not centred card rows by default (packages, locations, stats, blog posts…) join the
+ * system only when cards per row is set.
+ */
+.ta-ly-cols :is(.sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) {
+  display: flex !important;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: var(--g, 16px) !important;
+  grid-template-columns: none !important;
+  --c: var(--cols, 4);
+}
+.ta-ly-cols :is(.sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) > * {
+  flex: 0 0 calc((100% - (var(--c) - 1) * var(--g, 16px)) / var(--c));
+  max-width: calc((100% - (var(--c) - 1) * var(--g, 16px)) / var(--c));
+  min-width: 0;
+  box-sizing: border-box;
+}
+.ta-ly-cols :has(> :is(.sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb)) { container-type: inline-size; }
+.ta-ly-cols :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) { --cols: var(--ly-cols) !important; }
+.ta-ly-sm :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) { --cols-sm: var(--ly-cols-sm) !important; }
+.ta-ly-gap :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) { --g: var(--ly-g) !important; gap: var(--ly-g) !important; }
+@container (max-width: 999px) {
+  .ta-ly-cols :is(.sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) { --c: min(var(--cols, 4), 4); }
+  .ta-ly-md :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) { --c: min(var(--cols, 4), var(--ly-cols-md)) !important; }
+}
+@container (max-width: 759px) {
+  .ta-ly-cols :is(.sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) { --c: min(var(--cols, 4), 3); }
+}
+@container (max-width: 559px) {
+  .ta-ly-cols :is(.sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) { --c: min(var(--cols, 4), var(--cols-sm, 2)); }
+  .ta-ly-md :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) { --c: min(var(--cols, 4), var(--ly-cols-md), var(--cols-sm, 2)) !important; }
+}
+@container (max-width: 299px) {
+  .ta-ly-cols :is(.sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb), .ta-ly-md :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) { --c: 1 !important; }
+}
+
+/* Short / last row position (default: centred). */
+.ta-ly-rl :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) { justify-content: flex-start !important; }
+.ta-ly-rr :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) { justify-content: flex-end !important; }
+
+/* Text inside the cards. */
+.ta-ly-ca-left :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) > * { text-align: left !important; align-items: flex-start; }
+.ta-ly-ca-center :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) > * { text-align: center !important; align-items: center; }
+.ta-ly-ca-right :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) > * { text-align: right !important; align-items: flex-end; }
+.ta-ly-ca-left :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) > * > :is(span, img, .ic, .icon, .cb-ic, .cb-card-ic):first-child { margin-left: 0 !important; margin-right: auto !important; }
+.ta-ly-ca-center :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) > * > :is(span, img, .ic, .icon, .cb-ic, .cb-card-ic):first-child { margin-left: auto !important; margin-right: auto !important; }
+.ta-ly-ca-right :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) > * > :is(span, img, .ic, .icon, .cb-ic, .cb-card-ic):first-child { margin-left: auto !important; margin-right: 0 !important; }
+.ta-ly-cp :is(.catgrid, .sec-grid, .why-grid, .ind-grid, .ttm-grid, .tool-grid, .bundle-grid, .team-grid, .branch-grid, .pf-grid, .wc-grid, .bgrid, .incl-grid, .side-trust-grid, .cb-cards, .cb-stats, .cb-eco-pillars, .cb-tc-grid, .cb-db-stats, .cb-trust-grid, .cb-awards, .cb-xhub-grid, .cb-gallery, .jres-grid, .jsector-grid, .jugc-grid, .ikb-grid, .sec-grid2, .guarantee, .cred-strip, .nl9-trust, .svc-stats, .loc-grid, .pgrid, .cb-posts-grid, .cb-tpx-cards):not(.ta-cb) > * { padding: var(--ly-cp) !important; }
+
+/* Heading area (kicker, heading, sub text). */
+.ta-ly-ha-left :is(.sec-head, .cb-head, .jblock-head, .cb-tc-head, .ej-head, .tool-section-title, .blk > .kicker, .blk > h2, .blk > h2 ~ p) { text-align: left !important; margin-left: 0 !important; margin-right: auto !important; }
+.ta-ly-ha-center :is(.sec-head, .cb-head, .jblock-head, .cb-tc-head, .ej-head, .tool-section-title, .blk > .kicker, .blk > h2, .blk > h2 ~ p) { text-align: center !important; margin-left: auto !important; margin-right: auto !important; }
+.ta-ly-ha-right :is(.sec-head, .cb-head, .jblock-head, .cb-tc-head, .ej-head, .tool-section-title, .blk > .kicker, .blk > h2, .blk > h2 ~ p) { text-align: right !important; margin-left: auto !important; margin-right: 0 !important; }
+.ta-ly-ha-left :is(.sec-head, .cb-head, .jblock-head, .cb-tc-head, .ej-head, .tool-section-title, .blk > .kicker, .blk > h2, .blk > h2 ~ p) > * { margin-left: 0; margin-right: auto; }
+.ta-ly-ha-center :is(.sec-head, .cb-head, .jblock-head, .cb-tc-head, .ej-head, .tool-section-title, .blk > .kicker, .blk > h2, .blk > h2 ~ p) > * { margin-left: auto; margin-right: auto; }
+.ta-ly-ha-right :is(.sec-head, .cb-head, .jblock-head, .cb-tc-head, .ej-head, .tool-section-title, .blk > .kicker, .blk > h2, .blk > h2 ~ p) > * { margin-left: auto; margin-right: 0; }
+.ta-ly-hg :is(.sec-head, .cb-head, .jblock-head, .cb-tc-head, .ej-head, .tool-section-title) { margin-bottom: var(--ly-hg) !important; }
+
+/*
+ * ===== Heading look (same "Heading & cards" panel, config.layout) =====
+ *   .ta-ly-hw-full / -line   heading: whole width / one line (wide screens; narrow screens still wrap)
+ *   .ta-ly-sw-full / -line   sub text: the same
+ *   .ta-ly-hc / -sc / -kc    heading / sub text / kicker colour (--ly-hc, --ly-sc, --ly-kc)
+ *   .ta-ly-hs                heading size (--ly-hs, scaled down on phones)
+ *   .ta-ly-hl                two-tone highlight of *words* / <em> in headings: --ly-hl-1 up to --ly-hl-a,
+ *                            blending into --ly-hl-2 from --ly-hl-b (admin: colour 1 share % + blend %)
+ */
+:is(.ta-ly-hw-full, .ta-ly-hw-line, .ta-ly-sw-full, .ta-ly-sw-line) :is(.sec-head, .cb-head, .jblock-head, .cb-tc-head, .ej-head, .hero-text, .cb-fh-text) {
+  max-width: none !important;
+}
+:is(.ta-ly-hw-full, .ta-ly-hw-line) :is(h1, h2) { max-width: none !important; }
+@media (min-width: 900px) {
+  .ta-ly-hw-line :is(h1, h2) { white-space: nowrap; }
+}
+/* Heading widened but sub text left alone: the sub keeps its reading width and follows the heading alignment. */
+:is(.ta-ly-hw-full, .ta-ly-hw-line):not(.ta-ly-sw-full, .ta-ly-sw-line) :is(.sec-head, .cb-head, .jblock-head, .cb-tc-head, .ej-head) > :is(p, .sub, .cb-sub) {
+  display: inline-block;
+  max-width: 760px !important;
+}
+:is(.ta-ly-sw-full, .ta-ly-sw-line) :is(.sub, .cb-sub, .lede, .ej-sub, .hb-sub, .csub, .cb-fh-lede, .jblock-head > p, .blk > h2 ~ p) { max-width: none !important; }
+@media (min-width: 900px) {
+  .ta-ly-sw-line :is(.sub, .cb-sub, .lede, .ej-sub, .hb-sub, .csub, .cb-fh-lede, .jblock-head > p, .blk > h2 ~ p) { white-space: nowrap; }
+}
+
+.ta-ly-hc :is(h1, h2) { color: var(--ly-hc) !important; }
+.ta-ly-sc :is(.sub, .cb-sub, .lede, .ej-sub, .hb-sub, .csub, .cb-fh-lede, .jblock-head > p, .blk > h2 ~ p) { color: var(--ly-sc) !important; }
+.ta-ly-kc :is(.kicker, .eyebrow, .cb-kicker, .jkicker, .cb-tc-kicker, .ej-eyebrow, .cb-fh-eyebrow, .cb-lb-kicker) { color: var(--ly-kc) !important; }
+.ta-ly-hs :is(h1, h2) { font-size: clamp(20px, 6vw, var(--ly-hs)) !important; }
+
+.ta-ly-hl :is(h1, h2) em {
+  font-style: normal;
+  background: linear-gradient(90deg,
+    var(--ly-hl-1, var(--brand, #0e96ac)) 0%,
+    var(--ly-hl-1, var(--brand, #0e96ac)) var(--ly-hl-a, 20%),
+    var(--ly-hl-2, var(--accent, #e8521e)) var(--ly-hl-b, 80%),
+    var(--ly-hl-2, var(--accent, #e8521e)) 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+/* A heading colour must not paint over the highlighted words. */
+.ta-ly-hc.ta-ly-hl :is(h1, h2) em { color: transparent; }
+
+/* Tabbed Cards: the tab buttons follow the heading alignment. */
+.ta-ly-ha-left .cb-tc-tabs { justify-content: flex-start !important; }
+.ta-ly-ha-center .cb-tc-tabs { justify-content: center !important; }
+.ta-ly-ha-right .cb-tc-tabs { justify-content: flex-end !important; }
+/* Pill kickers: the soft background follows the kicker colour. */
+.ta-ly-kc :is(.eyebrow, .cb-tc-kicker, .cb-fh-eyebrow) { background: color-mix(in srgb, var(--ly-kc) 12%, transparent) !important; }
