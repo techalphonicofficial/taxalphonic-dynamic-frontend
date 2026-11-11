@@ -88,6 +88,8 @@ function Background({ config, hero = false, children }) {
 const HEX_COLOR = /^#[0-9a-f]{6}$/i;
 const SPACING = { marginTop: "mt", marginBottom: "mb", paddingTop: "pt", paddingBottom: "pb", paddingLeft: "pl", paddingRight: "pr" };
 
+const CONTENT_WIDTH = { full: "100%", wide: "1600px", site: "", medium: "1200px", narrow: "960px" };
+
 function spacingOf(config) {
   const spacing = config?.spacing;
   if (!spacing || typeof spacing !== "object") return null;
@@ -108,6 +110,15 @@ function spacingOf(config) {
     style["--sp-bs"] = ["dashed", "dotted"].includes(spacing.borderStyle) ? spacing.borderStyle : "solid";
     if (HEX_COLOR.test(String(spacing.borderColor || ""))) style["--sp-bc"] = spacing.borderColor;
   }
+  // Content width of this block (admin Spacing "Content width"): overrides the site page width
+  // (--ta-page-max, Settings → Website Layout) inside this block only.
+  const width = CONTENT_WIDTH[spacing.contentWidth] || (spacing.contentWidth === "custom" ? Number(spacing.customWidth) : 0);
+  if (width) {
+    classes.push("ta-sp-cw");
+    style["--ta-page-max"] = typeof width === "string" ? width : `${Math.max(320, Math.min(3000, Math.round(width)))}px`;
+  }
+  // Text width: "full" lets headings / paragraphs use the whole block width (no reading-width cap).
+  if (spacing.textWidth === "full") classes.push("ta-sp-tw-full");
   const borderRadius = Number(spacing.borderRadius);
   if (spacing.borderRadius !== "" && spacing.borderRadius !== null && spacing.borderRadius !== undefined && borderRadius >= 0) {
     classes.push("ta-sp-br");

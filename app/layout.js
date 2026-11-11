@@ -30,20 +30,28 @@ export async function generateMetadata() {
   return metadata;
 }
 
+// Settings → Website Layout: page width / side space / section gap as :root variables.
+// The CSS is built from numbers and known words only (siteSettingsService layoutCss).
+function LayoutStyle({ css }) {
+  return css ? <style id="ta-layout" dangerouslySetInnerHTML={{ __html: css }} /> : null;
+}
+
 export default async function RootLayout({ children }) {
   // Landing page subdomains (proxy.js sets this header; it can't come from the browser) render
   // their own header and footer regions (components/tax-alphonic/landing/LandingPage.jsx).
   if ((await headers()).get(LANDING_HEADER)) {
+    const { layoutCss } = await getSiteSettings();
     return (
       <html lang="en">
         <body className={`${sora.variable} ${inter.variable}`}>
+          <LayoutStyle css={layoutCss} />
           <ThemeProvider>{children}</ThemeProvider>
         </body>
       </html>
     );
   }
 
-  const [navigation, footerMenu, { branding, contact }] = await Promise.all([
+  const [navigation, footerMenu, { branding, contact, layoutCss }] = await Promise.all([
     getHeaderNavigation(),
     getFooterNavigation(),
     getSiteSettings(),
@@ -52,6 +60,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${sora.variable} ${inter.variable}`}>
+        <LayoutStyle css={layoutCss} />
         <ThemeProvider>
           <Header navigation={navigation} branding={branding} />
           {children}

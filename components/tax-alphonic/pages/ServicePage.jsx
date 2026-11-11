@@ -7,7 +7,7 @@ export default function ServicePage({ page }) {
   return (
     <>
       <Hero page={page} />
-      <main id="page-content" className="mx-auto max-w-[1210px] px-6 py-10">
+      <main id="page-content" className="mx-auto max-w-[var(--ta-page-max)] px-[var(--ta-gutter)] py-10">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div>
             <TextSection eyebrow="Overview" title="What is it?" text={c.whatIs} />

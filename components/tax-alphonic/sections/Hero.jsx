@@ -19,7 +19,7 @@ export default function Hero({ page }) {
             "radial-gradient(600px 300px at 80% -5%, rgba(14,150,172,.10), transparent), radial-gradient(500px 280px at 10% 30%, rgba(232,82,30,.08), transparent)",
         }}
       />
-      <div className="mx-auto max-w-[1156px] px-6 py-14 sm:py-16">
+      <div className="mx-auto max-w-[var(--ta-page-max)] px-[var(--ta-gutter)] py-14 sm:py-16">
         <div
           className="mb-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold"
           style={{ background: "rgba(14,150,172,.08)", color: THEME.brand }}

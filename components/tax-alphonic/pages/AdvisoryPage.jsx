@@ -9,7 +9,7 @@ export default function AdvisoryPage({ page }) {
   return (
     <>
       <Hero page={page} />
-      <main id="page-content" className="mx-auto max-w-[1156px] px-6 py-10">
+      <main id="page-content" className="mx-auto max-w-[var(--ta-page-max)] px-[var(--ta-gutter)] py-10">
         {c.overview ? (
           <section className="mb-10">
             <SectionTitle eyebrow="Overview" title="Overview" />

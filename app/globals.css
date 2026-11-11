@@ -3,6 +3,21 @@
 /* Google Fonts - TaxAlphonic */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
 
+/*
+ * Page width + side space for every page (header, footer, home, services, blocks, tools, journey,
+ * blog, landing). Default: full screen width with 10px on the left and right.
+ * Admin: Settings → Website Layout (settings group "layout") overrides these on :root
+ * (app/layout.js + service/siteSettingsService.js layoutCss). A block's Spacing panel
+ * "Content width" overrides --ta-page-max for that block only.
+ */
+:root {
+  --ta-page-max: 100%;
+  --ta-gutter: 10px;
+  --ta-section-gap: 28px;
+  --ta-hero-h1: 860px;
+  --ta-hero-lede: 640px;
+}
+
 /* Global Font Settings */
 :root {
   --font-heading: 'Poppins', sans-serif;

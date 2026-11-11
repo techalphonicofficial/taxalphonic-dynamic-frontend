@@ -9,7 +9,7 @@ export default function CategoryPage({ page }) {
   return (
     <>
       <Hero page={page} />
-      <main id="page-content" className="mx-auto max-w-[1156px] px-6 py-10">
+      <main id="page-content" className="mx-auto max-w-[var(--ta-page-max)] px-[var(--ta-gutter)] py-10">
         <SectionTitle eyebrow="Services" title={`${page.title} services`} description={page.description} />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service, index) => (

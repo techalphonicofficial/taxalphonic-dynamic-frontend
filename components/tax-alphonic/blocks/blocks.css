@@ -24,9 +24,9 @@
 }
 
 .ta-cb .cb-wrap {
-  max-width: 1210px;
+  max-width: var(--ta-page-max);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--ta-gutter);
 }
 
 /* Inside a page column that already has its own side spacing. */
@@ -1335,6 +1335,8 @@
 /* Block spacing (admin "Spacing" panel, BlockBackground.jsx): set on the block's own root, so a value
    can also be smaller than the design. Embedded blocks (AnyBlock) have their root one level deeper. */
 .ta-sp { min-width: 0; }
+/* Spacing panel "Text width: Full": headings and paragraphs use the block's whole width. */
+.ta-sp-tw-full :is(h1, h2, h3, h4, p, .lede, .sub, .cb-sub, .cb-head) { max-width: none !important; }
 .ta-sp-pt > :not(.ta-bg, .ta-svc-embed, .ta-jt-embed, .ta-home-embed, .ta-blk-btns),
 .ta-sp-pt > .ta-svc-embed > *,
 .ta-sp-pt > .ta-jt-embed > .wrap > *,
@@ -1433,9 +1435,9 @@
   gap: 28px;
   align-items: start;
   width: 100%;
-  max-width: 1300px;
+  max-width: var(--ta-page-max);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--ta-gutter);
   box-sizing: border-box;
 }
 .ta-svc .ta-lg-body { max-width: none; padding: 0; }
@@ -1597,7 +1599,7 @@
   --bb-accent: var(--t-accent, #e8521e);
   --bb-deep: var(--t-deep, #0a0e1a);
   display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
-  max-width: 1210px; margin: 0 auto; padding: 0 24px 26px;
+  max-width: var(--ta-page-max); margin: 0 auto; padding: 0 var(--ta-gutter) 26px;
   font-family: var(--font-inter), Inter, system-ui, sans-serif;
   position: relative; z-index: 1;
 }

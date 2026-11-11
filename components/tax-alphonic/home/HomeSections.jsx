@@ -224,7 +224,7 @@ function Hero({ p }) {
   if (!has(p.heading) && !has(p.highlight) && !has(p.subHeading) && !showVisual) return null;
 
   return (
-    <div className="hh">
+    <div className={["hh", ["wide", "full"].includes(p.textWidth) ? `hh-tw-${p.textWidth}` : "", p.textAlign === "center" ? "hh-center" : ""].filter(Boolean).join(" ")}>
       <div className="hh-bg" />
       <div className={`wrap hero-grid hero-size-${size}`} style={showVisual ? undefined : { gridTemplateColumns: "1fr" }}>
         <div className="hero-text">

@@ -60,9 +60,9 @@
 }
 
 .ta-journey .wrap {
-  max-width: 1300px;
+  max-width: var(--ta-page-max);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--ta-gutter);
 }
 
 .ta-journey .wrap {

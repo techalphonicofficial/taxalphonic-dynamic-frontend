@@ -76,9 +76,9 @@
 }
 
 .ta-home .wrap {
-  max-width: 1300px;
+  max-width: var(--ta-page-max);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--ta-gutter);
 }
 
 .ta-home .clients {
@@ -182,7 +182,7 @@
 .ta-home .hh h1 {
   font-size: 52px;
   font-weight: 800;
-  max-width: 780px;
+  max-width: var(--ta-hero-h1, 780px);
 }
 
 .ta-home .hh h1 em {
@@ -197,7 +197,7 @@
   font-size: 19px;
   color: var(--muted);
   margin: 22px 0 28px;
-  max-width: 560px;
+  max-width: var(--ta-hero-lede, 560px);
 }
 
 .ta-home .hh-cta {
@@ -328,7 +328,7 @@
 }
 
 .ta-home .home-page .wrap {
-  max-width: 1156px;
+  max-width: var(--ta-page-max);
 }
 
 .ta-home .faq {
@@ -809,9 +809,9 @@
   gap: 8px 22px;
   justify-content: center;
   align-items: center;
-  max-width: 1222px;
+  max-width: var(--ta-page-max);
   margin: 0 auto;
-  padding: 11px 24px;
+  padding: 11px var(--ta-gutter);
   font-size: 12.6px;
   font-weight: 700;
   color: #2a3550;
@@ -2588,9 +2588,9 @@
   grid-template-columns: minmax(0, 1fr) 360px;
   gap: 28px;
   align-items: start;
-  max-width: 1300px;
+  max-width: var(--ta-page-max);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--ta-gutter);
 }
 
 /* A column whose blocks all rendered nothing must not leave an empty gap. */
@@ -2791,9 +2791,9 @@
 
 /* Full-width blocks: a card as wide as the page content, with space between cards. */
 .ta-home .home-page > :is(.ej, .cats, .bigsec, .press, .info-journey, .clients, .how, .tools, .bundles, .why, .compare, .industries, .ttm, .secband, .home-faq, .home-team, .home-branches, .home-portfolio) {
-  width: calc(100% - 48px);
-  max-width: 1252px;
-  margin: 28px auto;
+  width: calc(100% - 2 * var(--ta-gutter));
+  max-width: calc(var(--ta-page-max) - 2 * var(--ta-gutter));
+  margin: var(--ta-section-gap) auto;
 }
 
 /* Blocks in a two-column row: the column sets the width. */
@@ -3269,3 +3269,10 @@
   padding: 14px 24px; border-radius: 12px; font-size: 15.5px; line-height: 1.35; text-decoration: none;
 }
 .ta-home .eb-wa.ta-look:not(.ta-look-link):hover { text-decoration: none; }
+
+/* ---------- Hero text width / alignment (admin Home Hero "Text width", "Text alignment") ---------- */
+.ta-home .hh.hh-tw-wide { --ta-hero-h1: 1100px; --ta-hero-lede: 820px; }
+.ta-home .hh.hh-tw-full { --ta-hero-h1: none; --ta-hero-lede: none; }
+.ta-home .hh.hh-center .hero-text { text-align: center; }
+.ta-home .hh.hh-center .hero-text :is(h1, .lede, .hero-search) { margin-left: auto; margin-right: auto; }
+.ta-home .hh.hh-center .hero-text :is(.hero-stats, .hh-cta, .hero-trust) { justify-content: center; }

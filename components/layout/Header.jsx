@@ -1706,10 +1706,10 @@ export default function Header({ navigation = {}, branding = {} }) {
               mx-auto
               flex
               min-h-[72px]
-              max-w-[1280px]
+              max-w-[var(--ta-page-max)]
               items-center
               gap-3
-              px-3
+              px-[var(--ta-gutter)]
             "
           >
             {/* LOGO */}
@@ -1824,8 +1824,8 @@ export default function Header({ navigation = {}, branding = {} }) {
             data-nav-bounds
             className="
               mx-auto
-              max-w-[1280px]
-              px-3
+              max-w-[var(--ta-page-max)]
+              px-[var(--ta-gutter)]
             "
           >
             <nav

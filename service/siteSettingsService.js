@@ -75,14 +75,51 @@ function contactDetails({ contact, address, social }) {
   };
 }
 
+/**
+ * Settings → Website Layout (group "layout") as CSS variables for :root. Only numbers / known
+ * words go into the CSS. Empty = the defaults in app/globals.css (full width, 10px sides).
+ *   pageWidth: "full" | "1200" | "1320" | "1440" | "1600" | "1800" | "custom" (+ customWidth px)
+ *   gutter (px, desktop), gutterMobile (px, phones under 768px), sectionGap (px)
+ *   heroTextWidth: "normal" | "wide" | "full"
+ */
+const num = (value, min, max) => {
+  if (value === "" || value === null || value === undefined) return null;
+  const n = Math.round(Number(value));
+  return Number.isFinite(n) ? Math.max(min, Math.min(max, n)) : null;
+};
+
+export function layoutCss(layout = {}) {
+  const vars = [];
+  const width = String(layout.pageWidth || "").trim();
+  if (width === "full") vars.push("--ta-page-max:100%");
+  else if (width === "custom") {
+    const w = num(layout.customWidth, 600, 3000);
+    if (w) vars.push(`--ta-page-max:${w}px`);
+  } else if (/^\d{3,4}$/.test(width)) vars.push(`--ta-page-max:${num(width, 600, 3000)}px`);
+
+  const desktop = num(layout.gutter, 0, 160);
+  const mobile = num(layout.gutterMobile, 0, 80);
+  if (desktop !== null) vars.push(`--ta-gutter:${desktop}px`);
+  const gap = num(layout.sectionGap, 0, 200);
+  if (gap !== null) vars.push(`--ta-section-gap:${gap}px`);
+
+  const hero = { wide: ["1100px", "820px"], full: ["none", "none"] }[layout.heroTextWidth];
+  if (hero) vars.push(`--ta-hero-h1:${hero[0]}`, `--ta-hero-lede:${hero[1]}`);
+
+  let css = vars.length ? `:root{${vars.join(";")}}` : "";
+  if (mobile !== null) css += `@media (max-width:767px){:root{--ta-gutter:${mobile}px}}`;
+  return css;
+}
+
 /** Branding and contact details for the root layout. Never throws; missing settings fall back. */
 export const getSiteSettings = cache(async function getSiteSettings() {
-  const [org, contact, address, social] = await Promise.all(
-    ["organization", "contact", "address", "social"].map(loadGroup)
+  const [org, contact, address, social, layout] = await Promise.all(
+    ["organization", "contact", "address", "social", "layout"].map(loadGroup)
   );
 
   return {
     branding: branding(org),
     contact: contactDetails({ contact, address, social }),
+    layoutCss: layoutCss(layout),
   };
 });

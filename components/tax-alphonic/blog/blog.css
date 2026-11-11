@@ -2,7 +2,7 @@
    The list part is uirefrence.html's "#/blog" view (loans-hero, blog-tabs, blog-grid, blog-card). */
 
 /* One content width for crumb, hero, list and post (the reference's 1222px). */
-.ta-blog .wrap { max-width: 1222px; margin-left: auto; margin-right: auto; }
+.ta-blog .wrap { max-width: var(--ta-page-max); margin-left: auto; margin-right: auto; }
 
 .ta-blog .loans-hero {
   padding: 40px 0 30px;

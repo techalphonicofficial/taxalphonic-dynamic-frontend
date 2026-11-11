@@ -9,7 +9,7 @@ export default function TaxpediaPage({ page }) {
   return (
     <>
       <Hero page={page} />
-      <main id="page-content" className="mx-auto max-w-[1156px] px-6 py-10">
+      <main id="page-content" className="mx-auto max-w-[var(--ta-page-max)] px-[var(--ta-gutter)] py-10">
         {c.meta ? <ContentBlock title="About this topic" value={c.meta} /> : null}
         {c.introduction ? <ContentBlock title="Introduction" value={c.introduction} /> : null}
         {c.detailedExplanation ? <ContentBlock title="Detailed explanation" value={c.detailedExplanation} /> : null}

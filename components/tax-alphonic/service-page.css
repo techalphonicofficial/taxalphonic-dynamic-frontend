@@ -76,9 +76,9 @@
 }
 
 .ta-svc .wrap {
-  max-width: 1300px;
+  max-width: var(--ta-page-max);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--ta-gutter);
 }
 
 .ta-svc .wrap {
@@ -186,7 +186,7 @@
   font-size: 17px;
   color: var(--muted);
   margin: 18px 0 24px;
-  max-width: 520px;
+  max-width: var(--ta-hero-lede, 520px);
 }
 
 .ta-svc .trust-row {
@@ -255,22 +255,22 @@
 }
 
 .ta-svc .svc-full>.blk {
-  max-width: 1200px;
+  max-width: var(--ta-page-max);
   margin-left: auto;
   margin-right: auto;
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: var(--ta-gutter);
+  padding-right: var(--ta-gutter);
 }
 
 .ta-svc .svc>.wrap {
-  max-width: 1210px;
+  max-width: var(--ta-page-max);
   margin-left: auto;
   margin-right: auto;
 }
 
 .ta-svc .svc-full>.blk,
 .ta-svc .svc-full .ctastrip {
-  max-width: 1210px !important;
+  max-width: var(--ta-page-max) !important;
   margin-left: auto;
   margin-right: auto;
 }
@@ -794,9 +794,9 @@
   gap: 8px 22px;
   justify-content: center;
   align-items: center;
-  max-width: 1222px;
+  max-width: var(--ta-page-max);
   margin: 0 auto;
-  padding: 11px 24px;
+  padding: 11px var(--ta-gutter);
   font-size: 12.6px;
   font-weight: 700;
   color: #2a3550;
@@ -1042,7 +1042,7 @@
 }
 
 .ta-svc .nl9-trust {
-  max-width: 1222px;
+  max-width: var(--ta-page-max);
   margin: 26px auto 0;
   display: grid;
   grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
@@ -1919,7 +1919,7 @@
 
 /* Breadcrumb row: the reference resets .wrap to 100% width, so match the content column (.svc > .wrap). */
 .ta-svc .view > .wrap {
-  max-width: 1210px;
+  max-width: var(--ta-page-max);
   margin-left: auto;
   margin-right: auto;
 }

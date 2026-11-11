@@ -8,7 +8,7 @@ export default function ListingPage({ page }) {
   return (
     <>
       <Hero page={page} />
-      <main id="page-content" className="mx-auto max-w-[1156px] px-6 py-10">
+      <main id="page-content" className="mx-auto max-w-[var(--ta-page-max)] px-[var(--ta-gutter)] py-10">
         {c.heroTitle && c.heroTitle !== page.title ? (
           <SectionTitle title={c.heroTitle} description={c.heroDescription || c.heroSub || c.description} />
         ) : null}
