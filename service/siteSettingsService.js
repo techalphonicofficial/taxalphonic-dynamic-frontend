@@ -12,6 +12,9 @@ async function loadGroup(group) {
     const payload = await apiClient(`/api/v1/settings/${group}`, { cache: "no-store" });
     return payload?.success && payload.data && typeof payload.data === "object" ? payload.data : {};
   } catch (error) {
+    // 401 / 404: the backend does not serve this group publicly (e.g. "layout" before the backend
+    // update is deployed). The defaults apply; not worth an error on every page.
+    if (error?.status === 401 || error?.status === 404) return {};
     console.error(`Unable to load ${group} settings.`, error);
     return {};
   }

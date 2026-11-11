@@ -89,7 +89,7 @@ function toCardItems(items) {
 }
 
 /** Normalises a CMS button ({ text, url }) and drops it when it has no text. */
-function toButton(value) {
+export function toButton(value) {
   const text = String(value?.text || "").trim();
   return text ? { text, url: String(value?.url || "").trim() || "#", icon: value?.icon || "", iconSide: value?.iconSide || "", style: value?.style || "" } : null;
 }
@@ -142,7 +142,7 @@ function Icon({ value, className }) {
 }
 
 /** A link styled as a reference button; external links open in a new tab. */
-function CmsButton({ button, className }) {
+export function CmsButton({ button, className }) {
   if (!button) return null;
   const external = /^https?:\/\//i.test(button.url);
   const internal = button.url.startsWith("/") && !button.url.startsWith("//");
@@ -848,5 +848,41 @@ export function ContentBlocks({ sections }) {
         <LayoutGroup key={group.id} group={{ ...group, items: group.items.filter((section) => hasContent(section, [])) }} render={render} bodyClass="svc-body" sideClass="side" />
       ))}
     </>
+  );
+}
+
+/**
+ * The service-page areas for another page type (blog posts): blocks sorted into hero / top / main /
+ * sidebar / bottom by the same placement rules, plus the repeatable layout sections. Empty blocks are
+ * skipped; `keep(section)` keeps blocks the page draws itself (no content check; without a placement they go in the sidebar).
+ */
+export function placeSections(sections, keep = () => false) {
+  const layout = splitLayoutSections(sections);
+  const ok = (section) => keep(section) || hasContent(section, []);
+  const items = layout.base.filter((section) => section.type !== "HeroBanner" && ok(section));
+  const groups = { hero: [], top: [], main: [], sidebar: [], bottom: [] };
+  items.forEach((section) => groups[keep(section) ? (PLACEMENTS.includes(section.config?.placement) ? section.config.placement : "sidebar") : placementOf(section)].push(section));
+  return {
+    groups,
+    items,
+    layoutGroups: layout.groups.map((group) => ({ ...group, items: group.items.filter(ok) })),
+  };
+}
+
+/**
+ * One block with its background, as on a service page. `custom(section, placement)` draws block types
+ * the page owns (blog blocks); `siblings` are the page's blocks (first Overview, first Form).
+ */
+export function PageBlock({ section, placement = "main", siblings = [], custom }) {
+  const firstOverviewId = siblings.find((item) => item.type === "Overview")?.id;
+  const firstForm = siblings.find((item) => item.type === "Form");
+  const packageCtaHref = firstForm ? `#${firstForm.config?.anchorId || "enquiry"}` : "";
+  const own = custom ? custom(section, placement) : null;
+  return (
+    <BlockBackground config={section.config} hero={placement === "hero"}>
+      {own || (
+        <ServiceBlock section={section} placement={placement} firstOverviewId={firstOverviewId} packageCtaHref={packageCtaHref} locations={[]} />
+      )}
+    </BlockBackground>
   );
 }

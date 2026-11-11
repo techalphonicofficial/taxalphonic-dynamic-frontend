@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { ContentBlocks } from "../pages/ApiServicePage";
-import { BlogViewCounter, ShareButtons, TableOfContents } from "./BlogClient";
+import { PageBlock, placeSections } from "../pages/ApiServicePage";
+import LayoutGroup from "../blocks/LayoutGroup";
+import { BlogViewCounter, ReadingProgress, TableOfContents } from "./BlogClient";
 import BlogEngagement from "./BlogEngagement";
+import { BlogBlock } from "./BlogBlocks";
+import { isBlogBlock, splitBlogSettings } from "./blogLayout";
 import "../service-page.css";
 import "./blog.css";
 
@@ -186,36 +189,100 @@ export function BlogListPage({ posts, pagination, categories, category, search }
   );
 }
 
-export function BlogPostPage({ post, url }) {
-  const faqSection = post.faqs.length
-    ? [{ id: "blog-faqs", type: "Faq", config: { kicker: "FAQ" }, payload: { title: "Frequently asked questions", faqs: post.faqs } }]
+/**
+ * One post. The post's blocks are laid out in the service-page areas (blogLayout.js):
+ * hero / top above the article, main | sidebar (left, right or none), bottom under it. The sidebar
+ * cards (On this page, Share, Expert help) are blocks too, so the editor places them.
+ * preview: the admin Live Preview (no view count, no likes / comments); single: one block alone
+ * (admin block preview), without the title, author, comments and related posts.
+ */
+export function BlogPostPage({ post, url, preview = false, single = false }) {
+  const { settings, sections } = splitBlogSettings(post.sections);
+  const faqSection = post.faqs?.length
+    ? [{ id: "blog-faqs", type: "Faq", config: { kicker: "FAQ", placement: "main" }, payload: { title: "Frequently asked questions", faqs: post.faqs } }]
     : [];
+  const { groups, items, layoutGroups } = placeSections([...sections, ...faqSection], isBlogBlock);
+  // No sidebar: its blocks go to the end of the article column.
+  const sideOff = settings.sidebar === "none" || !groups.sidebar.length;
+  const main = sideOff ? [...groups.main, ...groups.sidebar] : groups.main;
+  const side = sideOff ? [] : groups.sidebar;
+  const hasToc = items.some((section) => section.type === "BlogToc");
+  const toc = items.find((section) => section.type === "BlogToc")?.payload || {};
+
+  const custom = (section, placement) => (isBlogBlock(section) ? <BlogBlock section={section} placement={placement} post={post} url={url} /> : null);
+  const render = (section, placement) => <PageBlock key={section.id} section={section} placement={placement} siblings={items} custom={custom} />;
+
+  // Sticky part of the sidebar: from "On this page" down (default), all of it, or nothing.
+  const tocIndex = side.findIndex((section) => section.type === "BlogToc");
+  const stickFrom = settings.sticky === "all" ? 0 : settings.sticky === "toc" ? (tocIndex >= 0 ? tocIndex : side.length) : side.length;
+  const cover = settings.cover !== "none" && post.image ? settings.cover : "";
+
+  const gridClass = [
+    "blog-post-grid",
+    sideOff ? "no-side" : `side-${settings.sidebar === "left" ? "left" : "right"}`,
+    hasToc && settings.tocMobile !== "no" ? "toc-inline-on" : "",
+    settings.textWidth === "comfortable" || settings.textWidth === "narrow" ? `text-${settings.textWidth}` : "",
+  ].filter(Boolean).join(" ");
 
   return (
     <div className="ta-svc ta-blog">
-      <BlogViewCounter slug={post.slug} />
+      {!preview && <BlogViewCounter slug={post.slug} />}
+      {settings.progress !== "no" && !single && <ReadingProgress />}
       <div className="view">
-        <article className="wrap blog-post">
-          <header className="blog-post-head">
-            {post.category && <Link href={`/blog?category=${post.category.slug}`} className="eyebrow">● {post.category.name}</Link>}
-            <h1>{post.title}</h1>
-            {post.excerpt && <p className="lead">{post.excerpt}</p>}
-            <Meta post={post} />
-          </header>
+        <article className="wrap blog-post" id="blog-article">
+          {groups.hero.length > 0 && <div className="svc-hero-slot">{groups.hero.map((section) => render(section, "hero"))}</div>}
 
-          {post.image && (
+          {!single && <header className={`blog-post-hero${cover === "beside" ? " with-cover" : ""}`}>
+            <div className="blog-post-head">
+              {post.category && <Link href={`/blog?category=${post.category.slug}`} className="eyebrow">● {post.category.name}</Link>}
+              <h1>{post.title}</h1>
+              {post.excerpt && <p className="lead">{post.excerpt}</p>}
+              <Meta post={post} />
+            </div>
+            {cover === "beside" && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img className="blog-post-cover" src={post.image} alt={post.title} />
+            )}
+          </header>}
+          {cover === "below" && !single && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img className="blog-post-cover" src={post.image} alt={post.title} />
+            <img className="blog-post-cover blog-post-cover-wide" src={post.image} alt={post.title} />
           )}
 
-          <div className="blog-post-grid">
-            <div className="blog-post-body">
-              <TableOfContents variant="inline" />
-              <div id="blog-content">
-                <ContentBlocks sections={[...post.sections, ...faqSection]} />
-              </div>
+          {groups.top.length > 0 && <div className="blog-top">{groups.top.map((section) => render(section, "top"))}</div>}
 
-              {post.tags.length > 0 && (
+          <div className={gridClass} style={sideOff ? undefined : { "--blog-side": `${settings.sidebarWidth}px` }}>
+            <div className="blog-post-body">
+              {hasToc && settings.tocMobile !== "no" && (
+                <TableOfContents variant="inline" title={toc.title ?? "On this page"} icon={toc.icon ?? "📑"} levels={toc.levels === "h2" ? "h2" : "h2h3"} />
+              )}
+              <div id="blog-content">{main.map((section) => render(section, "main"))}</div>
+
+            </div>
+
+            {side.length > 0 && (
+              <aside className="blog-post-side">
+                {side.slice(0, stickFrom).map((section) => render(section, "sidebar"))}
+                {stickFrom < side.length && (
+                  <div className="blog-side-sticky">{side.slice(stickFrom).map((section) => render(section, "sidebar"))}</div>
+                )}
+              </aside>
+            )}
+          </div>
+
+          {groups.bottom.length > 0 && <div className="blog-bottom">{groups.bottom.map((section) => render(section, "bottom"))}</div>}
+          {layoutGroups.map((group) => (
+            <LayoutGroup key={group.id} group={group} render={render} bodyClass="svc-body" sideClass="side" />
+          ))}
+
+          {/* Tags, author and likes / comments after every block. */}
+          {/* settings.foot: "full" (default) | "center" | "article" (lined up with the article column). */}
+          {!single && <div
+            className={settings.foot === "article" ? `${gridClass} blog-post-foot` : `blog-post-foot foot-${settings.foot === "center" ? "center" : "full"}`}
+            style={settings.foot === "article" && !sideOff ? { "--blog-side": `${settings.sidebarWidth}px` } : undefined}
+          >
+            <div className="blog-post-body">
+              {post.tags?.length > 0 && (
                 <div className="blog-tags">
                   <b>Tags:</b>
                   {post.tags.map((t) => <Link key={t.slug} href={`/blog?q=${encodeURIComponent(t.name)}`}>#{t.name}</Link>)}
@@ -233,32 +300,21 @@ export function BlogPostPage({ post, url }) {
                 </div>
               )}
 
-              <BlogEngagement slug={post.slug} initialLikes={post.likeCount} />
+              {preview
+                ? <p className="blog-preview-note">Likes and comments show here on the live post.</p>
+                : <BlogEngagement slug={post.slug} initialLikes={post.likeCount} />}
             </div>
-
-            <aside className="blog-post-side">
-              <TableOfContents />
-              <div className="blog-side-card">
-                <h3>Share this article</h3>
-                <ShareButtons url={url} title={post.title} />
-              </div>
-              <div className="blog-side-card blog-side-cta">
-                <h3>Need expert help?</h3>
-                <p>Get a free consultation with a Tax Alphonic expert.</p>
-                <Link href="/talk-to-expert" className="btn-primary">🎧 Talk to an expert</Link>
-              </div>
-            </aside>
-          </div>
+          </div>}
         </article>
 
-        {post.related.length > 0 && (
+        {!single && post.related?.length > 0 && (
           <div className="wrap loans-body blog-related">
             <h2 className="loans-sec-h">Keep reading</h2>
             <div className="blog-grid">{post.related.map((p) => <BlogCard key={p.id} post={p} />)}</div>
           </div>
         )}
 
-        <div className="wrap loans-body"><CtaStrip /></div>
+        {!single && <div className="wrap loans-body"><CtaStrip /></div>}
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ export function BlogViewCounter({ slug }) {
 }
 
 /** Share links for the current post, plus "copy link". */
-export function ShareButtons({ url, title }) {
+export function ShareButtons({ url, title, copyLink = true }) {
   const [copied, setCopied] = useState(false);
   const text = encodeURIComponent(title);
   const link = encodeURIComponent(url);
@@ -47,9 +47,11 @@ export function ShareButtons({ url, title }) {
           <span aria-hidden="true">{t.icon}</span>{t.label}
         </a>
       ))}
-      <button type="button" onClick={copy}>
-        <span aria-hidden="true">🔗</span>{copied ? "Copied!" : "Copy link"}
-      </button>
+      {copyLink && (
+        <button type="button" onClick={copy}>
+          <span aria-hidden="true">🔗</span>{copied ? "Copied!" : "Copy link"}
+        </button>
+      )}
     </div>
   );
 }
@@ -57,16 +59,19 @@ export function ShareButtons({ url, title }) {
 const slugify = (text) =>
   text.toLowerCase().normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/[\s_]+/g, "-").replace(/-+/g, "-").slice(0, 80);
 
-/** Reads the h2/h3 headings of the post body (#blog-content), gives each an id and lists them. */
-function useHeadings(rootId) {
+// Headings that are not part of the article text: sidebar cards, the author box, comments, forms.
+const SKIP = "details, aside, form, .blog-side-card, .blog-toc, .blog-author, .blog-engage, .blog-post-hero, .cms-form";
+
+/** Reads the h2 (and h3) headings of the article (#blog-article), gives each an id and lists them. */
+function useHeadings(rootId, levels = "h2h3") {
   const [headings, setHeadings] = useState([]);
   useEffect(() => {
     const root = document.getElementById(rootId);
     if (!root) return undefined;
     const used = new Set();
     const scan = () => {
-      const found = [...root.querySelectorAll("h2, h3")]
-        .filter((el) => !el.closest("details, .blog-author") && el.textContent.trim())
+      const found = [...root.querySelectorAll(levels === "h2" ? "h2" : "h2, h3")]
+        .filter((el) => !el.closest(SKIP) && el.textContent.trim())
         .map((el) => {
           if (!el.id) {
             const base = slugify(el.textContent) || "section";
@@ -81,7 +86,7 @@ function useHeadings(rootId) {
     };
     const frame = requestAnimationFrame(scan);
     return () => cancelAnimationFrame(frame);
-  }, [rootId]);
+  }, [rootId, levels]);
   return headings;
 }
 
@@ -108,9 +113,13 @@ function useActiveHeading(headings) {
   return active;
 }
 
-/** "On this page" list for the post; a click smooth-scrolls to the section. Hidden when the post has fewer than 2 headings. */
-export function TableOfContents({ rootId = "blog-content", title = "On this page", variant = "side" }) {
-  const headings = useHeadings(rootId);
+/**
+ * "On this page" list for the post; a click smooth-scrolls to the section. Hidden when the post has
+ * fewer than 2 headings. variant: "side" (sidebar card), "main" (card in the article), "inline"
+ * (fold-out box shown above the article on phones / tablets).
+ */
+export function TableOfContents({ rootId = "blog-article", title = "On this page", icon = "📑", levels = "h2h3", variant = "side" }) {
+  const headings = useHeadings(rootId, levels);
   const active = useActiveHeading(headings);
   if (headings.length < 2) return null;
 
@@ -139,15 +148,41 @@ export function TableOfContents({ rootId = "blog-content", title = "On this page
   if (variant === "inline") {
     return (
       <details className="blog-toc blog-toc-inline">
-        <summary>📑 {title}</summary>
+        <summary>{icon ? `${icon} ` : ""}{title}</summary>
         {list}
       </details>
     );
   }
   return (
-    <nav className="blog-side-card blog-toc blog-toc-side" aria-label={title}>
-      <h3>📑 {title}</h3>
+    <nav className={`blog-side-card blog-toc blog-toc-${variant === "main" ? "main" : "side"}`} aria-label={title || "On this page"}>
+      {title && <h3>{icon ? `${icon} ` : ""}{title}</h3>}
       {list}
     </nav>
   );
+}
+
+/** Thin bar at the top of the screen showing how much of the article has been read. */
+export function ReadingProgress({ rootId = "blog-article" }) {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const el = document.getElementById(rootId);
+      if (!el) return;
+      const box = el.getBoundingClientRect();
+      const total = box.height - window.innerHeight;
+      setProgress(total > 0 ? Math.min(1, Math.max(0, -box.top / total)) : 1);
+    };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [rootId]);
+  return <div className="blog-progress" aria-hidden="true"><span style={{ transform: `scaleX(${progress})` }} /></div>;
 }

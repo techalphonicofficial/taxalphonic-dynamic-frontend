@@ -1,7 +1,7 @@
 "use server";
 
 import { apiClient } from "@/service/apiClient";
-import { getServiceCategory, mapService } from "@/service/servicePageService";
+import { getServiceCategory, mapService, normalizeAssetUrl } from "@/service/servicePageService";
 import { getServiceLocations } from "@/service/serviceLocationsService";
 import { mapSection } from "@/service/homePageService";
 import { attachModuleContent } from "@/service/homeContentService";
@@ -167,5 +167,40 @@ export async function buildLandingPreview(draft) {
     page: { id: "landing-preview", title: String(draft.title || "").trim() || "Landing page", sections },
     branding: settings.branding,
     contact: settings.contact,
+  };
+}
+
+/**
+ * Blog post draft (admin Blog editor, Live Preview): { title, excerpt, image, readTime, date,
+ * category, author, tags, slug, sections } as BlogPostPage's post. `single`: one block alone
+ * (block preview), without the title, author and comments.
+ */
+export async function buildBlogPreview(draft) {
+  if (!draft || typeof draft !== "object") return null;
+  const raw = Array.isArray(draft.sections) ? draft.sections.slice(0, 80) : [];
+  const mapped = raw
+    .map((section) => (section?.type === "RichText" ? { ...section, type: "Overview" } : section))
+    .map(mapSection)
+    .filter(Boolean);
+  const sections = await attachModuleContent(await Promise.all(mapped.map(hydrateSection)));
+  const name = (value) => String(value || "").trim();
+  return {
+    single: Boolean(draft.single),
+    post: {
+      id: "preview",
+      slug: name(draft.slug) || "preview",
+      title: name(draft.title) || (draft.single ? "" : "Untitled post"),
+      excerpt: name(draft.excerpt),
+      image: normalizeAssetUrl(draft.image),
+      readTime: Number(draft.readTime) || 1,
+      date: draft.date || null,
+      category: draft.category?.name ? { name: draft.category.name, slug: draft.category.slug || "" } : null,
+      author: draft.author?.name ? { name: draft.author.name, bio: draft.author.bio || "", avatar: normalizeAssetUrl(draft.author.avatar) } : null,
+      tags: (Array.isArray(draft.tags) ? draft.tags : []).filter((t) => t?.name).map((t) => ({ name: t.name, slug: t.slug || "" })),
+      faqs: [],
+      related: [],
+      likeCount: 0,
+      sections,
+    },
   };
 }
