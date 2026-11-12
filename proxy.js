@@ -17,7 +17,57 @@ const SINGLE_VALUE_HEADERS = [
   "x-forwarded-proto",
 ];
 
-export function proxy(request) {
+// ---- 410 Gone (2026-11-12) ----
+// Paths of deleted services / pages / pSEO pages / blog posts (backend services/goneUrls.js, public
+// GET /api/v1/seo/gone-urls). They answer "410 Gone" so search engines drop them for good. The list is
+// fetched at most once a minute; when the backend cannot be reached the site works as before.
+const GONE_TTL = 60 * 1000;
+let gone = { at: 0, paths: new Set(), loading: null };
+
+async function gonePaths() {
+  if (Date.now() - gone.at < GONE_TTL) return gone.paths;
+  if (!gone.loading) {
+    const base = String(process.env.BASE_URL || "").replace(/\/$/, "");
+    gone.loading = (async () => {
+      try {
+        if (!base) return;
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 2500);
+        const response = await fetch(`${base}/api/v1/seo/gone-urls`, { signal: controller.signal, cache: "no-store" });
+        clearTimeout(timer);
+        if (!response.ok) return;
+        const payload = await response.json();
+        const list = Array.isArray(payload?.data) ? payload.data : [];
+        gone.paths = new Set(list.map((p) => String(p).toLowerCase()));
+      } catch {
+        // keep the last list
+      } finally {
+        gone.at = Date.now();
+        gone.loading = null;
+      }
+    })();
+  }
+  await gone.loading;
+  return gone.paths;
+}
+
+function goneResponse(pathname) {
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Page removed — Tax Alphonic</title><style>body{margin:0;font:16px/1.6 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1c2b4b;background:#f6f8fb;display:grid;place-items:center;min-height:100vh;padding:20px;box-sizing:border-box}main{max-width:520px;text-align:center;background:#fff;border:1px solid #e3e8ef;border-radius:16px;padding:32px 26px}h1{font-size:22px;font-weight:500;margin:0 0 8px}p{color:#4b5565;margin:0 0 18px}a{display:inline-block;background:#0e96ac;color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;margin:4px}a.alt{background:#fff;color:#0e96ac;border:1px solid #0e96ac}</style></head><body><main><h1>This page has been removed</h1><p>The page you are looking for is no longer available.</p><a href="/">Go to the homepage</a><a class="alt" href="/blog">Read our guides</a></main></body></html>`;
+  return new Response(html, {
+    status: 410,
+    headers: { "content-type": "text/html; charset=utf-8", "x-robots-tag": "noindex", "cache-control": "public, max-age=300" },
+  });
+}
+
+const goneKey = (pathname) => {
+  try {
+    return decodeURIComponent(pathname).replace(/\/+$/, "").toLowerCase() || "/";
+  } catch {
+    return pathname.replace(/\/+$/, "").toLowerCase() || "/";
+  }
+};
+
+export async function proxy(request) {
   const pathname = request.nextUrl.pathname;
   const search = request.nextUrl.search;
 
@@ -116,7 +166,13 @@ export function proxy(request) {
     );
   }
 
-  // 4. Baaki requests unchanged rahengi.
+  // 4. Deleted pages: 410 Gone (only page loads; Server Actions / prefetch data pass through).
+  if ((request.method === "GET" || request.method === "HEAD") && pathname !== "/" && !request.headers.get("next-action")) {
+    const paths = await gonePaths();
+    if (paths.size && paths.has(goneKey(pathname))) return goneResponse(pathname);
+  }
+
+  // 5. Baaki requests unchanged rahengi.
   return NextResponse.next({
     request: { headers },
   });

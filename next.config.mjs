@@ -16,6 +16,10 @@ const SERVER_ACTION_ORIGINS = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactCompiler: true,
+  // Meta tags always in <head> (2026-11-12): without this Next.js streams generateMetadata and puts
+  // title / description / canonical / Open Graph at the end of <body> for normal browsers and for
+  // crawlers it does not recognise. /.*/ = every visitor gets them in <head> (Next docs: htmlLimitedBots).
+  htmlLimitedBots: /.*/,
   experimental: {
     trustHostHeader: true,
     serverActions: {

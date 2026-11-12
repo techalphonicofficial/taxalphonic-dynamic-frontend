@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { parse } from "node-html-parser";
 import { apiClient } from "@/service/apiClient";
-import { getServiceCategory, mapService } from "@/service/servicePageService";
+import { getServiceCategory, mapService, normalizeAssetUrl } from "@/service/servicePageService";
 import { getServiceLocations } from "@/service/serviceLocationsService";
 
 // pSEO pages (CMS: SEO Pages / "pSEO Matrix"): a service × location (or industry, technology,
@@ -199,6 +199,8 @@ function sectionBlock(section, index, context) {
       heading: textOf(section.querySelector("h1")) || title,
       paragraphs: intro,
       stats: findMetrics(section),
+      // Admin pSEO editor "Hero background" (data-bg-* on the hero section, admin pseoHeroBg.js).
+      bg: Object.fromEntries(["image", "overlay", "opacity", "text", "position", "size"].map((key) => [key, clean(section.getAttribute(`data-bg-${key}`))])),
     };
     return null;
   }
@@ -387,6 +389,32 @@ export function mapSeoPage(raw, { category = null, locations = [] } = {}) {
     stats: aiHero?.stats?.length ? aiHero.stats : serviceHero?.payload?.stats || [],
   };
 
+  // Hero look: the service's Hero Banner settings (background, height, alignment …), and this page's
+  // own background image when the editor set one (admin pSEO editor "Hero background").
+  const ownBg = aiHero?.bg?.image ? aiHero.bg : null;
+  const heroConfig = { ...(serviceHero?.config || {}) };
+  delete heroConfig.placement;
+  if (ownBg) {
+    heroConfig.background = {
+      ...(heroConfig.background || {}),
+      image: normalizeAssetUrl(ownBg.image),
+      color: "",
+      position: ["center", "top", "bottom", "left", "right"].includes(ownBg.position) ? ownBg.position : "center",
+      size: ownBg.size === "contain" ? "contain" : "cover",
+      overlayColor: /^#[0-9a-f]{3,8}$/i.test(ownBg.overlay) ? ownBg.overlay : "#0a1a2f",
+      overlayOpacity: Math.max(0, Math.min(90, Number(ownBg.opacity) || 0)),
+      textTheme: ownBg.text === "dark" ? "dark" : "light",
+    };
+    // The service hero's own heading / sub-text colours were picked for its background, not this
+    // photo: the text follows the chosen text colour instead.
+    if (heroConfig.layout) {
+      heroConfig.layout = { ...heroConfig.layout };
+      delete heroConfig.layout.headColor;
+      delete heroConfig.layout.subColor;
+      delete heroConfig.layout.kickerColor;
+    }
+  }
+
   // Hero paragraphs after the first become the opening overview.
   const extraIntro = (aiHero?.paragraphs || []).slice(1);
   const overview = extraIntro.length
@@ -425,7 +453,7 @@ export function mapSeoPage(raw, { category = null, locations = [] } = {}) {
     locationsFor: service?.title || "",
     locations,
     sections: [
-      { id: "seo-hero", type: "HeroBanner", config: {}, payload: heroPayload },
+      { id: "seo-hero", type: "HeroBanner", config: heroConfig, payload: heroPayload },
       ...overview,
       ...aiBlocks,
       ...kept,
