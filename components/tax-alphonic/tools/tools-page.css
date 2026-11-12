@@ -784,3 +784,45 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Compact calculator (2026-11-12): the fields share rows (as many as fit, at least 180px each),
+   each label sits on its box's top border like the forms (cms-form.css), results stay full width. */
+.ta-tools .calc { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); gap: 16px 12px; }
+.ta-tools .calc > :not(.calc-row) { grid-column: 1 / -1; }
+.ta-tools .calc-row { gap: 0; min-width: 0; }
+.ta-tools .calc-row:has(> label + :is(input, select)) { position: relative; margin-top: 4px; }
+.ta-tools .calc-row:has(> label + :is(input, select)) > label {
+  position: absolute;
+  left: 9px;
+  top: 0;
+  transform: translateY(-50%);
+  max-width: calc(100% - 22px);
+  padding: 0 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--muted);
+  background: linear-gradient(to bottom, transparent 50%, #fff 50%);
+  pointer-events: none;
+  z-index: 1;
+}
+.ta-tools .calc-row:has(> label + :is(input, select)):focus-within > label { color: var(--brand); }
+.ta-tools .calc-row :is(input, select) { padding: 10px 12px 8px; font-size: 14px; min-width: 0; box-sizing: border-box; border-radius: 8px; background: #fff; min-height: 40px; }
+.ta-tools .calc-out { margin-top: 2px; padding-top: 12px; gap: 8px; }
+.ta-tools .calc-line { font-size: 13.5px; }
+.ta-tools .calc-line.total { font-size: 15px; padding-top: 10px; }
+.ta-tools .calc-cards { gap: 10px; }
+.ta-tools .calc-card { padding: 12px; border-radius: 12px; }
+.ta-tools .calc-card b { font-size: 20px; margin: 4px 0; }
+.ta-tools .calc-verdict { padding: 10px 12px; font-size: 13.5px; }
+.ta-tools .tool-panel { padding: 22px; }
+@media (max-width: 600px) {
+  .ta-tools .tool-panel { padding: 16px; border-radius: 14px; }
+}
+/* Minimal fields, second pass (same as the forms). */
+.ta-tools .calc-row :is(input, select) { padding: 8px 11px 7px; font-size: 13px; font-weight: 400; min-height: 36px; }
+.ta-tools .calc-row input::placeholder { font-weight: 400; color: color-mix(in srgb, currentColor 30%, transparent); }
+.ta-tools .calc-row:has(> label + :is(input, select)) > label { font-size: 10px; font-weight: 500; left: 8px; }

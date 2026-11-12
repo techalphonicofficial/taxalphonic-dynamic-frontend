@@ -36,3 +36,98 @@
 .ta-svc .lead-card:has(.cms-form) { padding: 20px; }
 .ta-svc .lead-card:has(.cms-form) h3 { font-size: 17px; }
 .ta-svc .lead-card:has(.cms-form) .csub { font-size: 12.5px; margin-bottom: 12px; }
+
+/* ===== Labels on the border (2026-11-12, "notched" outline) =====
+   CmsForm puts the label after the box in .cms-float fields; here it sits on the box's top border,
+   always (the reference look: a small label cutting the outline). Help texts are kept for screen
+   readers only, and the captcha label too, so a field is just one box. The label's background is the
+   card above the line and the field colour below it (--ta-field-bg, default the page's --paper).
+   The form follows its own width (sidebar, popup, phone). */
+.cms-form.cms-form { container-type: inline-size; min-width: 0; --ta-field-bg: var(--paper, #fff); }
+.cms-form.cms-form .cms-form-grid > .field { min-width: 0; }
+.cms-form.cms-form .field { margin-bottom: 12px; }
+.cms-form.cms-form .cms-float { position: relative; margin-top: 4px; }
+/* Doubled .field + :not()s: beat the compact rule above and the pages' .field input rules. */
+.cms-form.cms-form .field.cms-float > :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px 8px;
+  font-size: 13.5px;
+  line-height: 1.35;
+  min-height: 40px;
+  border-radius: 8px;
+  background: var(--ta-field-bg);
+}
+.cms-form.cms-form .field.cms-float > select:not([type="checkbox"]):not([type="radio"]) { padding-right: 30px; }
+.cms-form.cms-form .field.cms-float > textarea:not([type="checkbox"]):not([type="radio"]) { min-height: 64px; resize: vertical; }
+.cms-form.cms-form .cms-float > .cms-label {
+  position: absolute;
+  left: 9px;
+  top: 0;
+  transform: translateY(-50%);
+  max-width: calc(100% - 22px);
+  margin: 0;
+  padding: 0 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: .01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 50%, var(--ta-field-bg) 50%);
+  color: var(--muted, #5b6478);
+  transition: color .15s ease;
+  z-index: 1;
+}
+.cms-form.cms-form .cms-float > :is(input, textarea, select):focus ~ .cms-label { color: var(--t-brand, var(--brand, #0e96ac)); }
+.cms-form.cms-form .field-invalid.cms-float > .cms-label { color: #e5484d; }
+.cms-form.cms-form .cms-float > :is(input, textarea)::placeholder { color: color-mix(in srgb, currentColor 38%, transparent); }
+/* Extra texts under the box: for screen readers only (errors stay visible). */
+.cms-form.cms-form .cms-help,
+.cms-form.cms-form .ta-captcha > .cms-label {
+  position: absolute !important;
+  width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.cms-form.cms-form .ta-captcha { position: relative; }
+
+/* Captcha: same height as the fields. */
+.cms-form.cms-form .ta-captcha .ta-captcha-q { min-height: 40px; }
+.cms-form.cms-form .ta-captcha.ta-captcha .ta-captcha-row input.ta-captcha-input { min-height: 40px; padding: 8px; flex: 1 1 80px; width: auto; max-width: 140px; }
+
+/* Narrow forms (sidebar, phone): half-width fields take the full row, a full-width button. */
+@container (max-width: 380px) {
+  .cms-form.cms-form .cms-form-grid > .field-half { grid-column: 1 / -1; }
+  .cms-form.cms-form button[type="submit"] { padding: 10px 14px; font-size: 14px; width: 100%; }
+}
+
+/* ===== Minimal fields (2026-11-12, second pass): slimmer boxes, smaller text, a light normal-weight
+   placeholder, smaller captcha and button. Same sizes in the calculator (tools-page.css), blog
+   comments (blog.css) and the newsletter box (home-page.css). ===== */
+.cms-form.cms-form .field { margin-bottom: 11px; }
+.cms-form.cms-form .field.cms-float > :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
+  padding: 8px 11px 7px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.35;
+  min-height: 36px;
+  border-radius: 8px;
+}
+.cms-form.cms-form .field.cms-float > select:not([type="checkbox"]):not([type="radio"]) { padding-right: 28px; }
+.cms-form.cms-form .field.cms-float > textarea:not([type="checkbox"]):not([type="radio"]) { min-height: 60px; }
+.cms-form.cms-form .cms-float > .cms-label { font-size: 10px; font-weight: 500; left: 8px; }
+.cms-form.cms-form .cms-float > :is(input, textarea)::placeholder {
+  font-weight: 400;
+  font-size: 12.5px;
+  color: color-mix(in srgb, currentColor 30%, transparent);
+  opacity: 1;
+}
+.cms-form.cms-form .ta-captcha .ta-captcha-row { gap: 6px; }
+.cms-form.cms-form .ta-captcha .ta-captcha-q { min-height: 36px; padding: 0 10px; font-size: 13.5px; font-weight: 600; border-radius: 8px; }
+.cms-form.cms-form .ta-captcha.ta-captcha .ta-captcha-row input.ta-captcha-input { min-height: 36px; padding: 6px 8px; font-size: 13px; font-weight: 400; border-radius: 8px; }
+.cms-form.cms-form .ta-captcha.ta-captcha .ta-captcha-row input.ta-captcha-input::placeholder { font-weight: 400; color: color-mix(in srgb, currentColor 30%, transparent); }
+.cms-form.cms-form .ta-captcha .ta-captcha-new { width: 32px; height: 32px; flex-basis: 32px; border-radius: 8px; }
+.cms-form.cms-form button[type="submit"] { padding: 9px 16px; font-size: 13.5px; font-weight: 600; border-radius: 8px; }

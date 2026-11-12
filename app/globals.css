@@ -1,7 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+/* Fonts: only Inter 300-500 from next/font (app/layout.js); the old Plus Jakarta Sans / Inter 700 / Poppins imports were removed (2026-11-12). */
 
 /* Google Fonts - TaxAlphonic */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+
 
 /*
  * Page width + side space for every page (header, footer, home, services, blocks, tools, journey,
@@ -227,3 +227,17 @@ body {
     text-decoration: none;
   }
 }
+/* Global font (2026-11-12): Inter everywhere, headings included. The CSS across the site asks for
+   var(--font-sora) (headings), var(--font-inter), --font-main / --font-heading / --font-body; all of
+   them point at the Inter that app/layout.js loads (next/font sets --font-inter on <body>). */
+body {
+  --font-sora: var(--font-inter), "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-main: var(--font-sora);
+  --font-heading: var(--font-sora);
+  --font-body: var(--font-sora);
+  font-family: var(--font-sora);
+}
+
+/* Light type (2026-11-12): Inter is loaded only up to 500 (app/layout.js), so bolder weights use the
+   500 face; no faux bold on top of it. */
+html, body { font-synthesis-weight: none; font-synthesis: style; }

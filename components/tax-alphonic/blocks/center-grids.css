@@ -206,3 +206,8 @@
 .ta-ly-ha-right .cb-tc-tabs { justify-content: flex-end !important; }
 /* Pill kickers: the soft background follows the kicker colour. */
 .ta-ly-kc :is(.eyebrow, .cb-tc-kicker, .cb-fh-eyebrow) { background: color-mix(in srgb, var(--ly-kc) 12%, transparent) !important; }
+
+/* Platform cards (homepage "More than filings", .sec-card: icon beside the text) need room:
+   2 per row under 760px, 1 per row on phones (2026-11-12). */
+@container (max-width: 759px) { .ta-home .sec-grid { --c: min(var(--cols, 3), 2); } }
+@container (max-width: 559px) { .ta-home .sec-grid { --c: 1; } }

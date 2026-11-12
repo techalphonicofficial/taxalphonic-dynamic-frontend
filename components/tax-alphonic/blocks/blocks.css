@@ -1818,3 +1818,46 @@ a.ta-rt-btn-outline:hover { background: var(--rt-b); color: #fff; }
   .ta-cb .cb-lb { padding: 26px 18px; border-radius: 20px; }
   .ta-cb .cb-lb-card-meta { display: none; }
 }
+
+/* The calculator follows its own column width (sidebar of any page, blog included, phone): one
+   column of fields and results under 560px, whatever the page. */
+.ta-cb .cb-tool-embed.ta-tools { container-type: inline-size; min-width: 0; }
+@container (max-width: 560px) {
+  .ta-cb .cb-tool-embed .tool-panel { padding: 16px; border-radius: 14px; }
+  .ta-cb .cb-tool-embed :is(.calc-cards, [class*="grid"], [class*="cols"]) { grid-template-columns: minmax(0, 1fr) !important; }
+  .ta-cb .cb-tool-embed :is(table) { font-size: 12.5px; }
+}
+
+/* Hero with Form spacing (2026-11-12): on a full-width page the two columns ran to the screen edges
+   (short text far left, a very wide form far right, a big gap between). The content now sits in the
+   middle at up to 1320px (the background stays full width), the form column is 340-460px wide and
+   the text column takes the rest; tighter padding and gaps. */
+.ta-cb.cb-formhero { padding: 34px 0; }
+.ta-cb .cb-fh {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
+  gap: clamp(24px, 4vw, 56px);
+  max-width: min(100%, 1320px);
+  margin-inline: auto;
+}
+.ta-cb .cb-fh-rev { grid-template-columns: minmax(320px, 460px) minmax(0, 1fr); }
+.ta-cb .cb-fh-solo { grid-template-columns: 1fr; max-width: 820px; }
+.ta-cb .cb-fh-eyebrow { margin-bottom: 12px; padding: 5px 12px; font-size: 12.5px; }
+.ta-cb .cb-fh-h { margin-bottom: 10px; }
+.ta-cb .cb-fh-lede { font-size: 16px; line-height: 1.6; margin-bottom: 18px; max-width: 640px; }
+.ta-cb .cb-fh-points { gap: 10px; margin-bottom: 16px; }
+.ta-cb .cb-fh-point-ic { flex-basis: 36px; height: 36px; font-size: 17px; border-radius: 10px; }
+.ta-cb .cb-fh-point b { font-size: 15px; }
+.ta-cb .cb-fh-point p { font-size: 13.5px; }
+.ta-cb .cb-fh-card { padding: 22px; border-radius: 16px; box-shadow: 0 16px 40px rgba(10, 14, 26, .08); }
+.ta-cb .cb-fh-card h3 { font-size: 18px; }
+.ta-cb .cb-fh-card-sub { font-size: 13px; margin-bottom: 12px; }
+@media (max-width: 900px) {
+  .ta-cb .cb-fh, .ta-cb .cb-fh-rev { grid-template-columns: 1fr; gap: 22px; }
+  .ta-cb.cb-formhero { padding: 24px 0; }
+}
+@media (max-width: 560px) {
+  .ta-cb .cb-fh-card { padding: 16px; }
+}
+/* The intro text fills its column, so the gap to the form is only the column gap. */
+.ta-cb .cb-fh-text { min-width: 0; }
+.ta-cb .cb-fh:not(.cb-fh-solo) .cb-fh-lede { max-width: none; }

@@ -30,12 +30,13 @@ function FieldControl({ field, inputId, describedBy, invalid }) {
 
   switch (field.type) {
     case "textarea":
-      return <textarea {...common} rows={4} placeholder={field.placeholder} defaultValue={field.defaultValue || ""} {...validationProps(field)} />;
+      return <textarea {...common} rows={3} placeholder={field.placeholder || " "} defaultValue={field.defaultValue || ""} {...validationProps(field)} />;
 
     case "select":
       return (
         <select {...common} defaultValue={field.defaultValue || ""}>
-          <option value="" disabled>{field.placeholder || "Select an option"}</option>
+          {/* The label floats above the value, so a hint that repeats it reads "Choose…". */}
+          <option value="" disabled>{field.placeholder && field.placeholder.trim().toLowerCase() !== String(field.label || "").trim().toLowerCase() ? field.placeholder : "Choose…"}</option>
           {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
         </select>
       );
@@ -77,7 +78,7 @@ function FieldControl({ field, inputId, describedBy, invalid }) {
         <input
           {...common}
           type={INPUT_TYPES[field.type] || "text"}
-          placeholder={field.placeholder}
+          placeholder={field.placeholder || " "}
           defaultValue={field.defaultValue || ""}
           autoComplete={AUTOCOMPLETE[field.type]}
           {...validationProps(field)}
@@ -150,15 +151,21 @@ export default function CmsForm({ form, compact = false, prefill = "" }) {
 
           const singleCheckbox = field.type === "checkbox" && !field.options?.length;
           const width = !compact && field.width === "half" ? " field-half" : "";
+          // Floating label: inside the box, moves up on focus / once filled (cms-form.css).
+          // Dropdowns and dates always show a value, so their label stays up.
+          const floats = field.type !== "radio" && field.type !== "checkbox";
+          const floatClass = floats ? ` cms-float${field.type === "select" || field.type === "date" ? " cms-float-up" : ""}${field.type === "textarea" ? " cms-float-area" : ""}` : "";
+          const label = (
+            <label htmlFor={inputId} className="cms-label">
+              {field.label}{field.required && <span className="cms-req"> *</span>}
+            </label>
+          );
 
           return (
-            <div key={field.id || field.name} className={`field${width}${error ? " field-invalid" : ""}`}>
-              {!singleCheckbox && (
-                <label htmlFor={inputId} className="cms-label">
-                  {field.label}{field.required && <span className="cms-req"> *</span>}
-                </label>
-              )}
+            <div key={field.id || field.name} className={`field${width}${floatClass}${error ? " field-invalid" : ""}`}>
+              {!singleCheckbox && !floats && label}
               <FieldControl field={field.name === prefillName ? { ...field, defaultValue: prefill } : field} inputId={inputId} describedBy={describedBy} invalid={Boolean(error)} />
+              {floats && label}
               {field.helpText && <small id={helpId} className="cms-help">{field.helpText}</small>}
               {error && <small id={errorId} className="cms-error">{error}</small>}
             </div>

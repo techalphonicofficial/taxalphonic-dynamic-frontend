@@ -5,17 +5,15 @@ import FormPopupHost from "@/components/tax-alphonic/forms/FormPopupHost";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { getFooterNavigation, getHeaderNavigation } from "@/service/navigationService";
 import { getSiteSettings } from "@/service/siteSettingsService";
-import { Sora, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 import { LANDING_HEADER } from "@/lib/landingHost.mjs";
 
-const sora = Sora({
-  subsets: ["latin"],
-  variable: "--font-sora",
-});
-
+// Light type sitewide (2026-11-12): only the 300 / 400 / 500 weights are loaded, so every
+// font-weight 600 / 700 / 800 in the CSS shows as 500 (medium); globals.css turns off faux bold.
 const inter = Inter({
   subsets: ["latin"],
+  weight: ["300", "400", "500"],
   variable: "--font-inter",
 });
 
@@ -43,7 +41,7 @@ export default async function RootLayout({ children }) {
     const { layoutCss } = await getSiteSettings();
     return (
       <html lang="en">
-        <body className={`${sora.variable} ${inter.variable}`}>
+        <body className={`${inter.variable}`}>
           <LayoutStyle css={layoutCss} />
           <ThemeProvider>{children}</ThemeProvider>
         </body>
@@ -59,7 +57,7 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body className={`${sora.variable} ${inter.variable}`}>
+      <body className={`${inter.variable}`}>
         <LayoutStyle css={layoutCss} />
         <ThemeProvider>
           <Header navigation={navigation} branding={branding} />

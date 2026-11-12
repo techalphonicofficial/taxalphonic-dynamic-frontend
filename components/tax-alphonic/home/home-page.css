@@ -3344,3 +3344,45 @@
 /* The side image never grows taller than the table area (stacked on narrow screens it would fill the page). */
 .ta-home .cmp-side-img { max-height: 320px; object-fit: cover; }
 @media (max-width: 900px) { .ta-home .cmp-side-img { max-height: 220px; } }
+
+/* Minimal newsletter field (2026-11-12). */
+.ta-home .news-form input[type="email"] { min-height: 36px; font-size: 13px; }
+.ta-home .news-form input::placeholder { font-weight: 400; color: color-mix(in srgb, currentColor 32%, transparent); }
+
+/* Platform cards: icon lined up with the heading, text takes the rest (2026-11-12). */
+.ta-home .sec-card { align-items: flex-start; }
+.ta-home .sec-body { min-width: 0; flex: 1; }
+.ta-home .sec-ic { width: 44px; height: 44px; font-size: 21px; border-radius: 12px; }
+.ta-home .sec-body h3 { line-height: 1.3; margin: 0 0 4px; min-height: 0; padding-top: 1px; }
+.ta-home .sec-body p { line-height: 1.55; }
+@media (max-width: 560px) {
+  .ta-home .sec-card { padding: 16px; gap: 14px; }
+  .ta-home .sec-ic { width: 40px; height: 40px; font-size: 19px; }
+  .ta-home .sec-body h3 { font-size: 16.5px; }
+}
+
+/* Journey stages stats strip (.ej-head-stats): never wider than the screen; values stay on one line;
+   on phones a grid of 2-3 per row without the dividers (2026-11-12). */
+.ta-home .ej-head-stats { max-width: 100%; box-sizing: border-box; flex-wrap: wrap; justify-content: center; row-gap: 12px; }
+.ta-home .ej-hstat { text-align: center; min-width: 0; }
+.ta-home .ej-hstat b { white-space: nowrap; }
+.ta-home .ej-hstat span { display: block; margin-top: 4px; line-height: 1.3; }
+@media (max-width: 560px) {
+  .ta-home .ej-head-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+    gap: 14px 10px;
+    width: 100%;
+    padding: 14px 12px;
+  }
+  .ta-home .ej-hdiv { display: none; }
+  .ta-home .ej-hstat b { font-size: 18px; }
+}
+/* A short last row sits in the middle. */
+@media (max-width: 560px) {
+  .ta-home .ej-head-stats { display: flex; flex-wrap: wrap; justify-content: center; }
+  .ta-home .ej-hstat { flex: 0 0 calc((100% - 20px) / 3); }
+}
+@media (max-width: 340px) {
+  .ta-home .ej-hstat { flex-basis: calc((100% - 10px) / 2); }
+}

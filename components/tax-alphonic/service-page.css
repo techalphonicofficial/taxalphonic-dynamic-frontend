@@ -2416,3 +2416,36 @@
 /* Centre / right heading: the h2 shrinks to its text so its accent bar moves with it. */
 .ta-svc .blk.wc-h-center > h2 { width: fit-content; margin-left: auto; margin-right: auto; }
 .ta-svc .blk.wc-h-right > h2 { width: fit-content; margin-left: auto; margin-right: 0; }
+
+/* Article text like the reference (IndiaFilings guide pages, 2026-11-12): calm grey 15px text with
+   room between lines, 20px navy medium headings with a hairline under them (no side bar), roomy list
+   items, the first paragraph like the others. Rich text of services, pages and blog posts. */
+.ta-svc .svc-rich {
+  --rt-text: #4b5565;
+  --rt-head: #1c2b4b;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--rt-text);
+  letter-spacing: .005em;
+}
+.ta-svc .svc-rich :is(p, li, td) { font-size: 15px; line-height: 1.8; color: var(--rt-text); }
+.ta-svc .svc-rich > p:first-child { font-size: 15px; font-weight: 400; color: var(--rt-text); line-height: 1.8; }
+.ta-svc .svc-rich p { margin: 0 0 14px; }
+.ta-svc .svc-rich :is(b, strong) { font-weight: 500; color: var(--rt-head); }
+.ta-svc .svc-rich :is(ul, ol) { font-size: 15px; color: var(--rt-text); padding-left: 26px; margin: 4px 0 16px; }
+.ta-svc .svc-rich li { margin-bottom: 10px; padding-left: 4px; }
+.ta-svc .svc-rich li::marker { color: #6b7385; }
+.ta-svc .svc-rich :is(h2, h3, h4) { color: var(--rt-head); font-weight: 500; letter-spacing: -.005em; }
+.ta-svc .svc-rich h2 { font-size: 20px; line-height: 1.35; margin: 30px 0 14px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.ta-svc .svc-rich h3 { font-size: 17px; line-height: 1.4; margin: 22px 0 10px; }
+.ta-svc .svc-rich h4 { font-size: 15.5px; margin: 18px 0 8px; }
+.ta-svc .svc-rich > :is(h2, h3):first-child { margin-top: 0; }
+.ta-svc .svc-rich a { font-weight: 400; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+/* Block titles in the page body: same look (hairline under, no coloured side bar). */
+.ta-svc .svc-body .blk h2 { font-size: 20px; font-weight: 500; color: #1c2b4b; padding-left: 0; padding-bottom: 12px; border-bottom: 1px solid var(--line); line-height: 1.35; }
+.ta-svc .svc-body .blk h2::before { content: none; }
+.ta-svc .svc-body .blk p { color: #4b5565; font-size: 15px; line-height: 1.8; }
+@media (max-width: 600px) {
+  .ta-svc .svc-rich, .ta-svc .svc-rich :is(p, li, td, ul, ol), .ta-svc .svc-rich > p:first-child { font-size: 15px; line-height: 1.75; }
+  .ta-svc .svc-rich h2, .ta-svc .svc-body .blk h2 { font-size: 19px; }
+}

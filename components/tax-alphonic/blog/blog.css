@@ -431,3 +431,19 @@
   .ta-blog .blog-post-grid { margin-top: 14px; }
 }
 .ta-blog .blog-post-foot.foot-center { max-width: 900px; margin-inline: auto; }
+
+/* Minimal comment fields (2026-11-12): slimmer, smaller text, light placeholder. */
+.ta-blog .bc-form textarea, .ta-blog .bc-form input { padding: 7px 11px; font-size: 13px; border-radius: 8px; }
+.ta-blog .bc-form :is(textarea, input)::placeholder { font-weight: 400; color: color-mix(in srgb, currentColor 32%, transparent); }
+.ta-blog .bc-actions .btn-primary { padding: 7px 16px; font-size: 13px; }
+.ta-blog .blog-search input { font-size: 13.5px; }
+
+/* Blog article text follows the site's article look (service-page.css "Article text like the reference"). */
+.ta-blog .blog-post-body .svc-rich { font-size: 15px; line-height: 1.8; color: #4b5565; }
+.ta-blog .blog-post-body .svc-rich h2 { font-size: 20px; margin: 30px 0 14px; letter-spacing: -.005em; }
+.ta-blog .blog-post-body .svc-rich h2:first-child { margin-top: 0; }
+.ta-blog .blog-post-body .svc-rich h3 { font-size: 17px; margin: 22px 0 10px; }
+.ta-blog .blog-post-body .svc-rich p { margin-bottom: 14px; }
+.ta-blog .blog-post-body .svc-rich li { margin-bottom: 10px; }
+.ta-blog .blog-post-body .svc-rich li::marker { color: #6b7385; }
+.ta-blog .blog-post-body .svc-rich li > p { margin: 0; }
