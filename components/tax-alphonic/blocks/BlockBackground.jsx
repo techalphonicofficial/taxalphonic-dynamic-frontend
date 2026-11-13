@@ -123,6 +123,12 @@ function layoutInto(layout, classes, style) {
   // Heading / sub text width: "full" = no reading-width cap, "line" = one line on wide screens.
   if (["full", "line"].includes(layout.headWidth)) classes.push(`ta-ly-hw-${layout.headWidth}`);
   if (["full", "line"].includes(layout.subWidth)) classes.push(`ta-ly-sw-${layout.subWidth}`);
+  // A set maximum width in px (preset "600" … or "custom" + headWidthPx / subWidthPx).
+  const widthPx = (value, custom) => (value === "custom" ? int(custom, 200, 2000) : /^\d+$/.test(String(value || "")) ? int(value, 200, 2000) : null);
+  const hw = widthPx(layout.headWidth, layout.headWidthPx);
+  const sw = widthPx(layout.subWidth, layout.subWidthPx);
+  if (hw) { classes.push("ta-ly-hw-px"); style["--ly-hw"] = `${hw}px`; }
+  if (sw) { classes.push("ta-ly-sw-px"); style["--ly-sw"] = `${sw}px`; }
   // Colours and heading size.
   const colours = { headColor: ["ta-ly-hc", "--ly-hc"], subColor: ["ta-ly-sc", "--ly-sc"], kickerColor: ["ta-ly-kc", "--ly-kc"] };
   for (const [key, [cls, prop]] of Object.entries(colours)) {

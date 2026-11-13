@@ -13,7 +13,7 @@ import { ToolBlock } from "../tools/ToolSections";
 import { isToolSection } from "../tools/toolBlockTypes";
 import ButtonLabel, { lookClass } from "../blocks/ButtonLabel";
 import LayoutGroup from "../blocks/LayoutGroup";
-import { mainWidthProps, splitLayoutSections } from "../blocks/layoutSections";
+import { areaTokens, mainWidthProps, splitLayoutSections } from "../blocks/layoutSections";
 import "../service-page.css";
 
 // Markup and class names mirror the #/service/... view in uirefrence.html;
@@ -661,11 +661,14 @@ function hasContent(section, locations) {
   }
 }
 
-function ServiceBlock({ section, placement, firstOverviewId, packageCtaHref, locations, currentPath, serviceTitle }) {
+function ServiceBlock({ section, placement, firstOverviewId, packageCtaHref, locations, currentPath, serviceTitle, service }) {
   const payload = section.payload || {};
   const config = section.config || {};
 
   switch (section.type) {
+    // A Hero Banner the editor moved out of the Hero area (Top / Main / Bottom / a layout section).
+    case "HeroBanner":
+      return <Hero service={service || { title: serviceTitle || "" }} hero={payload} config={config} />;
     case "Overview":
       return <OverviewBlock payload={payload} config={config} first={section.id === firstOverviewId} />;
     case "WhyUs":
@@ -705,9 +708,14 @@ function ServiceBlock({ section, placement, firstOverviewId, packageCtaHref, loc
   }
 }
 
-// Blocks the admin may put in the Hero area (config.placement "hero"; the Hero Banner is always
-// there). Keep in sync with SERVICE_HERO_BLOCKS in the admin's layoutZones.js.
+// Blocks the admin may put in the Hero area (config.placement "hero"). Keep in sync with
+// SERVICE_HERO_BLOCKS in the admin's layoutZones.js.
 const HERO_BLOCKS = new Set(["HomeHero", "CommonFormHero", "HomeBanners"]);
+
+// The Hero Banner sits at the top of the page unless the editor placed it in another area
+// (config.placement top / main / bottom, or inside a layout section; 2026-11-13). Placed ones render
+// in that spot like any block (ServiceBlock "HeroBanner").
+const isTopHero = (section) => section.type === "HeroBanner" && !PLACEMENTS.includes(section.config?.placement);
 
 function placementOf(section) {
   const placement = section.config?.placement;
@@ -725,11 +733,11 @@ const OWN_H1_BLOCKS = new Set(["HomeHero", "CommonFormHero", "JourneyHero", "Too
 
 export default function ApiServicePage({ service }) {
   const locations = list(service.locations);
-  const heroSection = service.sections.find((section) => section.type === "HeroBanner");
-  const hero = heroSection?.payload || {};
   // Repeatable sections come after the page's own areas (blocks/layoutSections.js).
   const layout = splitLayoutSections(service.sections);
-  const sections = layout.base.filter((section) => section.type !== "HeroBanner" && hasContent(section, locations));
+  const heroSection = layout.base.find(isTopHero);
+  const hero = heroSection?.payload || {};
+  const sections = layout.base.filter((section) => section !== heroSection && !isTopHero(section) && hasContent(section, locations));
   const hasLocationsBlock = service.sections.some((section) => section.type === "LocationsServed");
 
   const groups = { hero: [], top: [], main: [], sidebar: [], bottom: [] };
@@ -758,6 +766,7 @@ export default function ApiServicePage({ service }) {
           locations={locations}
           currentPath={service.path}
           serviceTitle={service.locationsFor || service.title}
+          service={service}
         />
       </BlockBackground>
     </Fragment>
@@ -773,32 +782,39 @@ export default function ApiServicePage({ service }) {
             {/* Only the blocks the editor added: without a Hero Banner block there is no automatic hero
                 (category / title / summary). The title stays as a hidden h1 for search engines, unless
                 another block already has the page's h1. */}
-            {heroSection ? (
-              <BlockBackground config={heroSection.config} hero><Hero service={service} hero={hero} config={heroSection.config} /></BlockBackground>
-            ) : !service.sections.some((section) => OWN_H1_BLOCKS.has(section.type)) && (
+            {!heroSection && !service.sections.some((section) => OWN_H1_BLOCKS.has(section.type) || section.type === "HeroBanner") && (
               <h1 className="svc-sr-only">{service.title}</h1>
             )}
-            {/* Another hero block placed in the Hero area (Homepage Hero, Hero with Form, Banners Slider). */}
-            {groups.hero.length > 0 && <div className="svc-hero-slot">{groups.hero.map((section) => render(section, "hero"))}</div>}
-
-            {groups.top.length > 0 && <div className="svc-top">{groups.top.map((section) => render(section, "top"))}</div>}
-
-            {groups.main.length > 0 && (
-              <div className={`svc-body${groups.sidebar.length ? (layout.baseMainWidth ? " ta-lg-w" : "") : " svc-body-full"}`} id="details" {...(groups.sidebar.length ? mainWidthProps(layout.baseMainWidth) : {})}>
-                <div>{groups.main.map((section) => render(section, "main"))}</div>
-                {groups.sidebar.length > 0 && (
-                  <aside className="side">{groups.sidebar.map((section) => render(section, "sidebar"))}</aside>
-                )}
-              </div>
-            )}
-
-            {groups.bottom.length > 0 && (
-              <div className="svc-full svc-bottom">{groups.bottom.map((section) => render(section, "bottom"))}</div>
-            )}
-
-            {layout.groups.map((group) => (
-              <LayoutGroup key={group.id} group={{ ...group, items: group.items.filter((section) => hasContent(section, locations)) }} render={render} bodyClass="svc-body" sideClass="side" />
-            ))}
+            {/* The page's areas in the order set in the admin (↑ / ↓ on each area; layoutSections.js areaTokens). */}
+            {areaTokens(layout.areaOrder, layout.groups.length).map((token) => {
+              if (token.group !== undefined) {
+                const group = layout.groups[token.group];
+                return <LayoutGroup key={group.id} group={{ ...group, items: group.items.filter((section) => hasContent(section, locations)) }} render={render} bodyClass="svc-body" sideClass="side" />;
+              }
+              if (token.key === "hero") {
+                return (
+                  <Fragment key="hero">
+                    {heroSection && <BlockBackground config={heroSection.config} hero><Hero service={service} hero={hero} config={heroSection.config} /></BlockBackground>}
+                    {/* Another hero block placed in the Hero area (Homepage Hero, Hero with Form, Banners Slider). */}
+                    {groups.hero.length > 0 && <div className="svc-hero-slot">{groups.hero.map((section) => render(section, "hero"))}</div>}
+                  </Fragment>
+                );
+              }
+              if (token.key === "top") {
+                return groups.top.length > 0 ? <div key="top" className="svc-top">{groups.top.map((section) => render(section, "top"))}</div> : null;
+              }
+              if (token.key === "body") {
+                return groups.main.length > 0 ? (
+                  <div key="body" className={`svc-body${groups.sidebar.length ? (layout.baseMainWidth ? " ta-lg-w" : "") : " svc-body-full"}`} id="details" {...(groups.sidebar.length ? mainWidthProps(layout.baseMainWidth) : {})}>
+                    <div>{groups.main.map((section) => render(section, "main"))}</div>
+                    {groups.sidebar.length > 0 && (
+                      <aside className="side">{groups.sidebar.map((section) => render(section, "sidebar"))}</aside>
+                    )}
+                  </div>
+                ) : null;
+              }
+              return groups.bottom.length > 0 ? <div key="bottom" className="svc-full svc-bottom">{groups.bottom.map((section) => render(section, "bottom"))}</div> : null;
+            })}
           </div>
         </div>
       </div>
@@ -822,7 +838,7 @@ export function ServiceBodyBlock({ section }) {
  */
 export function ContentBlocks({ sections }) {
   const layout = splitLayoutSections(sections);
-  const items = layout.base.filter((section) => section.type !== "HeroBanner" && hasContent(section, []));
+  const items = layout.base.filter((section) => !isTopHero(section) && hasContent(section, []));
   const firstOverviewId = items.find((section) => section.type === "Overview")?.id;
   const firstForm = items.find((section) => section.type === "Form");
   const packageCtaHref = firstForm ? `#${firstForm.config?.anchorId || "enquiry"}` : "";
@@ -859,7 +875,7 @@ export function ContentBlocks({ sections }) {
 export function placeSections(sections, keep = () => false) {
   const layout = splitLayoutSections(sections);
   const ok = (section) => keep(section) || hasContent(section, []);
-  const items = layout.base.filter((section) => section.type !== "HeroBanner" && ok(section));
+  const items = layout.base.filter((section) => !isTopHero(section) && ok(section));
   const groups = { hero: [], top: [], main: [], sidebar: [], bottom: [] };
   items.forEach((section) => groups[keep(section) ? (PLACEMENTS.includes(section.config?.placement) ? section.config.placement : "sidebar") : placementOf(section)].push(section));
   return {

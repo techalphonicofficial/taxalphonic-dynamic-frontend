@@ -73,15 +73,24 @@ function Paragraphs({ text }) {
 function Head({ p, center = false }) {
   const subLink = hasButton(p.subLink) ? p.subLink : null;
   if (!has(p.kicker) && !has(p.heading) && !has(p.sub) && !subLink) return null;
+  // The link's "Look" (admin ButtonField): "" / link = a text link after the sub text; a button look
+  // (solid, outline, soft, gradient, dark, white) = a real button on its own line under it (2026-11-13).
+  const look = lookClass(subLink);
+  const asButton = Boolean(subLink && look && subLink.style !== "link");
   return (
     <div className={`cb-head${center || p.align === "center" ? " cb-center" : ""}`}>
       {has(p.kicker) && <span className="cb-kicker">{p.kicker}</span>}
       {has(p.heading) && <h2>{p.heading}</h2>}
-      {(has(p.sub) || subLink) && (
+      {(has(p.sub) || (subLink && !asButton)) && (
         <p className="cb-sub">
           {p.sub}
-          {subLink && <>{has(p.sub) && " "}<A url={subLink.url} className="cb-sublink"><ButtonLabel button={subLink} /></A></>}
+          {subLink && !asButton && <>{has(p.sub) && " "}<A url={subLink.url} className={`cb-sublink${look}`}><ButtonLabel button={subLink} /></A></>}
         </p>
+      )}
+      {asButton && (
+        <div className="cb-sublink-row">
+          <A url={subLink.url} className={`ta-blk-btn ta-blk-btn-md cb-sublink-btn${look}`} label={subLink.text}><ButtonLabel button={subLink} /></A>
+        </div>
       )}
     </div>
   );

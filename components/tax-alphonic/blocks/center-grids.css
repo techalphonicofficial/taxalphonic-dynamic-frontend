@@ -211,3 +211,32 @@
    2 per row under 760px, 1 per row on phones (2026-11-12). */
 @container (max-width: 759px) { .ta-home .sec-grid { --c: min(var(--cols, 3), 2); } }
 @container (max-width: 559px) { .ta-home .sec-grid { --c: 1; } }
+
+/* ===== Heading / sub text maximum width in px (2026-11-13, "Heading & cards" panel) =====
+   .ta-ly-hw-px (--ly-hw) / .ta-ly-sw-px (--ly-sw): the heading / sub text wraps at that width, never
+   wider than its column. Its place: the Alignment buttons (the .ta-ly-ha-* rules above set the
+   margins), else the wrapper's own design (centred heads: .sec-head, .ej-head, centred .cb-head,
+   .cb-tc-head, .jblock-head; others start at the left). */
+:is(.ta-ly-hw-px, .ta-ly-sw-px) :is(.sec-head, .cb-head, .jblock-head, .cb-tc-head, .ej-head, .hero-text, .cb-fh-text) {
+  max-width: none !important;
+}
+.ta-ly-hw-px :is(h1, h2) {
+  max-width: min(100%, var(--ly-hw)) !important;
+  margin-left: var(--ly-ml, 0);
+  margin-right: var(--ly-mr, auto);
+}
+.ta-ly-sw-px :is(.sub, .cb-sub, .lede, .ej-sub, .hb-sub, .csub, .cb-fh-lede, .jblock-head > p, .blk > h2 ~ p) {
+  display: block;
+  max-width: min(100%, var(--ly-sw)) !important;
+  margin-left: var(--ly-ml, 0);
+  margin-right: var(--ly-mr, auto);
+}
+:is(.ta-ly-hw-px, .ta-ly-sw-px) :is(.sec-head, .ej-head, .cb-head.cb-center, .cb-tc-head, .jblock-head) { --ly-ml: auto; --ly-mr: auto; }
+:is(.ta-ly-hw-px, .ta-ly-sw-px) :is(.why-h-left .sec-head) { --ly-ml: 0; --ly-mr: auto; }
+:is(.ta-ly-hw-px, .ta-ly-sw-px) :is(.why-h-right .sec-head) { --ly-ml: auto; --ly-mr: 0; }
+:is(.ta-ly-hw-px, .ta-ly-sw-px).ta-ly-ha-left { --ly-ml: 0; --ly-mr: auto; }
+:is(.ta-ly-hw-px, .ta-ly-sw-px).ta-ly-ha-center { --ly-ml: auto; --ly-mr: auto; }
+:is(.ta-ly-hw-px, .ta-ly-sw-px).ta-ly-ha-right { --ly-ml: auto; --ly-mr: 0; }
+:is(.ta-ly-hw-px, .ta-ly-sw-px):is(.ta-ly-ha-left, .ta-ly-ha-center, .ta-ly-ha-right) :is(.sec-head, .ej-head, .cb-head, .cb-tc-head, .jblock-head, .hero-text, .cb-fh-text) { --ly-ml: inherit; --ly-mr: inherit; }
+/* Centred heroes (hero alignment "centre") centre a narrower heading / intro too. */
+:is(.ta-ly-hw-px, .ta-ly-sw-px) .svc-hero-align-center { --ly-ml: auto; --ly-mr: auto; }

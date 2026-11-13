@@ -229,7 +229,7 @@ body {
 }
 /* Global font (2026-11-12): Inter everywhere, headings included. The CSS across the site asks for
    var(--font-sora) (headings), var(--font-inter), --font-main / --font-heading / --font-body; all of
-   them point at the Inter that app/layout.js loads (next/font sets --font-inter on <body>). */
+   them point at Inter from app/fonts/inter.css (sets --font-inter; files in public/fonts). */
 body {
   --font-sora: var(--font-inter), "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-main: var(--font-sora);

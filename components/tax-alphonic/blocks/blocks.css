@@ -1861,3 +1861,18 @@ a.ta-rt-btn-outline:hover { background: var(--rt-b); color: #fff; }
 /* The intro text fills its column, so the gap to the form is only the column gap. */
 .ta-cb .cb-fh-text { min-width: 0; }
 .ta-cb .cb-fh:not(.cb-fh-solo) .cb-fh-lede { max-width: none; }
+
+/* Cards Grid sub-link with a button Look (2026-11-13, CommonBlocks.jsx Head): its own row under the sub text. */
+.ta-cb .cb-sublink-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.ta-cb .cb-head.cb-center .cb-sublink-row { justify-content: center; }
+.ta-ly-ha-center .ta-cb .cb-sublink-row { justify-content: center; }
+.ta-ly-ha-right .ta-cb .cb-sublink-row { justify-content: flex-end; }
+.ta-ly-ha-left .ta-cb .cb-sublink-row { justify-content: flex-start; }
+/* The sub-link as a button always has button padding (also an inline one carrying a look). */
+.ta-cb .cb-head .cb-sublink-btn,
+.ta-cb .cb-head .cb-sublink.ta-look:not(.ta-look-link) {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 20px !important; border-radius: 11px; font-size: 14.5px; font-weight: 600; line-height: 1.2;
+  text-decoration: none !important;
+}
+.ta-cb .cb-head .cb-sublink.ta-look:not(.ta-look-link) { margin-top: 10px; }
