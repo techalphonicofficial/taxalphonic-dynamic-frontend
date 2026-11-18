@@ -564,7 +564,7 @@ export default function JourneySections({ sections = [], stages = [], page = {} 
     const Component = entry?.[0];
     return (
       <Fragment key={section.id}>
-        <BlockBackground config={section.config}>
+        <BlockBackground type={section.type} config={section.config}>
           {!entry ? <AnyBlock section={section} /> : entry[1] ? <div className="wrap jbody"><Component p={section.payload || {}} ctx={ctx} /></div> : <Component p={section.payload || {}} ctx={ctx} />}
         </BlockBackground>
       </Fragment>
@@ -583,7 +583,7 @@ export default function JourneySections({ sections = [], stages = [], page = {} 
     // Every block may have its own background (admin: the block's Background panel).
     const node = (
       <Fragment key={section.id}>
-        <BlockBackground config={section.config} hero={section.type === "JourneyHero"}>
+        <BlockBackground type={section.type} config={section.config} hero={section.type === "JourneyHero"}>
           {entry ? <Component p={section.payload || {}} ctx={ctx} /> : extra}
         </BlockBackground>
       </Fragment>

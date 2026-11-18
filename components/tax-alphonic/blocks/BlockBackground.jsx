@@ -47,24 +47,129 @@ function autoTextTheme(bg, overlay) {
   return shade === null ? "" : shade ? "light" : "dark";
 }
 
-function Background({ config, hero = false, children }) {
-  const bg = backgroundOf(config);
-  if (!bg) return children;
+/*
+ * Phone view of any block (admin: the block's "Mobile view" panel, saved as section.config.mobile).
+ * Applies up to 767px (blocks.css "Mobile view"); desktop / tablet never change. Keys:
+ *   hide: "yes"                         block not shown on phones
+ *   bg: same | image | none             background image on phones (heroes default "none", others "same")
+ *   image, position                     the phone image (bg "image")
+ *   color                               phone background colour (#hex, any bg mode)
+ *   shade: light | dark, shadeOpacity   veil over the phone background
+ *   text: dark | light                  text colour on phones (else follows background / shade)
+ *   images: show | hide                 images in the block (heroes default: side image hidden)
+ *   align: left | center | right, headSize, textSize, padTop, padBottom (px)
+ *   buttons: full                       buttons full width, one under the other
+ *   hideKicker / hideSub / hideButtons: "yes"
+ * Cards per row on phones stay in config.layout.colsPhone ("Heading & cards").
+ * Keep in sync with cms-admin components/page-builder/MobileSettings.jsx.
+ */
+export const MOBILE_HERO_BLOCKS = new Set(["HeroBanner", "HomeHero", "CommonFormHero", "JourneyHero", "ToolHero"]);
+const M_POS = new Set(["center", "top", "bottom", "left", "right"]);
+const M_HEX = /^#[0-9a-f]{3}([0-9a-f]{3})?$/i;
+const mPx = (v, min, max) => {
+  if (v === "" || v === null || v === undefined) return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? Math.max(min, Math.min(max, Math.round(n))) : null;
+};
 
-  const overlay = Math.max(0, Math.min(100, Number(bg.overlayOpacity) || 0));
-  const textTheme = bg.textTheme === "light" || bg.textTheme === "dark" ? bg.textTheme : autoTextTheme(bg, overlay);
+export function mobileOf(config, type = "") {
+  const m = config?.mobile && typeof config.mobile === "object" ? config.mobile : {};
+  const isHero = MOBILE_HERO_BLOCKS.has(type);
+  const image = String(m.image || "").trim();
+  let bg = ["same", "image", "none"].includes(m.bg) ? m.bg : isHero ? "none" : "same";
+  if (bg === "image" && !image) bg = "same";
+  return {
+    m,
+    isHero,
+    bg,
+    image: bg === "image" ? image : "",
+    position: M_POS.has(m.position) ? m.position : "center",
+    color: M_HEX.test(String(m.color || "")) ? m.color : "",
+    shade: m.shade === "light" || m.shade === "dark" ? m.shade : "",
+    shadeAlpha: (mPx(m.shadeOpacity, 0, 100) ?? (m.shade === "dark" ? 55 : 80)) / 100,
+    images: m.images === "show" || m.images === "hide" ? m.images : isHero ? "hero" : "show",
+  };
+}
+
+/** The display: contents wrapper's classes / variables (everything except the background). */
+function mobileWrapOf(mob) {
+  const { m } = mob;
+  const classes = [];
+  const style = {};
+  if (m.hide === "yes") classes.push("ta-m-hide");
+  if (mob.images === "hide") classes.push("ta-m-img-hide");
+  else if (mob.images === "hero") classes.push("ta-m-heroimg-hide");
+  if (["left", "center", "right"].includes(m.align)) classes.push(`ta-m-al-${m.align}`);
+  const hs = mPx(m.headSize, 16, 64);
+  if (hs) { classes.push("ta-m-hs"); style["--m-hs"] = `${hs}px`; }
+  const ts = mPx(m.textSize, 11, 24);
+  if (ts) { classes.push("ta-m-ts"); style["--m-ts"] = `${ts}px`; }
+  const pt = mPx(m.padTop, 0, 300);
+  const pb = mPx(m.padBottom, 0, 300);
+  if (pt !== null) { classes.push("ta-m-pt"); style["--m-pt"] = `${pt}px`; }
+  if (pb !== null) { classes.push("ta-m-pb"); style["--m-pb"] = `${pb}px`; }
+  if (m.buttons === "full") classes.push("ta-m-btn-full");
+  if (m.hideKicker === "yes") classes.push("ta-m-no-kicker");
+  if (m.hideSub === "yes") classes.push("ta-m-no-sub");
+  if (m.hideButtons === "yes") classes.push("ta-m-no-btns");
+  return classes.length ? { className: `ta-m ${classes.join(" ")}`, style } : null;
+}
+
+const themeOf = (value) => (value === "light" || value === "dark" ? value : "");
+
+function Background({ config, hero = false, mob, children }) {
+  const desk = backgroundOf(config);
+  // Phones may get a background of their own (image / colour) even when desktop has none.
+  const phoneOnly = !desk && Boolean(mob.image || mob.color);
+  if (!desk && !phoneOnly) return children;
+  const bg = desk || { color: "", image: "" };
+
+  const overlay = desk ? Math.max(0, Math.min(100, Number(bg.overlayOpacity) || 0)) : 0;
+  const textTheme = !desk ? "" : bg.textTheme === "light" || bg.textTheme === "dark" ? bg.textTheme : autoTextTheme(bg, overlay);
+
+  // Text colour on phones: chosen, or from the shade, or from what the phone background is.
+  const phoneColor = mob.color || bg.color;
+  let phoneTheme;
+  if (themeOf(mob.m.text)) phoneTheme = mob.m.text;
+  else if (mob.shade) phoneTheme = mob.shade === "dark" ? "light" : "dark";
+  else if (mob.bg === "same") phoneTheme = mob.color ? autoTextTheme({ ...bg, color: phoneColor }, overlay) : textTheme;
+  else if (mob.bg === "image") phoneTheme = "";
+  else phoneTheme = phoneColor ? (isDark(phoneColor) ? "light" : "dark") : "";
+
   // Heroes bring their own spacing; other blocks get some room inside the colour by default.
-  const padding = PADDING.has(bg.padding) ? bg.padding : hero ? "none" : "md";
+  const padding = !desk ? "none" : PADDING.has(bg.padding) ? bg.padding : hero ? "none" : "md";
+  const style = {};
+  if (bg.color) style.backgroundColor = bg.color;
+  if (mob.color && mob.color !== bg.color) style["--m-bgc"] = mob.color;
   const classes = [
     "ta-bg",
+    phoneOnly ? "ta-bg-monly" : "",
     hero ? "ta-bg-hero" : "",
     `ta-bg-pad-${padding}`,
     bg.rounded === "yes" ? "ta-bg-rounded" : "",
-    textTheme === "light" ? "ta-bg-light" : textTheme === "dark" ? "ta-bg-dark" : "",
+    textTheme === phoneTheme
+      ? (textTheme ? `ta-bg-${textTheme}` : "")
+      : [textTheme ? `ta-bg-d-${textTheme}` : "", phoneTheme ? `ta-bg-m-${phoneTheme}` : ""].filter(Boolean).join(" "),
+    mob.color && mob.color !== bg.color ? "ta-bg-mc" : "",
+    mob.bg === "none" ? "ta-bg-m-noimg" : mob.bg === "image" ? "ta-bg-m-ownimg" : "",
   ].filter(Boolean).join(" ");
 
   return (
-    <div className={classes} style={bg.color ? { backgroundColor: bg.color } : undefined}>
+    <div className={classes} style={Object.keys(style).length ? style : undefined}>
+      {mob.image && (
+        <div
+          className="ta-bg-mimg"
+          aria-hidden="true"
+          style={{ backgroundImage: `url("${mob.image.replace(/"/g, "%22")}")`, backgroundPosition: mob.position }}
+        />
+      )}
+      {mob.shade && (
+        <div
+          className="ta-bg-mshade"
+          aria-hidden="true"
+          style={{ background: mob.shade === "dark" ? `rgba(10, 14, 26, ${mob.shadeAlpha})` : `rgba(255, 255, 255, ${mob.shadeAlpha})` }}
+        />
+      )}
       {bg.image && (
         <div
           className="ta-bg-img"
@@ -224,14 +329,19 @@ function BlockButtons({ set }) {
   );
 }
 
-export default function BlockBackground({ config, hero = false, children }) {
+/** `type` = the block type (section.type): heroes get "no image on phones" by default. */
+export default function BlockBackground({ config, hero = false, type = "", children }) {
   const buttons = buttonsOf(config);
   const inner = buttons
     ? (buttons.position === "above" ? <><BlockButtons set={buttons} />{children}</> : <>{children}<BlockButtons set={buttons} /></>)
     : children;
-  const body = <Background config={config} hero={hero}>{inner}</Background>;
+  const mob = mobileOf(config, type);
+  const body = <Background config={config} hero={hero} mob={mob}>{inner}</Background>;
   const spacing = spacingOf(config);
-  const node = spacing ? <div className={spacing.className} style={spacing.style}>{body}</div> : body;
+  const spaced = spacing ? <div className={spacing.className} style={spacing.style}>{body}</div> : body;
+  // Mobile view (phones only): display: contents, so desktop / tablet layout is untouched.
+  const wrap = mobileWrapOf(mob);
+  const node = wrap ? <div className={wrap.className} style={{ ...wrap.style, display: "contents" }}>{spaced}</div> : spaced;
   // Admin Live Preview only: marks the block being edited, so it can draw the spacing over it.
   const marked = config?.previewMark ? <div data-ta-block={config.previewMark}>{node}</div> : node;
   // Admin Live Preview only: every block carries its id, so a click on it opens it in the editor.

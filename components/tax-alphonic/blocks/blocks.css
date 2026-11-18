@@ -570,9 +570,9 @@
 }
 
 /* A block inside a page column keeps a little air around its coloured box. */
-.ta-svc .ta-bg,
-.ta-journey .jbody .ta-bg,
-.ta-tools .tool-page-body .ta-bg {
+.ta-svc .ta-bg:not(.ta-bg-monly),
+.ta-journey .jbody .ta-bg:not(.ta-bg-monly),
+.ta-tools .tool-page-body .ta-bg:not(.ta-bg-monly) {
   margin: 14px 0;
 }
 
@@ -587,16 +587,16 @@
 }
 
 /* A custom background replaces the hero's own decorative background. */
-.ta-bg .hh-bg,
-.ta-bg .jhero2-bg {
+.ta-bg:not(.ta-bg-monly) .hh-bg,
+.ta-bg:not(.ta-bg-monly) .jhero2-bg {
   display: none;
 }
 
-.ta-bg .svc-hero,
-.ta-bg .tool-page-hero,
-.ta-bg .tools-hub-hero,
-.ta-bg .hh,
-.ta-bg .jhero2 {
+.ta-bg:not(.ta-bg-monly) .svc-hero,
+.ta-bg:not(.ta-bg-monly) .tool-page-hero,
+.ta-bg:not(.ta-bg-monly) .tools-hub-hero,
+.ta-bg:not(.ta-bg-monly) .hh,
+.ta-bg:not(.ta-bg-monly) .jhero2 {
   background: transparent;
 }
 
@@ -649,6 +649,99 @@
 
 .ta-bg-dark > .ta-bg-content :is(p, li, .lede, .sub, .cb-sub) {
   color: #2a3142;
+}
+
+/* Mobile view (BlockBackground.jsx): when the phone text colour differs from the desktop one, the
+   block gets ta-bg-d-<theme> (desktop / tablet only) and ta-bg-m-<theme> (phones only). */
+@media (min-width: 768px) {
+  .ta-bg-d-light > .ta-bg-content :is(h1, h2, h3, h4, h5, h6, p, li, figcaption, blockquote, .lede, .sub, .cb-sub, .cb-caption, .jkicker, .kicker, .cb-kicker, .eyebrow, .crumb, .crumb span) {
+    color: #fff;
+  }
+
+  .ta-bg-d-light > .ta-bg-content :is(.lede, .sub, .cb-sub, p) {
+    opacity: .92;
+  }
+
+  /* Hero headings with a gradient highlight, stats and meta under the hero. */
+  .ta-bg-d-light > .ta-bg-content .svc-hero h1 {
+    color: #fff;
+    -webkit-text-fill-color: #fff;
+  }
+
+  .ta-bg-d-light > .ta-bg-content .svc-hero .lede {
+    color: rgba(255, 255, 255, .88);
+  }
+
+  .ta-bg-d-light > .ta-bg-content .svc-hero h1 em {
+    -webkit-text-fill-color: transparent;
+  }
+
+  .ta-bg-d-light > .ta-bg-content .trust-row :is(div, b),
+  .ta-bg-d-light > .ta-bg-content .eyebrow {
+    color: #fff;
+  }
+
+  .ta-bg-d-light > .ta-bg-content .trust-row div {
+    color: rgba(255, 255, 255, .8);
+  }
+
+  .ta-bg-d-light > .ta-bg-content .eyebrow {
+    background: rgba(255, 255, 255, .14);
+    border-color: rgba(255, 255, 255, .25);
+  }
+
+  .ta-bg-d-dark > .ta-bg-content :is(h1, h2, h3, h4, h5, h6) {
+    color: #0a0e1a;
+  }
+
+  .ta-bg-d-dark > .ta-bg-content :is(p, li, .lede, .sub, .cb-sub) {
+    color: #2a3142;
+  }
+}
+@media (max-width: 767px) {
+  .ta-bg-m-light > .ta-bg-content :is(h1, h2, h3, h4, h5, h6, p, li, figcaption, blockquote, .lede, .sub, .cb-sub, .cb-caption, .jkicker, .kicker, .cb-kicker, .eyebrow, .crumb, .crumb span) {
+    color: #fff;
+  }
+
+  .ta-bg-m-light > .ta-bg-content :is(.lede, .sub, .cb-sub, p) {
+    opacity: .92;
+  }
+
+  /* Hero headings with a gradient highlight, stats and meta under the hero. */
+  .ta-bg-m-light > .ta-bg-content .svc-hero h1 {
+    color: #fff;
+    -webkit-text-fill-color: #fff;
+  }
+
+  .ta-bg-m-light > .ta-bg-content .svc-hero .lede {
+    color: rgba(255, 255, 255, .88);
+  }
+
+  .ta-bg-m-light > .ta-bg-content .svc-hero h1 em {
+    -webkit-text-fill-color: transparent;
+  }
+
+  .ta-bg-m-light > .ta-bg-content .trust-row :is(div, b),
+  .ta-bg-m-light > .ta-bg-content .eyebrow {
+    color: #fff;
+  }
+
+  .ta-bg-m-light > .ta-bg-content .trust-row div {
+    color: rgba(255, 255, 255, .8);
+  }
+
+  .ta-bg-m-light > .ta-bg-content .eyebrow {
+    background: rgba(255, 255, 255, .14);
+    border-color: rgba(255, 255, 255, .25);
+  }
+
+  .ta-bg-m-dark > .ta-bg-content :is(h1, h2, h3, h4, h5, h6) {
+    color: #0a0e1a;
+  }
+
+  .ta-bg-m-dark > .ta-bg-content :is(p, li, .lede, .sub, .cb-sub) {
+    color: #2a3142;
+  }
 }
 
 /* A homepage block placed on another page: no page-coloured band of its own. */
@@ -1876,3 +1969,69 @@ a.ta-rt-btn-outline:hover { background: var(--rt-b); color: #fff; }
   text-decoration: none !important;
 }
 .ta-cb .cb-head .cb-sublink.ta-look:not(.ta-look-link) { margin-top: 10px; }
+
+/* ==== Mobile view of every block (2026-11-18; BlockBackground.jsx mobileOf, admin "Mobile view" panel) ====
+   Phones only (≤ 767px). Wrapper .ta-m (display: contents) carries the classes / variables; the
+   background parts (.ta-bg-mimg, .ta-bg-mshade, .ta-bg-m-*) sit on the block's .ta-bg. */
+.ta-bg-mimg,
+.ta-bg-mshade { display: none; }
+
+@media (max-width: 767px) {
+  .ta-m.ta-m-hide { display: none !important; }
+
+  /* Background */
+  .ta-bg.ta-bg-mc { background-color: var(--m-bgc) !important; }
+  .ta-bg.ta-bg-m-noimg > :is(.ta-bg-img, .ta-bg-overlay),
+  .ta-bg.ta-bg-m-ownimg > :is(.ta-bg-img, .ta-bg-overlay) { display: none; }
+  .ta-bg.ta-bg-m-ownimg > .ta-bg-mimg {
+    display: block; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-size: cover; background-repeat: no-repeat;
+  }
+  .ta-bg > .ta-bg-mshade { display: block; position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+  /* A hero whose image is off on phones shows its own soft decoration again. */
+  .ta-bg.ta-bg-m-noimg:not(.ta-bg-mc) > .ta-bg-content :is(.hh-bg, .jhero2-bg) { display: block; }
+  /* "Text on the hero: hide" heroes are the image itself: keep it. */
+  .ta-bg.ta-bg-m-noimg:has(> .ta-bg-content .svc-hero-bare) > .ta-bg-img { display: block; }
+
+  /* Images in the block: heroes hide their side image by default; "hide" hides every image. */
+  .ta-m.ta-m-heroimg-hide :is(.hero-visual, .mt-hero-visual, .svc-hero-media, .jhero2-right, .cb-fh-media, .tool-hero-visual) { display: none !important; }
+  .ta-m.ta-m-heroimg-hide :is(.svc-hero-grid, .jhero2-grid, .hero-grid) { grid-template-columns: 1fr !important; }
+  .ta-m.ta-m-img-hide :is(img, picture, video, figure, .hero-visual, .mt-hero-visual, .jhero2-right):not(.ta-bg-img) { display: none !important; }
+  .ta-m.ta-m-img-hide :is(.svc-hero-grid, .jhero2-grid, .hero-grid) { grid-template-columns: 1fr !important; }
+
+  /* Alignment */
+  .ta-m.ta-m-al-left :is(h1, h2, h3, h4, p, li, .lede, .sub, .cb-sub, .eyebrow, .kicker, .cb-kicker, .jkicker, blockquote, figcaption) { text-align: left !important; }
+  .ta-m.ta-m-al-center :is(h1, h2, h3, h4, p, li, .lede, .sub, .cb-sub, .eyebrow, .kicker, .cb-kicker, .jkicker, blockquote, figcaption) { text-align: center !important; }
+  .ta-m.ta-m-al-right :is(h1, h2, h3, h4, p, li, .lede, .sub, .cb-sub, .eyebrow, .kicker, .cb-kicker, .jkicker, blockquote, figcaption) { text-align: right !important; }
+  .ta-m.ta-m-al-center :is(h1, h2, .lede, .sub, .cb-sub, .hero-search) { margin-left: auto !important; margin-right: auto !important; }
+  .ta-m.ta-m-al-center :is(.hh-cta, .hero-stats, .hero-trust, .cb-btns, .ta-blk-btns, .nl9-meta, .trust-row, .cb-fh-chips, .cb-head, .sec-head) { justify-content: center !important; justify-items: center; }
+  .ta-m.ta-m-al-left :is(.hh-cta, .hero-stats, .hero-trust, .cb-btns, .ta-blk-btns, .nl9-meta, .trust-row, .cb-fh-chips) { justify-content: flex-start !important; }
+  .ta-m.ta-m-al-right :is(.hh-cta, .hero-stats, .hero-trust, .cb-btns, .ta-blk-btns, .nl9-meta, .trust-row, .cb-fh-chips) { justify-content: flex-end !important; }
+
+  /* Sizes */
+  .ta-m.ta-m-hs :is(h1, h2) { font-size: var(--m-hs) !important; line-height: 1.22; }
+  .ta-m.ta-m-ts :is(p, li, .lede, .sub, .cb-sub, blockquote) { font-size: var(--m-ts) !important; }
+
+  /* Space inside the block: set on the block's own outer element. */
+  .ta-m.ta-m-pt > :not(.ta-sp):not(.ta-bg),
+  .ta-m.ta-m-pt > .ta-sp > :not(.ta-bg):not(.ta-blk-btns),
+  .ta-m.ta-m-pt > .ta-bg > .ta-bg-content > :not(.ta-blk-btns),
+  .ta-m.ta-m-pt > .ta-sp > .ta-bg > .ta-bg-content > :not(.ta-blk-btns),
+  .ta-m.ta-m-pt .ta-home-embed > .home-page > * { padding-top: var(--m-pt) !important; }
+  .ta-m.ta-m-pb > :not(.ta-sp):not(.ta-bg),
+  .ta-m.ta-m-pb > .ta-sp > :not(.ta-bg):not(.ta-blk-btns),
+  .ta-m.ta-m-pb > .ta-bg > .ta-bg-content > :not(.ta-blk-btns),
+  .ta-m.ta-m-pb > .ta-sp > .ta-bg > .ta-bg-content > :not(.ta-blk-btns),
+  .ta-m.ta-m-pb .ta-home-embed > .home-page > * { padding-bottom: var(--m-pb) !important; }
+
+  /* Buttons full width, one under the other */
+  .ta-m.ta-m-btn-full :is(.hh-cta, .cb-btns, .ta-blk-btns, .cb-fh-btns, .cb-buttons) { flex-direction: column !important; align-items: stretch !important; }
+  .ta-m.ta-m-btn-full :is(.btn-primary, .btn-ghost, .btn-ghost-light, .ta-blk-btn, .cb-btn, [class*="ta-look-"]) {
+    display: flex !important; width: 100%; justify-content: center; text-align: center;
+  }
+
+  /* Parts hidden on phones */
+  .ta-m.ta-m-no-kicker :is(.eyebrow, .kicker, .cb-kicker, .jkicker, .cb-fh-eyebrow, .ej-eyebrow) { display: none !important; }
+  .ta-m.ta-m-no-sub :is(.lede, .sub, .cb-sub, .sec-head > p, .cb-head > p, .ej-sub, .cb-fh-lede) { display: none !important; }
+  .ta-m.ta-m-no-btns :is(.hh-cta, .cb-btns, .ta-blk-btns, .cb-fh-btns, .cb-buttons) { display: none !important; }
+}

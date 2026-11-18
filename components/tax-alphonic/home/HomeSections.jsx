@@ -226,10 +226,11 @@ function heroMobile(p, config) {
   let banner = null;
 
   // Shade over the phone background: auto | none | light | dark.
-  const deskDarkText = bg.textTheme === "light" || (Number(bg.overlayOpacity) || 0) >= 35;
   let shade = ["none", "light", "dark"].includes(m.shade) ? m.shade : "auto";
   if (shade === "auto") {
-    const imageBehind = mode === "image" ? Boolean(ownImage) : mode === "" ? Boolean(deskImage) && !deskDarkText : false;
+    // The background on phones is the block's Mobile view panel now (heroes: no image by default),
+    // so "auto" only shades an older hero-only phone image.
+    const imageBehind = mode === "image" && Boolean(ownImage);
     shade = imageBehind ? "light" : "none";
   }
   const shadeAlpha = (mNum(m.shadeOpacity, 0, 100) ?? (shade === "dark" ? 55 : 80)) / 100;
@@ -1329,7 +1330,7 @@ function renderBlock(section, i) {
   // Each block may have its own background (admin: the block's Background panel).
   return (
     <Fragment key={section.id || i}>
-      <BlockBackground config={section.config} hero={section.type === "HomeHero"}>{inner}</BlockBackground>
+      <BlockBackground type={section.type} config={section.config} hero={section.type === "HomeHero"}>{inner}</BlockBackground>
     </Fragment>
   );
 }

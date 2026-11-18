@@ -757,7 +757,7 @@ export default function ApiServicePage({ service }) {
   // Every block may have its own background (admin: the block's Background panel).
   const render = (section, placement) => (
     <Fragment key={section.id}>
-      <BlockBackground config={section.config} hero={placement === "hero"}>
+      <BlockBackground type={section.type} config={section.config} hero={placement === "hero"}>
         <ServiceBlock
           section={section}
           placement={placement}
@@ -794,7 +794,7 @@ export default function ApiServicePage({ service }) {
               if (token.key === "hero") {
                 return (
                   <Fragment key="hero">
-                    {heroSection && <BlockBackground config={heroSection.config} hero><Hero service={service} hero={hero} config={heroSection.config} /></BlockBackground>}
+                    {heroSection && <BlockBackground type="HeroBanner" config={heroSection.config} hero><Hero service={service} hero={hero} config={heroSection.config} /></BlockBackground>}
                     {/* Another hero block placed in the Hero area (Homepage Hero, Hero with Form, Banners Slider). */}
                     {groups.hero.length > 0 && <div className="svc-hero-slot">{groups.hero.map((section) => render(section, "hero"))}</div>}
                   </Fragment>
@@ -845,7 +845,7 @@ export function ContentBlocks({ sections }) {
 
   const render = (section, placement = "main") => (
     <Fragment key={section.id}>
-      <BlockBackground config={section.config}>
+      <BlockBackground type={section.type} config={section.config}>
         <ServiceBlock
           section={section}
           placement={placement}
@@ -895,7 +895,7 @@ export function PageBlock({ section, placement = "main", siblings = [], custom }
   const packageCtaHref = firstForm ? `#${firstForm.config?.anchorId || "enquiry"}` : "";
   const own = custom ? custom(section, placement) : null;
   return (
-    <BlockBackground config={section.config} hero={placement === "hero"}>
+    <BlockBackground type={section.type} config={section.config} hero={placement === "hero"}>
       {own || (
         <ServiceBlock section={section} placement={placement} firstOverviewId={firstOverviewId} packageCtaHref={packageCtaHref} locations={[]} />
       )}

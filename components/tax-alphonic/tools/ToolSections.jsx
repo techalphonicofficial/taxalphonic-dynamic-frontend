@@ -232,7 +232,7 @@ export default function ToolSections({ sections = [], tools = [], page = {} }) {
     const Component = entry?.[0];
     return (
       <Fragment key={section.id}>
-        <BlockBackground config={section.config}>
+        <BlockBackground type={section.type} config={section.config}>
           {!entry ? <AnyBlock section={section} /> : entry[1] ? <div className="wrap tool-page-body"><Component p={section.payload || {}} ctx={ctx} /></div> : <Component p={section.payload || {}} ctx={ctx} />}
         </BlockBackground>
       </Fragment>
@@ -253,7 +253,7 @@ export default function ToolSections({ sections = [], tools = [], page = {} }) {
     // Every block may have its own background (admin: the block's Background panel).
     const node = (
       <Fragment key={section.id}>
-        <BlockBackground config={section.config} hero={section.type === "ToolHero"}>
+        <BlockBackground type={section.type} config={section.config} hero={section.type === "ToolHero"}>
           {entry ? <Component p={section.payload || {}} ctx={ctx} /> : extra}
         </BlockBackground>
       </Fragment>
