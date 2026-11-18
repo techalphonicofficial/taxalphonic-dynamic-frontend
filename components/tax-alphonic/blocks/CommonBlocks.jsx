@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { openFormPopup, prefillFormIn } from "@/lib/formPopup";
 import { blockLandingNavigation } from "@/lib/landingLinks";
 import { sanitizeHtml } from "@/lib/sanitizeHtml";
+import { withLinks } from "@/lib/inlineLinks";
 import CmsForm from "../forms/CmsForm";
 import Calculator from "../tools/calculators";
 import AutoPopup from "./AutoPopup";
@@ -65,7 +66,7 @@ function Icon({ value, alt = "" }) {
 /** Paragraphs (blank lines) with **bold** words. */
 function Paragraphs({ text }) {
   return String(text || "").split(/\n\s*\n/).map((para) => para.trim()).filter(Boolean).map((para, i) => (
-    <p key={i}>{para.split(/\*\*(.+?)\*\*/g).map((part, j) => (j % 2 ? <b key={j}>{part}</b> : <Fragment key={j}>{part}</Fragment>))}</p>
+    <p key={i}>{para.split(/\*\*(.+?)\*\*/g).map((part, j) => (j % 2 ? <b key={j}>{withLinks(part)}</b> : <Fragment key={j}>{withLinks(part)}</Fragment>))}</p>
   ));
 }
 
@@ -1022,7 +1023,7 @@ function StarHighlight({ text }) {
 /** Card text: each line a line, **bold** words. */
 function CardLines({ text }) {
   return String(text || "").split(/\n/).map((line) => line.trim()).filter(Boolean).map((line, i) => (
-    <p key={i}>{line.split(/\*\*(.+?)\*\*/g).map((part, j) => (j % 2 ? <b key={j}>{part}</b> : <Fragment key={j}>{part}</Fragment>))}</p>
+    <p key={i}>{line.split(/\*\*(.+?)\*\*/g).map((part, j) => (j % 2 ? <b key={j}>{withLinks(part)}</b> : <Fragment key={j}>{withLinks(part)}</Fragment>))}</p>
   ));
 }
 

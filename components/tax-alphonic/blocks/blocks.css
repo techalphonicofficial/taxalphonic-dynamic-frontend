@@ -2035,3 +2035,20 @@ a.ta-rt-btn-outline:hover { background: var(--rt-b); color: #fff; }
   .ta-m.ta-m-no-sub :is(.lede, .sub, .cb-sub, .sec-head > p, .cb-head > p, .ej-sub, .cb-fh-lede) { display: none !important; }
   .ta-m.ta-m-no-btns :is(.hh-cta, .cb-btns, .ta-blk-btns, .cb-fh-btns, .cb-buttons) { display: none !important; }
 }
+
+/* ---- Links inside CMS text: [words](url) from the admin Link button (lib/inlineLinks.js) ---- */
+/* Blue on light backgrounds, light blue on dark ones (white-text blocks, dark mode). */
+.ta-inline-link,
+.ta-inline-link:visited {
+  color: var(--ta-link-color, #1a56db) !important;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  transition: text-decoration-color .15s ease, color .15s ease;
+}
+.ta-inline-link:hover { color: var(--ta-link-hover, #1e40af) !important; text-decoration-color: currentColor; }
+.ta-bg-light .ta-inline-link,
+.dark .ta-inline-link,
+[data-theme="dark"] .ta-inline-link { --ta-link-color: #93c5fd; --ta-link-hover: #bfdbfe; }

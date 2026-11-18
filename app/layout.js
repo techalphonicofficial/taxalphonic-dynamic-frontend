@@ -9,6 +9,7 @@ import { getSiteSettings } from "@/service/siteSettingsService";
 import { preload } from "react-dom";
 import { headers } from "next/headers";
 import { LANDING_HEADER } from "@/lib/landingHost.mjs";
+import InlineLinksScanner from "@/components/tax-alphonic/InlineLinksScanner";
 
 // Light type sitewide (2026-11-12): Inter comes from app/fonts/inter.css (files in public/fonts, served by
 // the site since 2026-11-13: next/font/google broke `next dev` under Turbopack) with only the 300–500
@@ -48,6 +49,8 @@ export default async function RootLayout({ children }) {
         <body>
           <LayoutStyle css={layoutCss} />
           <ThemeProvider>{children}</ThemeProvider>
+          {/* [words](url) in CMS text = a link (lib/inlineLinks.js). */}
+          <InlineLinksScanner />
         </body>
       </html>
     );
@@ -69,6 +72,7 @@ export default async function RootLayout({ children }) {
           <Footer menu={footerMenu} branding={branding} contact={contact} />
           {/* "#form-<id>" buttons open that form in a popup (landing pages mount their own). */}
           <FormPopupHost />
+          <InlineLinksScanner />
         </ThemeProvider>
       </body>
     </html>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { openFormPopup } from "@/lib/formPopup";
 import { blockLandingNavigation } from "@/lib/landingLinks";
+import { withLinks } from "@/lib/inlineLinks";
 import AnyBlock from "../blocks/AnyBlock";
 import LayoutGroup from "../blocks/LayoutGroup";
 import { splitLayoutSections } from "../blocks/layoutSections";
@@ -70,7 +71,7 @@ const fill = (text, stage) => String(text || "").replace(/\{stage\}/gi, stage.ti
 
 /** Plain text where **double asterisks** mark bold words. */
 function Rich({ text }) {
-  return String(text || "").split(/\*\*(.+?)\*\*/g).map((part, i) => (i % 2 ? <b key={i}>{part}</b> : <Fragment key={i}>{part}</Fragment>));
+  return String(text || "").split(/\*\*(.+?)\*\*/g).map((part, i) => (i % 2 ? <b key={i}>{withLinks(part)}</b> : <Fragment key={i}>{withLinks(part)}</Fragment>));
 }
 
 function BlockHead({ kicker, heading, sub, stage, center = false, kickerColor }) {
