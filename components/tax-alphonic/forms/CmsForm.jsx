@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useActionState, useEffect, useId, useState } from "react";
+import { startTransition, useActionState, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { landingLocked } from "@/lib/landingLinks";
 import { submitCmsForm } from "@/service/formSubmission";
@@ -18,6 +18,115 @@ function validationProps(field) {
   return { minLength: rules.minLength, maxLength: rules.maxLength, min: rules.min, max: rules.max };
 }
 
+/*
+ * Dropdowns with more than SEARCH_FROM options (services, cities, states…) become a search box:
+ * the visitor types, the list filters, a click / Enter picks. The chosen value goes in a hidden
+ * input with the field's name, so the submission is the same as a plain <select>. The text box is
+ * `required` like the select was and only keeps text that is a picked option, so the browser's
+ * own "please fill in" check still works.
+ */
+const SEARCH_FROM = 6;
+const fold = (text) => String(text || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+function SearchSelect({ field, options, common }) {
+  const listId = useId();
+  const initial = options.find((o) => String(o.value) === String(field.defaultValue ?? "")) || null;
+  const [picked, setPicked] = useState(initial);
+  const [query, setQuery] = useState(initial ? initial.label : "");
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(0);
+  const listRef = useRef(null);
+  const blurTimer = useRef(null);
+
+  const typed = open && picked && query === picked.label ? "" : query;
+  const shown = useMemo(() => {
+    const q = fold(typed).trim();
+    if (!q) return options;
+    const words = q.split(/\s+/);
+    return options.filter((o) => { const label = fold(o.label); return words.every((w) => label.includes(w)); });
+  }, [options, typed]);
+
+  useEffect(() => () => clearTimeout(blurTimer.current), []);
+  useEffect(() => {
+    if (!open) return;
+    listRef.current?.querySelector(`[data-i="${active}"]`)?.scrollIntoView({ block: "nearest" });
+  }, [active, open]);
+
+  const choose = (option) => {
+    setPicked(option);
+    setQuery(option.label);
+    setOpen(false);
+  };
+  const close = () => {
+    setOpen(false);
+    // Typed text that is not an option goes back to the chosen one (or empty).
+    setQuery(picked ? picked.label : "");
+  };
+  const onKeyDown = (event) => {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      if (!open) { setOpen(true); setActive(0); return; }
+      const step = event.key === "ArrowDown" ? 1 : -1;
+      setActive((i) => (shown.length ? (i + step + shown.length) % shown.length : 0));
+    } else if (event.key === "Enter") {
+      if (open) {
+        event.preventDefault();
+        if (shown[active]) choose(shown[active]);
+      }
+    } else if (event.key === "Escape") {
+      if (open) { event.preventDefault(); close(); }
+    } else if (event.key === "Tab") {
+      if (open) close();
+    }
+  };
+  const placeholder = field.placeholder && field.placeholder.trim().toLowerCase() !== String(field.label || "").trim().toLowerCase() ? field.placeholder : "Type to search…";
+
+  return (
+    <>
+      <input
+        id={common.id}
+        type="text"
+        className="cms-ss-input"
+        role="combobox"
+        aria-expanded={open}
+        aria-controls={listId}
+        aria-autocomplete="list"
+        aria-activedescendant={open && shown[active] ? `${listId}-${active}` : undefined}
+        aria-invalid={common["aria-invalid"]}
+        aria-describedby={common["aria-describedby"]}
+        autoComplete="off"
+        required={common.required}
+        placeholder={placeholder}
+        value={query}
+        onChange={(e) => { setQuery(e.target.value); setOpen(true); setActive(0); if (!e.target.value) setPicked(null); }}
+        onFocus={(e) => { setOpen(true); setActive(Math.max(0, picked ? options.indexOf(picked) : 0)); e.target.select(); }}
+        onClick={() => setOpen(true)}
+        onBlur={() => { blurTimer.current = setTimeout(close, 120); }}
+        onKeyDown={onKeyDown}
+      />
+      <input type="hidden" name={common.name} value={picked ? picked.value : ""} />
+      {open && (
+        <ul className="cms-ss-list" id={listId} role="listbox" ref={listRef}>
+          {shown.length ? shown.map((option, i) => (
+            <li
+              key={`${option.value}-${i}`}
+              id={`${listId}-${i}`}
+              data-i={i}
+              role="option"
+              aria-selected={picked === option}
+              className={`${i === active ? "is-active" : ""}${picked === option ? " is-picked" : ""}`}
+              onMouseDown={(e) => { e.preventDefault(); choose(option); }}
+              onMouseEnter={() => setActive(i)}
+            >
+              {option.label}
+            </li>
+          )) : <li className="cms-ss-empty" role="presentation">No match for “{typed.trim()}”</li>}
+        </ul>
+      )}
+    </>
+  );
+}
+
 function FieldControl({ field, inputId, describedBy, invalid }) {
   const common = {
     id: inputId,
@@ -33,6 +142,7 @@ function FieldControl({ field, inputId, describedBy, invalid }) {
       return <textarea {...common} rows={3} placeholder={field.placeholder || " "} defaultValue={field.defaultValue || ""} {...validationProps(field)} />;
 
     case "select":
+      if (options.length > SEARCH_FROM) return <SearchSelect field={field} options={options} common={common} />;
       return (
         <select {...common} defaultValue={field.defaultValue || ""}>
           {/* The label floats above the value, so a hint that repeats it reads "Choose…". */}

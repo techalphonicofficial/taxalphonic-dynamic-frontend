@@ -199,7 +199,87 @@ function HeroVisual({ d }) {
   );
 }
 
-function Hero({ p }) {
+/*
+ * Phone view of the hero (admin: Hero → "Mobile view", payload.mobile). Applies up to 767px
+ * (home-page.css "Hero mobile view"). Background on phones: same as desktop | a different image
+ * | the image as a banner above the text | a plain colour, each with an optional shade so the
+ * text stays readable; text colour, alignment, sizes, and how stats / search / buttons / metrics /
+ * right-side visual show. "auto" shade = a soft white veil when a desktop background image sits
+ * behind dark text. Empty values keep the phone defaults.
+ */
+const M_HEX = /^#[0-9a-f]{3}([0-9a-f]{3})?$/i;
+const M_POS = new Set(["center", "top", "bottom", "left", "right"]);
+const mNum = (v, min, max) => {
+  const n = Number(v);
+  return v === "" || v === null || v === undefined || !Number.isFinite(n) ? null : Math.max(min, Math.min(max, Math.round(n)));
+};
+
+function heroMobile(p, config) {
+  const m = p.mobile && typeof p.mobile === "object" ? p.mobile : {};
+  const bg = config?.background || {};
+  const deskImage = String(bg.image || "").trim();
+  const ownImage = String(m.image || "").trim();
+  const mode = ["image", "top", "plain"].includes(m.bg) ? m.bg : "";
+  const classes = ["hh-m"];
+  const style = {};
+  let layer = null;
+  let banner = null;
+
+  // Shade over the phone background: auto | none | light | dark.
+  const deskDarkText = bg.textTheme === "light" || (Number(bg.overlayOpacity) || 0) >= 35;
+  let shade = ["none", "light", "dark"].includes(m.shade) ? m.shade : "auto";
+  if (shade === "auto") {
+    const imageBehind = mode === "image" ? Boolean(ownImage) : mode === "" ? Boolean(deskImage) && !deskDarkText : false;
+    shade = imageBehind ? "light" : "none";
+  }
+  const shadeAlpha = (mNum(m.shadeOpacity, 0, 100) ?? (shade === "dark" ? 55 : 80)) / 100;
+  const color = M_HEX.test(String(m.color || "")) ? m.color : "";
+
+  if (mode === "image" && ownImage) {
+    layer = { image: ownImage, position: M_POS.has(m.position) ? m.position : "center", color };
+  } else if (mode === "plain" || mode === "top") {
+    layer = { image: "", color: color || "#ffffff" };
+    const src = ownImage || deskImage;
+    if (mode === "top" && src) {
+      banner = { src, alt: m.imageAlt || "", fit: m.bannerFit === "contain" ? "contain" : "cover", position: M_POS.has(m.position) ? m.position : "center" };
+      style["--hm-banner-h"] = `${mNum(m.bannerHeight, 80, 600) ?? 200}px`;
+    }
+  }
+  if (shade !== "none" && (layer || mode === "")) {
+    classes.push("hh-m-shade");
+    style["--hm-shade"] = shade === "dark" ? `rgba(10, 14, 26, ${shadeAlpha})` : `rgba(255, 255, 255, ${shadeAlpha})`;
+  }
+  if (layer) classes.push("hh-m-layer");
+  if (banner) classes.push("hh-m-banner");
+
+  // Text colour: explicit, or follows the shade / plain background.
+  const text = m.text === "dark" || m.text === "light" ? m.text
+    : shade === "dark" ? "light"
+    : shade === "light" || mode === "plain" || mode === "top" ? "dark" : "";
+  if (text) classes.push(`hh-m-text-${text}`);
+
+  if (m.align === "left" || m.align === "center") classes.push(`hh-m-al-${m.align}`);
+  const hs = mNum(m.headingSize, 18, 60);
+  if (hs) { classes.push("hh-m-hs"); style["--hm-h1"] = `${hs}px`; }
+  const ls = mNum(m.ledeSize, 12, 24);
+  if (ls) { classes.push("hh-m-ls"); style["--hm-lede"] = `${ls}px`; }
+  const pt = mNum(m.padTop, 0, 200);
+  const pb = mNum(m.padBottom, 0, 200);
+  if (pt !== null) style["--hm-pt"] = `${pt}px`;
+  if (pb !== null) style["--hm-pb"] = `${pb}px`;
+
+  if (m.eyebrow === "hide") classes.push("hh-m-no-eyebrow");
+  if (m.lede === "hide") classes.push("hh-m-no-lede");
+  if (m.search === "hide") classes.push("hh-m-no-search");
+  classes.push(`hh-m-stats-${["scroll", "one", "hide"].includes(m.stats) ? m.stats : "two"}`);
+  classes.push(`hh-m-btns-${["side", "hide"].includes(m.buttons) ? m.buttons : "stack"}`);
+  classes.push(`hh-m-metrics-${["scroll", "hide"].includes(m.metrics) ? m.metrics : "two"}`);
+  classes.push(`hh-m-visual-${["below", "hide"].includes(m.visual) ? m.visual : "above"}`);
+
+  return { className: classes.join(" "), style, layer, banner };
+}
+
+function Hero({ p, config }) {
   const go = useGo();
   const [search, setSearch] = useState("");
   const searchItems = list(p.searchItems);
@@ -223,9 +303,39 @@ function Hero({ p }) {
 
   if (!has(p.heading) && !has(p.highlight) && !has(p.subHeading) && !showVisual) return null;
 
+  const mob = heroMobile(p, config);
+  // Desktop / tablet space above and below the hero content (admin "Space above / below", px)
+  // and where the text sits next to a taller image (top | centre). Phones use Mobile view.
+  const deskStyle = {};
+  const dpt = mNum(p.padTop, 0, 300);
+  const dpb = mNum(p.padBottom, 0, 300);
+  if (dpt !== null) deskStyle["--hh-pt"] = `${dpt}px`;
+  if (dpb !== null) deskStyle["--hh-pb"] = `${dpb}px`;
+
   return (
-    <div className={["hh", ["wide", "full"].includes(p.textWidth) ? `hh-tw-${p.textWidth}` : "", p.textAlign === "center" ? "hh-center" : ""].filter(Boolean).join(" ")}>
+    <div
+      className={["hh", ["wide", "full"].includes(p.textWidth) ? `hh-tw-${p.textWidth}` : "", p.textAlign === "center" ? "hh-center" : "", ["top", "bottom"].includes(p.textVAlign) ? `hh-v-${p.textVAlign}` : "", mob.className].filter(Boolean).join(" ")}
+      style={{ ...deskStyle, ...mob.style }}
+    >
       <div className="hh-bg" />
+      {mob.layer && (
+        <div
+          className="hh-mlayer"
+          aria-hidden="true"
+          style={{
+            backgroundColor: mob.layer.color || undefined,
+            backgroundImage: mob.layer.image ? `url("${mob.layer.image.replace(/"/g, "%22")}")` : undefined,
+            backgroundPosition: mob.layer.position,
+          }}
+        />
+      )}
+      <div className="hh-mshade" aria-hidden="true" />
+      {mob.banner && (
+        <div className="hh-mbanner">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={mob.banner.src} alt={mob.banner.alt} style={{ objectFit: mob.banner.fit, objectPosition: mob.banner.position }} />
+        </div>
+      )}
       <div className={`wrap hero-grid hero-size-${size}`} style={showVisual ? undefined : { gridTemplateColumns: "1fr" }}>
         <div className="hero-text">
           {has(p.eyebrow) && <span className="eyebrow">{p.eyebrow}</span>}
@@ -1215,7 +1325,7 @@ function groupSections(sections) {
 
 function renderBlock(section, i) {
   const Block = BLOCKS[section.type];
-  const inner = Block ? <Block p={section.payload || {}} /> : <AnyBlock section={section} />;
+  const inner = Block ? <Block p={section.payload || {}} config={section.config} /> : <AnyBlock section={section} />;
   // Each block may have its own background (admin: the block's Background panel).
   return (
     <Fragment key={section.id || i}>
@@ -1233,7 +1343,7 @@ export function HomeBlock({ section }) {
   if (!Block) return null;
   return (
     <div className="ta-home ta-home-embed">
-      <div className="home-page"><Block p={section.payload || {}} /></div>
+      <div className="home-page"><Block p={section.payload || {}} config={section.config} /></div>
     </div>
   );
 }
