@@ -58,17 +58,24 @@ function A({ url, className, style, children }) {
 }
 
 /** A clickable card that keeps the reference's element (div) so its layout is unchanged. */
-function Card({ url, className, style, children }) {
+function Card({ url, className, style, duplicate = false, children }) {
   const go = useGo();
-  if (!has(url)) return <div className={className} style={style}>{children}</div>;
+  if (!has(url)) {
+    return (
+      <div className={className} style={style} aria-hidden={duplicate || undefined}>
+        {children}
+      </div>
+    );
+  }
   return (
     <div
       className={className}
       style={style}
-      role="link"
-      tabIndex={0}
+      role={duplicate ? undefined : "link"}
+      tabIndex={duplicate ? -1 : 0}
+      aria-hidden={duplicate || undefined}
       onClick={() => go(url)}
-      onKeyDown={(e) => { if (e.key === "Enter") go(url); }}
+      onKeyDown={duplicate ? undefined : (e) => { if (e.key === "Enter") go(url); }}
     >
       {children}
     </div>
@@ -256,7 +263,7 @@ function heroMobile(p, config) {
   // Text colour: explicit, or follows the shade / plain background.
   const text = m.text === "dark" || m.text === "light" ? m.text
     : shade === "dark" ? "light"
-    : shade === "light" || mode === "plain" || mode === "top" ? "dark" : "";
+      : shade === "light" || mode === "plain" || mode === "top" ? "dark" : "";
   if (text) classes.push(`hh-m-text-${text}`);
 
   if (m.align === "left" || m.align === "center") classes.push(`hh-m-al-${m.align}`);
@@ -620,12 +627,13 @@ function Clients({ p }) {
     const logo = isImage(item.logo)
       ? <ClientLogo src={item.logo} alt={item.name || ""} />
       : <span className="client-logo"><Icon value={item.logo} /></span>;
-    // Only the first set is real (links, screen readers); repeats are decoration.
+    // Only the first set is in tab order / screen readers; repeated marquee cards remain clickable by mouse/touch.
     const first = copy === 0 && i < items.length;
-    return first ? (
-      <Card key={`${copy}-${i}`} url={item.url} className="client-card">{logo}{has(item.name) && <b>{item.name}</b>}</Card>
-    ) : (
-      <div key={`${copy}-${i}`} className="client-card client-dup" aria-hidden="true">{logo}{has(item.name) && <b>{item.name}</b>}</div>
+    const cardClass = `client-card${has(item.url) ? " is-link" : ""}${first ? "" : " client-dup"}`;
+    return (
+      <Card key={`${copy}-${i}`} url={item.url} className={cardClass} duplicate={!first}>
+        {logo}{has(item.name) && <b>{item.name}</b>}
+      </Card>
     );
   });
   return (
@@ -939,15 +947,49 @@ function Security({ p }) {
   );
 }
 
+const INITIAL_FAQ_COUNT = 7;
+
 function Faq({ p }) {
   const items = list(p.items).filter((item) => has(item.question));
+  const [showAll, setShowAll] = useState(false);
   if (!items.length) return null;
+  const visibleItems = showAll ? items : items.slice(0, INITIAL_FAQ_COUNT);
+  const hasMore = items.length > INITIAL_FAQ_COUNT;
+  const hasIntro = has(p.eyebrow) || has(p.heading) || has(p.sub) || hasButton(p.button);
   return (
     <div className="home-faq">
-      <div className="wrap">
-        <SecHead heading={p.heading} sub={p.sub} />
-        <div className="faq-wrap">
-          {items.map((item, i) => <details key={i} className="faq" open={i === 0}><summary>{item.question}</summary><TextOrHtml value={item.answer} /></details>)}
+      <div className={`faq-layout${hasIntro ? "" : " faq-layout-solo"}`}>
+        {hasIntro && (
+          <div className="faq-intro">
+            <div className="faq-intro-inner">
+              <span className="faq-accent-bar" aria-hidden="true" />
+              {has(p.eyebrow) && <div className="eyebrow">{p.eyebrow}</div>}
+              {has(p.heading) && <h2>{p.heading}</h2>}
+              {has(p.sub) && <p className="faq-sub">{p.sub}</p>}
+              {hasButton(p.button) && (
+                <div className="faq-cta">
+                  <Button button={p.button} className="btn-primary faq-cta-btn" />
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        <div className="faq-panel">
+          <div className="faq-wrap">
+            {visibleItems.map((item, i) => (
+              <details key={i} className="faq">
+                <summary>{item.question}</summary>
+                <TextOrHtml value={item.answer} />
+              </details>
+            ))}
+            {hasMore && (
+              <div className="faq-more">
+                <button type="button" className="faq-more-btn" onClick={() => setShowAll((v) => !v)}>
+                  {showAll ? "Show fewer questions" : `Show all ${items.length} questions (+${items.length - INITIAL_FAQ_COUNT})`}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

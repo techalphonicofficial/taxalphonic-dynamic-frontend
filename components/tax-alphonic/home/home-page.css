@@ -729,6 +729,10 @@
   flex-shrink: 0;
 }
 
+.ta-home .client-card.is-link {
+  cursor: pointer;
+}
+
 /* Logos in colour; admin "Logo colours: grey" (.clients-gray) greys them until hover. */
 .ta-home .client-logo {
   font-size: 28px;
@@ -3496,4 +3500,261 @@
 @media (min-width: 821px) {
   .ta-home .hh.hh-v-top .hero-grid { align-items: start; }
   .ta-home .hh.hh-v-bottom .hero-grid { align-items: end; }
+}
+
+/* ---------- Split-panel FAQ section (HomeFaq) ---------- */
+.ta-home .home-page > .home-faq,
+.ta-home .home-page > .ta-sp > .home-faq {
+  width: calc(100% - 2 * var(--ta-gutter));
+  max-width: calc(var(--ta-page-max) - 2 * var(--ta-gutter));
+  margin: var(--ta-section-gap) auto;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: var(--home-card-shadow);
+  overflow: clip;
+}
+
+.ta-home :is(.home-main, .home-side) .home-faq {
+  width: 100%;
+  max-width: none;
+  margin: 0 0 24px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: var(--home-card-shadow);
+  overflow: clip;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.ta-home .home-faq {
+  padding: 0;
+  background:
+    radial-gradient(360px 220px at 92% 100%, color-mix(in srgb, var(--brand) 11%, transparent), transparent 72%),
+    linear-gradient(145deg, #f7fafc 0%, #edf4f8 100%);
+}
+
+.ta-home .faq-layout {
+  display: grid;
+  grid-template-columns: minmax(290px, 37%) minmax(0, 1fr);
+  align-items: stretch;
+  min-height: 460px;
+}
+
+.ta-home .faq-layout-solo {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.ta-home .faq-intro {
+  position: relative;
+  background: linear-gradient(160deg, #0f1c30 0%, #162640 100%);
+  color: #fff;
+  padding: 52px 42px 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 68px), calc(100% - 116px) 100%, 0 100%);
+}
+
+.ta-home .faq-intro-inner {
+  position: sticky;
+  top: calc(var(--ta-header-h, 74px) + 32px);
+}
+
+.ta-home .faq-accent-bar {
+  display: block;
+  width: 56px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--brand);
+  margin-bottom: 20px;
+}
+
+.ta-home .faq-intro .eyebrow {
+  background: color-mix(in srgb, var(--brand) 22%, transparent);
+  color: var(--brand2);
+  margin-bottom: 14px;
+}
+
+.ta-home .faq-intro h2 {
+  color: #fff;
+  font-size: clamp(28px, 2.7vw, 38px);
+  line-height: 1.15;
+  font-weight: 700;
+  margin: 0 0 16px;
+  max-width: 14ch;
+}
+
+.ta-home .faq-sub {
+  color: rgba(255, 255, 255, .8);
+  font-size: 15px;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 34ch;
+}
+
+.ta-home .faq-cta {
+  margin-top: 28px;
+}
+
+.ta-home .faq-cta-btn {
+  border-radius: 999px;
+  padding: 13px 26px;
+  background: linear-gradient(135deg, var(--brand), var(--brand2));
+  color: #fff;
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--brand) 28%, transparent);
+}
+
+.ta-home .faq-panel {
+  padding: 26px 28px 26px 18px;
+  display: flex;
+  align-items: center;
+}
+
+.ta-home .home-faq .faq-wrap {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  background: rgba(255, 255, 255, .82);
+  border: 1px solid rgba(226, 232, 240, .95);
+  border-radius: 20px;
+  padding: 16px 18px;
+  box-shadow: 0 10px 30px rgba(15, 28, 48, .05);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ta-home .home-faq .faq {
+  margin-bottom: 0;
+  background: #fff;
+  border: 1px solid #eef1f6;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(15, 28, 48, .04);
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.ta-home .home-faq .faq:hover,
+.ta-home .home-faq .faq[open] {
+  border-color: color-mix(in srgb, var(--brand) 40%, var(--line));
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--brand) 12%, transparent);
+}
+
+.ta-home .home-faq .faq summary {
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink2);
+  gap: 16px;
+}
+
+.ta-home .home-faq .faq summary::after {
+  content: "+";
+  font-size: 21px;
+  font-weight: 500;
+  color: var(--brand);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ta-home .home-faq .faq[open] summary::after {
+  content: "−";
+  color: var(--brand);
+}
+
+.ta-home .home-faq .faq p,
+.ta-home .home-faq .faq .home-rich {
+  padding: 0 20px 16px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.ta-home .faq-more {
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
+}
+
+.ta-home .faq-more-btn {
+  border: 1px solid color-mix(in srgb, var(--brand) 30%, var(--line));
+  background: color-mix(in srgb, var(--brand) 7%, #fff);
+  color: var(--brand);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .18s, color .18s, border-color .18s, transform .18s;
+}
+
+.ta-home .faq-more-btn:hover {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.ta-home .home-side .faq-layout {
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 0;
+}
+
+.ta-home .home-side .faq-intro {
+  clip-path: none;
+  padding: 36px 28px 32px;
+}
+
+.ta-home .home-side .faq-intro-inner {
+  position: static;
+}
+
+.ta-home .home-side .faq-panel {
+  padding: 20px;
+}
+
+@media (max-width: 900px) {
+  .ta-home .faq-layout {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .ta-home .faq-intro {
+    clip-path: none;
+    padding: 36px 28px 32px;
+  }
+
+  .ta-home .faq-intro h2 {
+    max-width: none;
+  }
+
+  .ta-home .faq-intro-inner {
+    position: static;
+  }
+
+  .ta-home .faq-panel {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ta-home .home-page > .home-faq,
+  .ta-home .home-page > .ta-sp > .home-faq {
+    width: calc(100% - 24px);
+    margin: 16px auto;
+    border-radius: 18px;
+  }
+
+  .ta-home .faq-panel {
+    padding: 14px;
+  }
+
+  .ta-home .home-faq .faq-wrap {
+    padding: 12px;
+  }
+
+  .ta-home .home-faq .faq summary {
+    padding: 13px 16px;
+    font-size: 14.5px;
+  }
 }

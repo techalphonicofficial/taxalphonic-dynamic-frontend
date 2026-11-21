@@ -31,6 +31,7 @@ function mapHomePage(page) {
 export const getHomePage = cache(async function getHomePage() {
   try {
     const payload = await apiClient(`/api/v1/pages/slug/${HOME_PAGE_SLUG}`, { cache: "no-store" });
+    // console.log("getHomePage payload", payload);
     return payload?.success ? mapHomePage(payload.data) : null;
   } catch (error) {
     if (error.status !== 404) console.error("Unable to load the CMS homepage.", error);

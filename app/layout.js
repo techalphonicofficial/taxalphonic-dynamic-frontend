@@ -9,6 +9,7 @@ import { getSiteSettings } from "@/service/siteSettingsService";
 import { preload } from "react-dom";
 import { headers } from "next/headers";
 import { LANDING_HEADER } from "@/lib/landingHost.mjs";
+import { buildSiteIcons } from "@/lib/favicon";
 import InlineLinksScanner from "@/components/tax-alphonic/InlineLinksScanner";
 
 // Light type sitewide (2026-11-12): Inter comes from app/fonts/inter.css (files in public/fonts, served by
@@ -21,15 +22,14 @@ export const dynamic = "force-dynamic";
 
 const fontPreload = () => preload("/fonts/inter-latin.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
 
-// Favicon and Apple touch icon come from Settings → Organization when set.
+// Favicon and Apple touch icon come from Settings → Organization (with /logo.png fallback).
 export async function generateMetadata() {
   const { branding } = await getSiteSettings();
-  const metadata = { title: branding.name || "Tax Alphonic", description: "Tax & Compliance Services" };
-  const icons = {};
-  if (branding.favicon) icons.icon = branding.favicon;
-  if (branding.appleTouchIcon) icons.apple = branding.appleTouchIcon;
-  if (Object.keys(icons).length) metadata.icons = icons;
-  return metadata;
+  return {
+    title: branding.name || "Tax Alphonic",
+    description: "Tax & Compliance Services",
+    icons: buildSiteIcons(branding),
+  };
 }
 
 // Settings → Website Layout: page width / side space / section gap as :root variables.
