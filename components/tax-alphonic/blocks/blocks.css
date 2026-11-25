@@ -2052,3 +2052,107 @@ a.ta-rt-btn-outline:hover { background: var(--rt-b); color: #fff; }
 .ta-bg-light .ta-inline-link,
 .dark .ta-inline-link,
 [data-theme="dark"] .ta-inline-link { --ta-link-color: #93c5fd; --ta-link-hover: #bfdbfe; }
+
+/* ---------- Reference look of the general blocks (2026-11-25) ----------
+   Sizes and bands of the matching reference sections (.impact, .info-eco, .lc, .rfs, .insights,
+   .hc-side-stats, .xhub). Everything the admin sets on a block (spacing, layout, colours) sits on
+   .ta-sp / .ta-ly / .ta-bg and still applies. */
+.ta-home .home-page { --ta-page-max: var(--ta-page-max-home); }
+.ta-home .ta-cb h2:not(.cb-fh-h) { font-size: 32px; line-height: 1.15; }
+.ta-home .home-side .ta-cb h2 { font-size: 19px; }
+.ta-home .ta-cb .cb-head { margin-bottom: 30px; }
+.ta-home .ta-cb .cb-sub { font-size: 16px; line-height: 1.6; }
+.ta-cb .cb-kicker { background: rgba(14, 150, 172, .1); padding: 6px 14px; border-radius: 99px; margin-bottom: 14px; }
+.ta-cb .cb-btn { padding: 14px 26px; font-size: 15.5px; }
+.ta-cb .cb-btn-ghost { padding: 14px 24px; }
+@media (max-width: 760px) {
+  .ta-home .ta-cb h2:not(.cb-fh-h) { font-size: 22px; }
+}
+
+/* Numbers on a dark block background = the reference "impact" band. */
+.ta-home .ta-bg-light .ta-cb .cb-stats .cb-stat { background: none; border: 0; box-shadow: none; }
+.ta-home .ta-bg-light .ta-cb .cb-stats .cb-stat b { font-size: 32px; line-height: 1; color: #fff; background: none; -webkit-text-fill-color: currentColor; }
+.ta-home .ta-bg-light .ta-cb .cb-stats .cb-stat span { font-size: 13px; color: rgba(255, 255, 255, .7); margin-top: 6px; }
+@media (min-width: 821px) {
+  .ta-home .home-page > .ta-sp > .ta-bg:has(> .ta-bg-content > .ta-cb.cb-stats) {
+    max-width: calc(var(--ta-page-max-home) - 2 * var(--ta-gutter)); margin: 50px auto !important;
+    border-radius: 24px; padding: 24px 16px;
+    background-image: linear-gradient(120deg, #0a0e1a, #1a2236); overflow: hidden;
+  }
+}
+
+/* Section bands */
+.ta-home .home-page > .ta-sp > .ta-cb:is(.cb-eco, .cb-blogposts) { background: #f3f4f8; }
+.ta-home .home-page > .ta-sp > .ta-cb.cb-tabcards,
+.ta-home .home-page > .ta-cb.cb-tabcards { padding: 64px 0; background: radial-gradient(900px 400px at 50% -10%, rgba(14, 150, 172, .05), transparent), linear-gradient(180deg, #f3f4f8, #fff); }
+
+/* Cards with two buttons = the reference "rfs" card */
+.ta-home .ta-cb .cb-card:has(.cb-card-btns, .cb-card-actions) { padding: 22px; border-radius: 16px; }
+.ta-home .ta-cb .cb-card:has(.cb-card-btns, .cb-card-actions) .cb-card-ic {
+  width: 50px; height: 50px; border-radius: 13px; font-size: 26px; margin-bottom: 14px;
+  background: linear-gradient(135deg, rgba(14, 150, 172, .12), rgba(60, 183, 204, .1));
+}
+.ta-home .ta-cb .cb-card:has(.cb-card-btns, .cb-card-actions) b { font-size: 16px; line-height: 1.3; }
+.ta-home .ta-cb .cb-card:has(.cb-card-btns, .cb-card-actions) p { font-size: 13px; line-height: 1.55; color: var(--cb-muted); }
+
+/* Numbers in the home side column = the reference dark side stats */
+.home-split .home-side .ta-cb.cb-stats .cb-wrap > .cb-stats { display: flex !important; flex-direction: column; gap: 0 !important; background: linear-gradient(135deg, #0a0e1a, #1a2236); border-radius: 18px; padding: 8px 24px; }
+.home-split .home-side .ta-cb.cb-stats .cb-stats > .cb-stat {
+  flex: none; max-width: none; width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  background: none; border: 0; box-shadow: none; border-radius: 0; padding: 16px 0; border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+.home-split .home-side .ta-cb.cb-stats .cb-stats > .cb-stat:last-child { border-bottom: 0; }
+.home-split .home-side .ta-cb.cb-stats .cb-stat .cb-stat-ic { display: none; }
+.home-split .home-side .ta-cb.cb-stats .cb-stat b { font-size: 22px; color: #fff; background: none; -webkit-text-fill-color: currentColor; }
+.home-split .home-side .ta-cb.cb-stats .cb-stat span { font-size: 13px; color: rgba(255, 255, 255, .7); margin: 0; }
+
+/* Other pages' blocks embedded on the homepage keep the home width. */
+.ta-home .ta-svc-embed { max-width: var(--ta-page-max-home); margin-left: auto; margin-right: auto; padding-left: var(--ta-gutter); padding-right: var(--ta-gutter); background: transparent; }
+
+/* Homepage: Industries block without a heading = the reference .rfs-features strip (one white card, six items). */
+.ta-home .home-page > .ta-sp > .industries:not(:has(.sec-head, .ind-go)) { padding: 6px 0 0 !important; }
+.ta-home .home-page > .ta-sp > .industries:not(:has(.sec-head, .ind-go)) .ind-grid {
+  background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 22px; box-shadow: var(--shadow); row-gap: 18px;
+}
+.ta-home .home-page > .ta-sp > .industries:not(:has(.sec-head, .ind-go)) .ind-card {
+  background: none; border: 0; box-shadow: none; padding: 0; transform: none; cursor: default;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.ta-home .home-page > .ta-sp > .industries:not(:has(.sec-head, .ind-go)) .ind-ic { font-size: 26px; margin: 0; }
+.ta-home .home-page > .ta-sp > .industries:not(:has(.sec-head, .ind-go)) .ind-card b { font-size: 12.5px; line-height: 1.3; }
+
+/* Homepage: Why Choose Us block with a heading = the reference .rfs-why panel (3 per row, icon beside the text). */
+.ta-home .home-page .ta-svc-embed:has(> .blk > h2 ~ .wc-grid) { margin-top: 34px; }
+.ta-home .home-page .ta-svc-embed > .blk:has(> h2 ~ .wc-grid) {
+  background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 30px !important; margin: 0; box-shadow: var(--shadow);
+}
+.ta-home .home-page .ta-svc-embed > .blk:has(> .wc-grid) > h2 {
+  font-size: 22px; width: auto; text-align: center; margin: 0 0 20px; padding: 0; border: 0;
+}
+.ta-home .home-page .ta-svc-embed > .blk:has(> .wc-grid) > h2::before { content: none; }
+.ta-home .home-page .ta-svc-embed > .blk > h2 ~ .wc-grid { --c: 3; --g: 18px; row-gap: 18px; justify-content: flex-start; }
+.ta-home .home-page .ta-svc-embed > .blk > h2 ~ .wc-grid > .wc-item {
+  flex-direction: row; align-items: flex-start; justify-content: flex-start; text-align: left; gap: 12px;
+  background: none; border: 0; border-radius: 0; padding: 0; box-shadow: none; transform: none;
+}
+.ta-home .home-page .ta-svc-embed > .blk > h2 ~ .wc-grid > .wc-item :is(b, p) { text-align: left; }
+@media (max-width: 900px) { .ta-home .home-page .ta-svc-embed > .blk > h2 ~ .wc-grid { --c: 2; } }
+@media (max-width: 640px) {
+  .ta-home .home-page .ta-svc-embed > .blk > h2 ~ .wc-grid { --c: 1; }
+  .ta-home .home-page .ta-svc-embed > .blk:has(> h2 ~ .wc-grid) { padding: 22px 18px !important; }
+}
+
+/* Homepage: Hero with Form on a dark background = the reference .expert-banner (same width as the other blocks). */
+.ta-home .home-page .ta-bg.ta-bg-light:has(> .ta-bg-content > .cb-formhero) {
+  width: calc(100% - 2 * var(--ta-gutter)); max-width: calc(var(--ta-page-max-home) - 2 * var(--ta-gutter));
+  margin: 50px auto; border-radius: 24px; overflow: hidden;
+  background-image: linear-gradient(120deg, #0a0e1a, #1a2236);
+}
+.ta-home .home-page .ta-bg.ta-bg-light > .ta-bg-content:has(> .cb-formhero) { padding: 44px; }
+.ta-home .home-page .ta-bg.ta-bg-light > .ta-bg-content > .cb-formhero { background: none; padding: 0; }
+.ta-home .home-page .ta-bg.ta-bg-light > .ta-bg-content > .cb-formhero .cb-fh-h { font-size: 30px; line-height: 1.2; }
+@media (max-width: 760px) {
+  .ta-home .home-page .ta-bg.ta-bg-light:has(> .ta-bg-content > .cb-formhero) { margin: 28px auto; }
+  .ta-home .home-page .ta-bg.ta-bg-light > .ta-bg-content:has(> .cb-formhero) { padding: 24px 18px; }
+  .ta-home .home-page .ta-bg.ta-bg-light > .ta-bg-content > .cb-formhero .cb-fh-h { font-size: 24px; }
+}

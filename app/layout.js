@@ -11,15 +11,17 @@ import { headers } from "next/headers";
 import { LANDING_HEADER } from "@/lib/landingHost.mjs";
 import InlineLinksScanner from "@/components/tax-alphonic/InlineLinksScanner";
 
-// Light type sitewide (2026-11-12): Inter comes from app/fonts/inter.css (files in public/fonts, served by
-// the site since 2026-11-13: next/font/google broke `next dev` under Turbopack) with only the 300–500
-// weights, so every font-weight 600 / 700 / 800 in the CSS shows as 500; globals.css turns off faux bold.
+// Reference type: Sora headings + Inter text, self-hosted (app/fonts/inter.css, files in public/fonts).
 // Every page reads the CMS on each request (settings, menus). Without this the built-in 404 page was
 // pre-rendered at build time, where the settings fetch (no-store) cannot run, so it came out without
 // the site's logo / menus and the build logged "Dynamic server usage" errors (2026-11-13).
 export const dynamic = "force-dynamic";
 
-const fontPreload = () => preload("/fonts/inter-latin.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
+const fontPreload = () => {
+  for (const file of ["inter-latin", "sora-latin"]) {
+    preload(`/fonts/${file}.woff2`, { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
+  }
+};
 
 // Favicon and Apple touch icon come from Settings → Organization when set.
 export async function generateMetadata() {

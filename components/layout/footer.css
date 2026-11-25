@@ -5,6 +5,7 @@
   --brand2: #3cb7cc;
   --shadow-lg: 0 20px 60px rgba(14, 150, 172, .16);
   margin-top: 30px;
+  padding: 46px 0 28px;
   background: var(--ink);
   color: rgba(255, 255, 255, .6);
   font-family: var(--font-inter), Inter, system-ui, sans-serif;
@@ -31,7 +32,7 @@
 }
 
 .ta-footer .wrap {
-  max-width: var(--ta-page-max);
+  max-width: var(--ta-page-max-footer);
   margin: 0 auto;
   padding: 0 var(--ta-gutter);
 }
@@ -176,7 +177,8 @@
 .ta-footer .f-col h5 {
   color: #fff;
   font-size: 13.5px;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1.6;
   margin-bottom: 10px;
   font-family: var(--font-sora), Sora, sans-serif;
 }
@@ -214,7 +216,8 @@
 .ta-footer .f-bottom h6 {
   color: #fff;
   font-size: 13px;
-  font-weight: 600;
+  line-height: 1.6;
+  font-weight: 700;
   margin-bottom: 12px;
   font-family: var(--font-sora), Sora, sans-serif;
 }

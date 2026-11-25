@@ -1,21 +1,24 @@
-/* Fonts: only Inter 300-500 from next/font (app/layout.js); the old Plus Jakarta Sans / Inter 700 / Poppins imports were removed (2026-11-12). */
+/* Fonts: Sora (headings) and Inter (text) from app/fonts/inter.css. */
 
 /* Google Fonts - TaxAlphonic */
 
 
 /*
  * Page width + side space for every page (header, footer, home, services, blocks, tools, journey,
- * blog, landing). Default: full screen width with 10px on the left and right.
+ * blog, landing). Default (reference): 1300px, 24px sides; home and service pages set their own
+ * reference width when neither the settings nor the block give one.
  * Admin: Settings → Website Layout (settings group "layout") overrides these on :root
  * (app/layout.js + service/siteSettingsService.js layoutCss). A block's Spacing panel
  * "Content width" overrides --ta-page-max for that block only.
  */
 :root {
-  --ta-page-max: 100%;
-  --ta-gutter: 10px;
+  --ta-page-max: 1300px;
+  --ta-page-max-home: 1156px;
+  --ta-page-max-svc: 1210px;
+  --ta-page-max-bar: 1222px;
+  --ta-page-max-footer: 100%;
+  --ta-gutter: 24px;
   --ta-section-gap: 28px;
-  --ta-hero-h1: 860px;
-  --ta-hero-lede: 640px;
 }
 
 /* Global Font Settings */
@@ -38,19 +41,20 @@ body {
 h1,
 h2,
 h3,
-h4,
-h5,
-h6 {
+h4 {
   font-family: var(--font-heading);
-  font-weight: 600;
-  line-height: 1.25;
+  font-weight: 700;
+  line-height: 1.15;
   letter-spacing: -0.02em;
+}
+
+h5, h6 {
+  font-weight: 700;
 }
 
 /* Main Hero Heading */
 h1 {
-  font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
 }
 
 /* Buttons */
@@ -58,7 +62,7 @@ button,
 .btn,
 input[type="submit"],
 input[type="button"] {
-  font-family: var(--font-heading);
+  font-family: var(--font-body);
   font-weight: 600;
 }
 
@@ -73,7 +77,7 @@ select {
 /* Navigation */
 nav,
 nav a {
-  font-family: var(--font-heading);
+  font-family: var(--font-body);
   font-weight: 500;
 }
 
@@ -82,18 +86,10 @@ a {
   text-decoration: none;
 }
 
-/* Responsive Heading Sizes */
-h1 {
-  font-size: clamp(2rem, 4vw, 3.5rem);
-}
-
-h2 {
-  font-size: clamp(1.6rem, 3vw, 2.5rem);
-}
-
-h3 {
-  font-size: clamp(1.25rem, 2vw, 1.75rem);
-}
+/* Browser heading sizes (as in the reference, which sets its own size where it needs one). */
+h1 { font-size: 2em; }
+h2 { font-size: 1.5em; letter-spacing: -0.015em; }
+h3 { font-size: 1.17em; letter-spacing: -0.008em; }
 
 :root {
   --font-main: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -227,17 +223,10 @@ body {
     text-decoration: none;
   }
 }
-/* Global font (2026-11-12): Inter everywhere, headings included. The CSS across the site asks for
-   var(--font-sora) (headings), var(--font-inter), --font-main / --font-heading / --font-body; all of
-   them point at Inter from app/fonts/inter.css (sets --font-inter; files in public/fonts). */
+/* Reference type (2026-11-25): headings ask for var(--font-sora), text inherits Inter. */
 body {
-  --font-sora: var(--font-inter), "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-main: var(--font-sora);
-  --font-heading: var(--font-sora);
-  --font-body: var(--font-sora);
-  font-family: var(--font-sora);
+  --font-heading: var(--font-sora), "Sora", sans-serif;
+  --font-body: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-main: var(--font-body);
+  font-family: var(--font-body);
 }
-
-/* Light type (2026-11-12): Inter is loaded only up to 500 (app/layout.js), so bolder weights use the
-   500 face; no faux bold on top of it. */
-html, body { font-synthesis-weight: none; font-synthesis: style; }

@@ -80,7 +80,7 @@ function contactDetails({ contact, address, social }) {
 
 /**
  * Settings → Website Layout (group "layout") as CSS variables for :root. Only numbers / known
- * words go into the CSS. Empty = the defaults in app/globals.css (full width, 10px sides).
+ * words go into the CSS. Empty = the defaults in app/globals.css (reference widths, 24px sides).
  *   pageWidth: "full" | "1200" | "1320" | "1440" | "1600" | "1800" | "custom" (+ customWidth px)
  *   gutter (px, desktop), gutterMobile (px, phones under 768px), sectionGap (px)
  *   heroTextWidth: "normal" | "wide" | "full"
@@ -93,12 +93,14 @@ const num = (value, min, max) => {
 
 export function layoutCss(layout = {}) {
   const vars = [];
+  // The home, service, trust bar and footer widths follow the chosen page width.
+  const pageMax = (value) => vars.push(...["", "-home", "-svc", "-bar", "-footer"].map((part) => `--ta-page-max${part}:${value}`));
   const width = String(layout.pageWidth || "").trim();
-  if (width === "full") vars.push("--ta-page-max:100%");
+  if (width === "full") pageMax("100%");
   else if (width === "custom") {
     const w = num(layout.customWidth, 600, 3000);
-    if (w) vars.push(`--ta-page-max:${w}px`);
-  } else if (/^\d{3,4}$/.test(width)) vars.push(`--ta-page-max:${num(width, 600, 3000)}px`);
+    if (w) pageMax(`${w}px`);
+  } else if (/^\d{3,4}$/.test(width)) pageMax(`${num(width, 600, 3000)}px`);
 
   const desktop = num(layout.gutter, 0, 160);
   const mobile = num(layout.gutterMobile, 0, 80);

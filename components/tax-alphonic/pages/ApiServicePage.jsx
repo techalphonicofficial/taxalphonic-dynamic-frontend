@@ -304,9 +304,10 @@ function OverviewBlock({ payload, config, first }) {
 
 function WhyUsBlock({ payload, config }) {
   const items = toCardItems(payload.reasons);
-  // Admin: heading / card alignment and cards per row (3–6, default 3).
+  // Admin: heading / card alignment and cards per row (3–6; the reference 2 when not set).
   const align = (v) => (v === "center" || v === "right" ? v : "left");
-  const cols = Math.min(6, Math.max(3, parseInt(payload.columns, 10) || 3));
+  const wanted = parseInt(payload.columns, 10);
+  const cols = wanted ? Math.min(6, Math.max(3, wanted)) : 2;
 
   return (
     <Block config={config} defaultId="whychoose" title={payload.title} intro={payload.intro} className={`wc-h-${align(payload.headAlign)} wc-c-${align(payload.cardAlign)}`}>

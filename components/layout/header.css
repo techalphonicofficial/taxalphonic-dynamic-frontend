@@ -1,0 +1,109 @@
+/*
+ * Site header in the reference look (.topbar / .megabar / .dropdown of the design file). Unlayered, so
+ * it wins over the Tailwind utilities in Header.jsx; menus, search and behaviour come from Header.jsx.
+ * "Settings -> Website Layout" page width still applies through --ta-page-max-home.
+ */
+.ta-hdr {
+  --h-ink: #0a0e1a;
+  --h-line: #e6e8f0;
+  --h-mist: #f3f4f8;
+  --h-brand: #0e96ac;
+  --h-muted: #5b6478;
+  border-top: 0;
+  box-shadow: none;
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+}
+.ta-hdr :is(nav, nav a, button, input) { font-family: inherit; }
+
+/* Top row */
+.ta-hdr .ta-hdr-top { border-bottom: 1px solid var(--h-line); background: #fff; }
+.ta-hdr .ta-hdr-top > div,
+.ta-hdr .ta-hdr-main > div { max-width: var(--ta-page-max-home); }
+.ta-hdr .ta-hdr-top > div { min-height: 64px; gap: 6px; padding-top: 4px; padding-bottom: 4px; }
+.ta-hdr .ta-hdr-top > div > a { margin-right: 4px; }
+.ta-hdr .ta-hdr-top input[type] {
+  height: 37px;
+  padding: 9px 14px 9px 36px;
+  font-size: 14px;
+  color: var(--h-ink);
+  background: var(--h-mist);
+  border: 1px solid var(--h-line);
+  border-radius: 10px;
+}
+.ta-hdr .ta-hdr-top input[type]:focus { outline: 0; border-color: var(--h-brand); background: #fff; box-shadow: none; }
+.ta-hdr .ta-hdr-top nav { gap: 6px; }
+.ta-hdr .ta-hdr-top nav > div { height: 39px; }
+.ta-hdr .ta-hdr-top nav > div > :is(a, button) {
+  height: auto;
+  gap: 4px;
+  padding: 7px 9px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  line-height: 1.3;
+  font-weight: 600;
+  color: #2a3142;
+  background: none;
+}
+.ta-hdr .ta-hdr-top nav > div:nth-child(1) > :is(a, button) { color: var(--h-brand); background: rgba(14, 150, 172, .08); }
+.ta-hdr .ta-hdr-top nav > div:nth-child(2) > :is(a, button) { color: #0d8f6e; background: rgba(232, 82, 30, .1); }
+.ta-hdr .ta-hdr-top nav > div:nth-child(3) > :is(a, button) { color: #b5790f; background: rgba(245, 166, 35, .12); }
+.ta-hdr .ta-hdr-top nav > div:nth-child(3):hover > :is(a, button) { background: rgba(245, 166, 35, .2); }
+.ta-hdr .ta-hdr-top nav > div:nth-child(n + 4) > :is(a, button) { font-weight: 500; }
+.ta-hdr .ta-hdr-top nav > div:nth-child(n + 4):hover > :is(a, button) { background: var(--h-mist); color: var(--h-ink); }
+
+/* Carets: the reference's small triangle instead of the chevron */
+.ta-hdr nav > div > button > svg:last-child { display: none; }
+.ta-hdr nav > div > button::after { content: "\25BC"; font-size: 9px; line-height: 1; transition: transform .2s; }
+.ta-hdr nav > div > button[aria-expanded="true"]::after { transform: rotate(180deg); }
+
+/* Menu row */
+.ta-hdr .ta-hdr-main { background: linear-gradient(180deg, #e8f6f8, #dcf0f3); border-bottom: 1px solid #c5e5ea; }
+.ta-hdr .ta-hdr-main nav { height: auto; min-height: 50px; flex-wrap: wrap; gap: 0 1px; }
+.ta-hdr .ta-hdr-main nav > div { height: auto; }
+.ta-hdr .ta-hdr-main nav > div > :is(a, button) {
+  height: auto;
+  gap: 4px;
+  padding: 10px 11px;
+  border: 0;
+  border-radius: 9px;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: #0a4a55;
+}
+.ta-hdr .ta-hdr-main nav > div > button::after { color: var(--h-brand); }
+.ta-hdr .ta-hdr-main nav > div:hover > :is(a, button) { background: var(--h-mist); color: var(--h-ink); }
+@media (max-width: 1400px) { .ta-hdr .ta-hdr-main nav > div > :is(a, button) { padding: 10px; font-size: 13.2px; } }
+@media (max-width: 1330px) { .ta-hdr .ta-hdr-main nav { column-gap: 0; } .ta-hdr .ta-hdr-main nav > div > :is(a, button) { padding: 10px 8px; font-size: 12.8px; } }
+@media (max-width: 1240px) { .ta-hdr .ta-hdr-main nav > div > :is(a, button) { padding: 9px 6px; font-size: 12.2px; letter-spacing: -.01em; } }
+@media (max-width: 1150px) { .ta-hdr .ta-hdr-main nav > div > :is(a, button) { padding: 8px 5px; font-size: 11.6px; } }
+
+/* Dropdowns */
+.ta-hdr .ta-dd { border: 1px solid var(--h-line); border-radius: 16px; box-shadow: 0 24px 70px rgba(10, 14, 26, .16); }
+.ta-hdr .ta-dd input[type] { height: auto; padding: 11px 14px 11px 36px; border: 1px solid var(--h-line); border-radius: 10px; font-size: 14px; background: var(--h-mist); box-shadow: none; }
+.ta-hdr .ta-dd input[type]:focus { border-color: var(--h-brand); background: #fff; }
+.ta-hdr .ta-dd-grid { padding: 18px; gap: 6px 20px; }
+.ta-hdr .ta-dd-h {
+  padding: 6px 12px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--h-line);
+  font-family: var(--font-sora), Sora, sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: none;
+  color: var(--h-ink);
+}
+.ta-hdr .ta-dd-a { gap: 10px; padding: 7px 12px; border-radius: 8px; }
+.ta-hdr .ta-dd-a:hover { background: var(--h-mist); }
+.ta-hdr .ta-dd-a > span:nth-child(2) > span:first-child { font-size: 13.2px; line-height: 1.4; font-weight: 500; color: #2a3142; }
+.ta-hdr .ta-dd-a:hover > span:nth-child(2) > span:first-child { color: var(--h-brand); }
+.ta-hdr .ta-dd-ic {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 7px;
+  font-size: 13px;
+  background: linear-gradient(135deg, rgba(14, 150, 172, .1), rgba(232, 82, 30, .1));
+}
+.ta-hdr .ta-dd-all { background: var(--h-mist); border-top: 1px solid var(--h-line); color: var(--h-brand); padding: 12px 18px; font-size: 13px; }

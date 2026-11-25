@@ -283,7 +283,8 @@ function spacingOf(config) {
   const width = CONTENT_WIDTH[spacing.contentWidth] || (spacing.contentWidth === "custom" ? Number(spacing.customWidth) : 0);
   if (width) {
     classes.push("ta-sp-cw");
-    style["--ta-page-max"] = typeof width === "string" ? width : `${Math.max(320, Math.min(3000, Math.round(width)))}px`;
+    const value = typeof width === "string" ? width : `${Math.max(320, Math.min(3000, Math.round(width)))}px`;
+    for (const part of ["", "-home", "-svc", "-bar"]) style[`--ta-page-max${part}`] = value;
   }
   // Text width: "full" lets headings / paragraphs use the whole block width (no reading-width cap).
   if (spacing.textWidth === "full") classes.push("ta-sp-tw-full");

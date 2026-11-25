@@ -47,7 +47,7 @@
 .ta-home .team-grid { --cols: 4; --g: 18px; }
 .ta-home .branch-grid { --cols: 4; --g: 16px; --cols-sm: 1; }
 .ta-home .pf-grid { --cols: 4; --g: 18px; }
-.ta-svc .wc-grid { --cols: var(--wc-cols, 3); --g: 16px; --cols-sm: 1; }
+.ta-svc .wc-grid { --cols: var(--wc-cols, 2); --g: 16px; --cols-sm: 1; }
 .ta-svc .bgrid { --cols: 2; --g: 14px; --cols-sm: 1; }
 .ta-svc .incl-grid { --cols: 2; --g: 12px; --cols-sm: 1; }
 .ta-svc .side-trust-grid { --cols: 2; --g: 10px; }

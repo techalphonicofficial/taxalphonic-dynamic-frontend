@@ -1,5 +1,6 @@
 "use client";
 
+import "./header.css";
 import Link from "next/link";
 import {
   Search,
@@ -162,6 +163,7 @@ function MenuIcon({ value, small = false }) {
     <span
       aria-hidden
       className={`
+        ta-dd-ic
         flex
         shrink-0
         items-center
@@ -205,6 +207,7 @@ function DropdownItem({ item }) {
       href={cleanUrl(item.url)}
       target={item.target}
       className="
+        ta-dd-a
         group/item
         flex
         min-w-0
@@ -773,6 +776,7 @@ function ColumnSection({ section }) {
   return (
     <div
       className={`
+        ta-dd-grid
         grid
         ${gridClass}
         gap-x-6
@@ -788,6 +792,7 @@ function ColumnSection({ section }) {
         >
           {column.title && (() => {
             const className = `
+              ta-dd-h
               mb-2.5
               flex
               items-center
@@ -1149,6 +1154,7 @@ function DesktopDropdown({
       }}
       className={`
         ${open ? "pointer-events-auto visible opacity-100" : "pointer-events-none invisible opacity-0"}
+        ta-dd
         absolute
         top-full
         z-[999]
@@ -1214,7 +1220,7 @@ function ViewAllLink({ item, onClick, mobile = false }) {
       onClick={onClick}
       className={mobile
         ? "mt-1 flex items-center justify-between rounded-lg bg-[#F0FDFA] px-3 py-2 text-xs font-semibold text-[#0F766E]"
-        : "flex items-center justify-between border-t border-slate-100 bg-[#F8FAFC] px-5 py-2.5 text-[12.5px] font-semibold text-[#0F766E] transition-colors hover:bg-[#F0FDFA]"}
+        : "ta-dd-all flex items-center justify-between border-t border-slate-100 bg-[#F8FAFC] px-5 py-2.5 text-[12.5px] font-semibold text-[#0F766E] transition-colors hover:bg-[#F0FDFA]"}
     >
       <span>View all {item.label}{count ? ` (${count})` : ""}</span>
       <span aria-hidden>→</span>
@@ -1685,6 +1691,7 @@ export default function Header({ navigation = {}, branding = {} }) {
       <header
         ref={headerRef}
         className="
+          ta-hdr
           sticky
           top-0
           z-[900]
@@ -1699,7 +1706,7 @@ export default function Header({ navigation = {}, branding = {} }) {
             TOP ROW
         ================================================= */}
 
-        <div className="border-b border-[#E6F7F5] bg-white">
+        <div className="ta-hdr-top border-b border-[#E6F7F5] bg-white">
           <div
             data-nav-bounds
             className="
@@ -1813,6 +1820,7 @@ export default function Header({ navigation = {}, branding = {} }) {
 
         <div
           className="
+            ta-hdr-main
             hidden
             border-b
             border-[#99F6E4]

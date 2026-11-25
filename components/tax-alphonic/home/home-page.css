@@ -328,7 +328,7 @@
 }
 
 .ta-home .home-page .wrap {
-  max-width: var(--ta-page-max);
+  max-width: var(--ta-page-max-home);
 }
 
 .ta-home .faq {
@@ -582,30 +582,20 @@
   letter-spacing: .03em;
 }
 
-/* The reveal area always keeps its full height (hover only fades the step in), so a hover never
-   makes the card taller and the content below never moves. */
 .ta-home .ej-reveal {
+  max-height: 24px;
+  overflow: hidden;
+  transition: .32s ease;
   position: relative;
   z-index: 1;
-  margin-top: auto;
-  padding-top: 12px;
+  margin-top: 12px;
 }
 
-.ta-home .ej-reveal-row {
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity .28s ease, transform .28s ease;
+.ta-home .ej-stage:hover .ej-reveal,
+.ta-home .ej-stage:focus-visible .ej-reveal {
+  max-height: 90px;
 }
 
-.ta-home .ej-stage:hover .ej-reveal-row,
-.ta-home .ej-stage:focus-visible .ej-reveal-row {
-  opacity: 1;
-  transform: none;
-}
-
-@media (hover: none) {
-  .ta-home .ej-reveal-row { opacity: 1; transform: none; }
-}
 
 .ta-home .ej-reveal-row {
   font-size: 11.5px;
@@ -821,7 +811,7 @@
   gap: 8px 22px;
   justify-content: center;
   align-items: center;
-  max-width: var(--ta-page-max);
+  max-width: var(--ta-page-max-bar);
   margin: 0 auto;
   padding: 11px var(--ta-gutter);
   font-size: 12.6px;
@@ -1053,30 +1043,22 @@
   animation: qlPulse 2s ease-in-out infinite;
 }
 
-/* One line: the chips scroll sideways (thin hidden scrollbar, faded edge); "All Taxpedia" stays outside. */
 .ta-home .ql-chips {
   display: flex;
   align-items: center;
   gap: 9px;
-  flex-wrap: nowrap;
-  flex: 1 1 0%;
-  min-width: 0;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-  padding: 4px 2px;
-  -webkit-overflow-scrolling: touch;
-  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
-  mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
+  flex-wrap: wrap;
 }
 
-.ta-home .ql-chips::-webkit-scrollbar {
-  display: none;
-}
-
-.ta-home .ql-chip {
-  flex-shrink: 0;
-  white-space: nowrap;
+@media (max-width: 760px) {
+  .ta-home .ql-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ta-home .ql-chip { flex-shrink: 0; }
 }
 
 .ta-home .ql-chip {
@@ -2603,7 +2585,7 @@
   grid-template-columns: minmax(0, 1fr) 360px;
   gap: 28px;
   align-items: start;
-  max-width: var(--ta-page-max);
+  max-width: var(--ta-page-max-home);
   margin: 0 auto;
   padding: 0 var(--ta-gutter);
 }
@@ -2748,19 +2730,6 @@
   }
 }
 
-/* ---------- No grey section bands ---------- */
-/* The reference gives some sections a grey (--mist) band; the homepage keeps them on the page background. */
-.ta-home .bigsec,
-.ta-home .ttm,
-.ta-home .bundles,
-.ta-home .compare {
-  background: transparent;
-}
-
-.ta-home .ej {
-  background: radial-gradient(1100px 500px at 50% -10%, rgba(14, 150, 172, .06), transparent);
-}
-
 /* ---------- Hero right side: image or dashboard, size from the CMS ---------- */
 .ta-home .hero-visual-img img {
   display: block;
@@ -2787,28 +2756,19 @@
 }
 
 /* ---------- Page tint and card blocks ---------- */
-/* A soft tinted page with each content block on a white, bordered card. The hero, strips,
-   dark banners, the form card and the banner slider keep their own design. */
+/* Reference look: full-width sections keep their own band; only blocks in a main / sidebar column are cards. */
 .ta-home {
-  --home-page-bg: #f3f6fa;
+  --home-page-bg: var(--paper);
   --home-card-shadow: 0 1px 2px rgba(10, 14, 26, .04), 0 14px 36px rgba(10, 14, 26, .05);
   background: var(--home-page-bg);
 }
 
-.ta-home .home-page > :is(.ej, .cats, .bigsec, .press, .info-journey, .clients, .how, .tools, .bundles, .why, .compare, .industries, .ttm, .secband, .home-faq, .home-team, .home-branches, .home-portfolio),
 .ta-home :is(.home-main, .home-side) > :is(.ej, .cats, .bigsec, .press, .info-journey, .clients, .how, .tools, .bundles, .why, .compare, .industries, .ttm, .secband, .home-faq, .home-team, .home-branches, .home-portfolio) {
   background-color: #fff;
   border: 1px solid var(--line);
   border-radius: 24px;
   box-shadow: var(--home-card-shadow);
   overflow: hidden;
-}
-
-/* Full-width blocks: a card as wide as the page content, with space between cards. */
-.ta-home .home-page > :is(.ej, .cats, .bigsec, .press, .info-journey, .clients, .how, .tools, .bundles, .why, .compare, .industries, .ttm, .secband, .home-faq, .home-team, .home-branches, .home-portfolio) {
-  width: calc(100% - 2 * var(--ta-gutter));
-  max-width: calc(var(--ta-page-max) - 2 * var(--ta-gutter));
-  margin: var(--ta-section-gap) auto;
 }
 
 /* Blocks in a two-column row: the column sets the width. */
@@ -2832,19 +2792,6 @@
 .ta-home .home-split {
   margin-top: 28px;
   margin-bottom: 28px;
-}
-
-/* The trust strip and knowledge strip sit on the tint as well. */
-.ta-home .trustbar {
-  background-color: #fff;
-}
-
-@media (max-width: 640px) {
-  .ta-home .home-page > :is(.ej, .cats, .bigsec, .press, .info-journey, .clients, .how, .tools, .bundles, .why, .compare, .industries, .ttm, .secband, .home-faq, .home-team, .home-branches, .home-portfolio) {
-    width: calc(100% - 24px);
-    margin: 16px auto;
-    border-radius: 18px;
-  }
 }
 
 /* Portfolio block (HomePortfolio): tabs, image grid, Show more, full-size preview */
@@ -3345,21 +3292,6 @@
 .ta-home .cmp-side-img { max-height: 320px; object-fit: cover; }
 @media (max-width: 900px) { .ta-home .cmp-side-img { max-height: 220px; } }
 
-/* Minimal newsletter field (2026-11-12). */
-.ta-home .news-form input[type="email"] { min-height: 36px; font-size: 13px; }
-.ta-home .news-form input::placeholder { font-weight: 400; color: color-mix(in srgb, currentColor 32%, transparent); }
-
-/* Platform cards: icon lined up with the heading, text takes the rest (2026-11-12). */
-.ta-home .sec-card { align-items: flex-start; }
-.ta-home .sec-body { min-width: 0; flex: 1; }
-.ta-home .sec-ic { width: 44px; height: 44px; font-size: 21px; border-radius: 12px; }
-.ta-home .sec-body h3 { line-height: 1.3; margin: 0 0 4px; min-height: 0; padding-top: 1px; }
-.ta-home .sec-body p { line-height: 1.55; }
-@media (max-width: 560px) {
-  .ta-home .sec-card { padding: 16px; gap: 14px; }
-  .ta-home .sec-ic { width: 40px; height: 40px; font-size: 19px; }
-  .ta-home .sec-body h3 { font-size: 16.5px; }
-}
 
 /* Journey stages stats strip (.ej-head-stats): never wider than the screen; values stay on one line;
    on phones a grid of 2-3 per row without the dividers (2026-11-12). */
@@ -3496,4 +3428,19 @@
 @media (min-width: 821px) {
   .ta-home .hh.hh-v-top .hero-grid { align-items: start; }
   .ta-home .hh.hh-v-bottom .hero-grid { align-items: end; }
+}
+
+/* ---------- Reference section spacing (2026-11-25) ----------
+   The homepage keeps the reference's vertical rhythm: each section's own top / bottom padding wins
+   over the smaller numbers saved in the CMS Spacing panel. Delete this part to let the panel's
+   top / bottom padding apply again. Blocks in a column and other pages are not affected. */
+@media (min-width: 768px) {
+  .ta-home .home-page > .ta-sp > .ej { padding: 72px 0 !important; }
+  .ta-home .home-page > .ta-sp > .ql-strip { padding: 16px 0 !important; }
+  .ta-home .home-page > .ta-sp > .cats { padding: 30px 0 70px !important; }
+  .ta-home .home-page > .ta-sp > .bigsec { padding: 50px 0 !important; }
+  .ta-home .home-page > .ta-sp > .press { padding: 40px 0 !important; }
+  .ta-home .home-page > .ta-sp > :is(.clients, .how) { padding: 56px 0 !important; }
+  .ta-home .home-page > .ta-sp > :is(.info-journey, .tools, .bundles, .why, .compare, .industries, .ttm, .home-faq, .secband),
+  .ta-home .home-page > .ta-sp > .ta-cb:is(.cb-databand, .cb-eco, .cb-blogposts) { padding-top: 60px !important; padding-bottom: 60px !important; }
 }

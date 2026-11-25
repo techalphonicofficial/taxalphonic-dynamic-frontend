@@ -1654,4 +1654,10 @@
    can still set "Space under heading" (center-grids.css .ta-ly-hg). */
 .ta-journey .jblock-head { margin-bottom: 18px; }
 .ta-journey .jblock-head p { margin: 0; color: var(--muted, #5b6478); }
-.ta-journey .jblock2 { padding: clamp(18px, 4vw, 34px); }
+.ta-journey .jblock2 { padding: 34px; }
+@media (max-width: 640px) { .ta-journey .jblock2 { padding: 18px; } }
+
+/* Heading letter-spacing of the reference. */
+.ta-journey h1 { letter-spacing: -.025em; }
+.ta-journey h2 { letter-spacing: -.015em; }
+.ta-journey h3 { letter-spacing: -.008em; }

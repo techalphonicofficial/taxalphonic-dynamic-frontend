@@ -3,12 +3,12 @@
  * landing pages, form popups). Smaller fields, labels, gaps and button than the page styles
  * (service-page.css / home-page.css .field rules). The doubled .cms-form class wins over those rules.
  */
-.cms-form.cms-form .field { margin-bottom: 9px; }
+.cms-form.cms-form .field { margin-bottom: 12px; }
 .cms-form.cms-form .field :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
-  padding: 9px 12px;
-  font-size: 13.5px;
+  padding: 12px 14px;
+  font-size: 14px;
   line-height: 1.4;
-  border-radius: 9px;
+  border-radius: 10px;
   min-height: 0;
 }
 .cms-form.cms-form .field select { padding-right: 30px; }
@@ -19,23 +19,21 @@
 .cms-form.cms-form .cms-choice { font-size: 13.5px; }
 .cms-form.cms-form .cms-form-grid { column-gap: 10px; }
 .cms-form.cms-form button[type="submit"] {
-  padding: 11px 18px;
-  font-size: 14.5px;
-  border-radius: 10px;
-  margin-top: 2px;
+  padding: 15px 28px;
+  font-size: 15.5px;
+  border-radius: 11px;
+  margin-top: 4px;
 }
 .cms-form.cms-form .cms-form-error { font-size: 12.5px; padding: 8px 10px; }
 .cms-form.cms-form .cms-form-success { font-size: 13.5px; padding: 12px 14px; }
 
 /* Captcha row in the same size as the fields. */
-.cms-form.cms-form .ta-captcha .ta-captcha-q { min-height: 37px; padding: 0 12px; font-size: 15px; }
+.cms-form.cms-form .ta-captcha .ta-captcha-q { min-height: 46px; padding: 0 12px; font-size: 15px; }
 .cms-form.cms-form .ta-captcha .ta-captcha-new { width: 34px; height: 34px; flex-basis: 34px; }
 .cms-form.cms-form .ta-captcha.ta-captcha .ta-captcha-row input.ta-captcha-input { width: 80px; flex-basis: 80px; }
 
 /* The card around a sidebar / Form-block form. */
-.ta-svc .lead-card:has(.cms-form) { padding: 20px; }
-.ta-svc .lead-card:has(.cms-form) h3 { font-size: 17px; }
-.ta-svc .lead-card:has(.cms-form) .csub { font-size: 12.5px; margin-bottom: 12px; }
+.ta-svc .lead-card:has(.cms-form) { padding: 26px; }
 
 /* ===== Labels on the border (2026-11-12, "notched" outline) =====
    CmsForm puts the label after the box in .cms-float fields; here it sits on the box's top border,
@@ -52,11 +50,11 @@
   display: block;
   width: 100%;
   box-sizing: border-box;
-  padding: 10px 12px 8px;
-  font-size: 13.5px;
-  line-height: 1.35;
-  min-height: 40px;
-  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.4;
+  min-height: 46px;
+  border-radius: 10px;
   background: var(--ta-field-bg);
 }
 .cms-form.cms-form .field.cms-float > select:not([type="checkbox"]):not([type="radio"]) { padding-right: 30px; }
@@ -95,42 +93,19 @@
 .cms-form.cms-form .ta-captcha { position: relative; }
 
 /* Captcha: same height as the fields. */
-.cms-form.cms-form .ta-captcha .ta-captcha-q { min-height: 40px; }
-.cms-form.cms-form .ta-captcha.ta-captcha .ta-captcha-row input.ta-captcha-input { min-height: 40px; padding: 8px; flex: 1 1 80px; width: auto; max-width: 140px; }
+.cms-form.cms-form .ta-captcha .ta-captcha-q { min-height: 46px; }
+.cms-form.cms-form .ta-captcha.ta-captcha .ta-captcha-row input.ta-captcha-input { min-height: 46px; padding: 8px; flex: 1 1 80px; width: auto; max-width: 140px; }
 
 /* Narrow forms (sidebar, phone): half-width fields take the full row, a full-width button. */
 @container (max-width: 380px) {
   .cms-form.cms-form .cms-form-grid > .field-half { grid-column: 1 / -1; }
-  .cms-form.cms-form button[type="submit"] { padding: 10px 14px; font-size: 14px; width: 100%; }
+  .cms-form.cms-form button[type="submit"] { width: 100%; }
 }
 
-/* ===== Minimal fields (2026-11-12, second pass): slimmer boxes, smaller text, a light normal-weight
-   placeholder, smaller captcha and button. Same sizes in the calculator (tools-page.css), blog
-   comments (blog.css) and the newsletter box (home-page.css). ===== */
-.cms-form.cms-form .field { margin-bottom: 11px; }
-.cms-form.cms-form .field.cms-float > :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
-  padding: 8px 11px 7px;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.35;
-  min-height: 36px;
-  border-radius: 8px;
+/* Reference look: a field with its own placeholder shows just that; the label stays for screen readers. */
+.cms-form.cms-form .cms-float:has(> :is(input, textarea)[placeholder]:not([placeholder=" "])) > .cms-label {
+  width: 1px; height: 1px; padding: 0; clip-path: inset(50%);
 }
-.cms-form.cms-form .field.cms-float > select:not([type="checkbox"]):not([type="radio"]) { padding-right: 28px; }
-.cms-form.cms-form .field.cms-float > textarea:not([type="checkbox"]):not([type="radio"]) { min-height: 60px; }
-.cms-form.cms-form .cms-float > .cms-label { font-size: 10px; font-weight: 500; left: 8px; }
-.cms-form.cms-form .cms-float > :is(input, textarea)::placeholder {
-  font-weight: 400;
-  font-size: 12.5px;
-  color: color-mix(in srgb, currentColor 30%, transparent);
-  opacity: 1;
-}
-.cms-form.cms-form .ta-captcha .ta-captcha-row { gap: 6px; }
-.cms-form.cms-form .ta-captcha .ta-captcha-q { min-height: 36px; padding: 0 10px; font-size: 13.5px; font-weight: 600; border-radius: 8px; }
-.cms-form.cms-form .ta-captcha.ta-captcha .ta-captcha-row input.ta-captcha-input { min-height: 36px; padding: 6px 8px; font-size: 13px; font-weight: 400; border-radius: 8px; }
-.cms-form.cms-form .ta-captcha.ta-captcha .ta-captcha-row input.ta-captcha-input::placeholder { font-weight: 400; color: color-mix(in srgb, currentColor 30%, transparent); }
-.cms-form.cms-form .ta-captcha .ta-captcha-new { width: 32px; height: 32px; flex-basis: 32px; border-radius: 8px; }
-.cms-form.cms-form button[type="submit"] { padding: 9px 16px; font-size: 13.5px; font-weight: 600; border-radius: 8px; }
 
 /* ===== Searchable dropdown (2026-11-18, CmsForm.jsx SearchSelect: dropdowns with more than 6 options) =====
    A text box with a chevron; the list opens under it and filters while typing. */
