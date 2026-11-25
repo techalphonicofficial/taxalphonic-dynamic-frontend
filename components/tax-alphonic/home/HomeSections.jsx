@@ -58,17 +58,24 @@ function A({ url, className, style, children }) {
 }
 
 /** A clickable card that keeps the reference's element (div) so its layout is unchanged. */
-function Card({ url, className, style, children }) {
+function Card({ url, className, style, duplicate = false, children }) {
   const go = useGo();
-  if (!has(url)) return <div className={className} style={style}>{children}</div>;
+  if (!has(url)) {
+    return (
+      <div className={className} style={style} aria-hidden={duplicate || undefined}>
+        {children}
+      </div>
+    );
+  }
   return (
     <div
       className={className}
       style={style}
-      role="link"
-      tabIndex={0}
+      role={duplicate ? undefined : "link"}
+      tabIndex={duplicate ? -1 : 0}
+      aria-hidden={duplicate || undefined}
       onClick={() => go(url)}
-      onKeyDown={(e) => { if (e.key === "Enter") go(url); }}
+      onKeyDown={duplicate ? undefined : (e) => { if (e.key === "Enter") go(url); }}
     >
       {children}
     </div>
@@ -256,7 +263,7 @@ function heroMobile(p, config) {
   // Text colour: explicit, or follows the shade / plain background.
   const text = m.text === "dark" || m.text === "light" ? m.text
     : shade === "dark" ? "light"
-    : shade === "light" || mode === "plain" || mode === "top" ? "dark" : "";
+      : shade === "light" || mode === "plain" || mode === "top" ? "dark" : "";
   if (text) classes.push(`hh-m-text-${text}`);
 
   if (m.align === "left" || m.align === "center") classes.push(`hh-m-al-${m.align}`);
@@ -620,12 +627,13 @@ function Clients({ p }) {
     const logo = isImage(item.logo)
       ? <ClientLogo src={item.logo} alt={item.name || ""} />
       : <span className="client-logo"><Icon value={item.logo} /></span>;
-    // Only the first set is real (links, screen readers); repeats are decoration.
+    // Only the first set is in tab order / screen readers; repeated marquee cards remain clickable by mouse/touch.
     const first = copy === 0 && i < items.length;
-    return first ? (
-      <Card key={`${copy}-${i}`} url={item.url} className="client-card">{logo}{has(item.name) && <b>{item.name}</b>}</Card>
-    ) : (
-      <div key={`${copy}-${i}`} className="client-card client-dup" aria-hidden="true">{logo}{has(item.name) && <b>{item.name}</b>}</div>
+    const cardClass = `client-card${has(item.url) ? " is-link" : ""}${first ? "" : " client-dup"}`;
+    return (
+      <Card key={`${copy}-${i}`} url={item.url} className={cardClass} duplicate={!first}>
+        {logo}{has(item.name) && <b>{item.name}</b>}
+      </Card>
     );
   });
   return (

@@ -719,6 +719,10 @@
   flex-shrink: 0;
 }
 
+.ta-home .client-card.is-link {
+  cursor: pointer;
+}
+
 /* Logos in colour; admin "Logo colours: grey" (.clients-gray) greys them until hover. */
 .ta-home .client-logo {
   font-size: 28px;
